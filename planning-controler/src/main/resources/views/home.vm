@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>盛行天下运营系统</title>
+    <title>计划管理平台</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
     <!-- Bootstrap 3.3.7 -->
@@ -17,12 +17,12 @@
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <script src="/planning/static/home/html5shiv.js"></script>
+    <script src="/planning/static/home/respond.js"></script>
     <![endif]-->
 
     <!-- Google Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"></link>
+    <link rel="stylesheet" th:href="@{/static/home/googleFont.css}"></link>
     <script th:inline="javascript">
         var contextPath = [[@{/}]];
         var interceptorToken = [[${token}]];
@@ -37,9 +37,9 @@
         <!-- Logo -->
         <a class="logo" id="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>运管</b></span>
+            <span class="logo-mini"><b>管理</b></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>运营管理平台</b></span>
+            <span class="logo-lg"><b>计划管理平台</b></span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top">
@@ -149,7 +149,7 @@
     var treeMenuId;
     var contentMain = $('#contentMain');
     var navHeader = $('#navHeader');
-    var iframeHightConst = 45;
+    var iframeHightConst = 35;
     function menuClick(menuParentName, menuChildName, menuParentId, menuChildId, treeMenuId){
         var nav = menuParentName + "  > " + menuChildName;
         $("#navHeader").html(nav);
@@ -257,9 +257,9 @@
                         menuChildId = '#' + childMenuId;
                         $('#contentIframe').attr('src', href);
                         navHeaderHtml = navHeaderHtml + childMenuName;
-                        menuMainHtml = menuMainHtml + "<li class='active' name='menuLiChild' id='" + childMenuId + "'><a href='" + href + "' target='contentIframe' onclick=\"" + onclickHtml + "\"><i class='fa " + childMenuIcon + "'></i>" + childMenuName + "</a></li>";
+                        menuMainHtml = menuMainHtml + "<li class='active' name='menuLiChild' id='" + childMenuId + "'><a href='" + href + "' target='contentIframe' onclick=\"" + onclickHtml + "\">&nbsp;&nbsp;&nbsp;&nbsp;<i class='fa " + childMenuIcon + "'></i>" + childMenuName + "</a></li>";
                     } else {
-                        menuMainHtml = menuMainHtml + "<li name='menuLiChild' id='" + childMenuId + "'><a href='" + href + "' target='contentIframe' onclick=\"" + onclickHtml + "\"><i class='fa " + childMenuIcon + "'></i>" + childMenuName + "</a></li>";
+                        menuMainHtml = menuMainHtml + "<li name='menuLiChild' id='" + childMenuId + "'><a href='" + href + "' target='contentIframe' onclick=\"" + onclickHtml + "\">&nbsp;&nbsp;&nbsp;&nbsp;<i class='fa " + childMenuIcon + "'></i>" + childMenuName + "</a></li>";
                     }
                 });
                 menuMainHtml = menuMainHtml + "</ul>";
@@ -267,7 +267,7 @@
             });
             $("#menuMain").html(menuMainHtml);
             $("#navHeader").html(navHeaderHtml);
-            $('#contentIframe').height(contentMain.height() - navHeader.height() - iframeHightConst);
+            $('#contentIframe').height(contentMain.height() - navHeader.height() - iframeHightConst - 35);
             $("#unameHomeSpan").html([[${uname}]]);
             var menuParent = $(menuParentId);
             var menuChild = $(menuChild);
