@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Repository
@@ -55,5 +56,9 @@ public class RedisRepositoryCustomImpl implements RedisRepositoryCustom {
 
     public void delete(String key) {
         template.delete(key);
+    }
+
+    public void deleteKeys(List<String> keyList) {
+        template.delete(keyList);
     }
 }

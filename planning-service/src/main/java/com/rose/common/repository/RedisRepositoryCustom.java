@@ -1,5 +1,7 @@
 package com.rose.common.repository;
 
+import java.util.List;
+
 /**
  * 功能：redis interface
  * @author sunpeng
@@ -35,4 +37,6 @@ public interface RedisRepositoryCustom {
     String getString(String key);
 
     void delete(String key);
+
+    void deleteKeys(List<String> keyList);
 }

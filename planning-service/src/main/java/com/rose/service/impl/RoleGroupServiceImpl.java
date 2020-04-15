@@ -2,14 +2,19 @@ package com.rose.service.impl;
 
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
+import com.rose.common.repository.RedisRepositoryCustom;
+import com.rose.common.util.RedisKeyUtil;
 import com.rose.data.entity.TbRoleGroup;
+import com.rose.data.entity.TbSysUser;
 import com.rose.repository.RoleGroupRepository;
+import com.rose.repository.SysUserRepository;
 import com.rose.service.RoleGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +24,10 @@ public class RoleGroupServiceImpl implements RoleGroupService {
 
     @Inject
     private RoleGroupRepository roleGroupRepository;
+    @Inject
+    private SysUserRepository sysUserRepository;
+    @Inject
+    private RedisRepositoryCustom redisRepositoryCustom;
 
     /**
      * 功能：权限分组列表
@@ -80,6 +89,14 @@ public class RoleGroupServiceImpl implements RoleGroupService {
         int c = roleGroupRepository.updateStateById(id, state);
         if (c <= 0) {
             throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+        }
+        List<TbSysUser> userList = sysUserRepository.findByRoleGroupId(id);
+        if (userList != null && userList.size() > 0) {
+            List<String> keyList = new ArrayList<>();
+            for (TbSysUser user : userList) {
+                keyList.add(RedisKeyUtil.getRedisUserInfoKey(user.getId()));
+            }
+            redisRepositoryCustom.deleteKeys(keyList);
         }
     }
 

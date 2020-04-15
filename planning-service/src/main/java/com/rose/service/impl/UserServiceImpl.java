@@ -85,17 +85,10 @@ public class UserServiceImpl implements UserService {
         if (c <= 0) {
             throw new BusinessException(ResponseResultCode.OPERT_ERROR);
         }
-        // 更新redis
-        String userInfoKey = RedisKeyUtil.getRedisUserInfoKey(sysUser.getId());
-        if (state == 2) {
+        if (state != 0) {
+            // 更新redis
+            String userInfoKey = RedisKeyUtil.getRedisUserInfoKey(sysUser.getId());
             redisRepositoryCustom.delete(userInfoKey);
-        } else {
-            String userInfoStr = redisRepositoryCustom.getString(userInfoKey);
-            if (StringUtil.isNotEmpty(userInfoStr)) {
-                UserRedisVo userRedisVo = JsonUtil.jsonToObject(userInfoStr, UserRedisVo.class);
-                userRedisVo.setUserState(state);
-                userRedisInfoSave(userInfoKey, userRedisVo);
-            }
         }
     }
 

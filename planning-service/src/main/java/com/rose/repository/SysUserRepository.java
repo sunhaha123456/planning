@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface SysUserRepository extends CrudRepository<TbSysUser, Long> {
 
     @Query(value = "select * from tb_sys_user where uname = :uname and upwd = :upwd", nativeQuery = true)
@@ -29,4 +31,7 @@ public interface SysUserRepository extends CrudRepository<TbSysUser, Long> {
     @Modifying
     @Query(value = "update tb_sys_user set upwd = :userNewPassword where id = :id and upwd = :userOldPassword", nativeQuery = true)
     int updatePasswodByOldPassword(@Param(value = "id") Long id, @Param(value = "userOldPassword") String userOldPassword, @Param(value = "userNewPassword") String userNewPassword);
+
+    @Query(value = "select * from tb_sys_user where role_group_id = :roleGroupId", nativeQuery = true)
+    List<TbSysUser> findByRoleGroupId(@Param(value = "roleGroupId") Long roleGroupId);
 }
