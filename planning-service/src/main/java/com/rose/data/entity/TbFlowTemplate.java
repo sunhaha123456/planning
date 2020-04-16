@@ -13,7 +13,6 @@ import javax.persistence.Table;
 @Table(name = "tb_flow_template")
 public class TbFlowTemplate extends BaseDataIdLong {
 
-    // 0：正常 1：冻结
-    @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程模板状态'")
-    private Integer state;
+    @Column(name = "template_name", columnDefinition = "VARCHAR(255) COMMENT '模板名称'")
+    private String templateName;
 }
