@@ -29,7 +29,7 @@ public class BaseDataIdStrDelFlag implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_modified", updatable = true, columnDefinition = "timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@JsonProperty(value = "lastModifiedDate")
+	//@JsonProperty(value = "lastModifiedDate")
 	protected Date lastModified;
 
 	// 0：正常，1：已删除
