@@ -90,7 +90,6 @@
             var params = {"menuName":menuName, "iconCls":iconCls, "menuState":menuState, "sort":sort,"dirLevel":dirLevel,"parentId":parentId,"url":url,"id":id};
             var result = ajaxSynchPostJson("user/menuManage/save", params);
             if (result.code == '200') {
-                alertSuccess();
                 if (isParent == 1) {
                     searchMenu();
                 } else {
@@ -100,12 +99,13 @@
                 $('#manager_edit').dialog('close');
                 $('#manager_listChild_add').dialog('close');
                 $('#manager_listChild_edit').dialog('close');
+                alertSuccess();
             } else {
                 alertWarn(result.msg);
             }
         }
         function searchMenu() {
-            var params = {"uname": $('#unameSearch').val(), "page":1, "rows":10};
+            var params = {"page":1, "rows":10};
             var result = ajaxSynchPostJson("user/menuManage/searchRoot", params);
             if (result.code == '200') {
                 dataGridPageInit();
@@ -116,7 +116,7 @@
         }
         function dataGridInit() {
             $('#manager').datagrid({
-                fit : true,
+                //fit : true,
                 fitColumns : true,
                 striped : true,
                 rownumbers : true,
@@ -172,7 +172,8 @@
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var result = ajaxSynchPostJson("user/menuManage/searchRoot", {"page":pageNumber, "rows":pageSize});
+                    var params = {"page":pageNumber, "rows":pageSize};
+                    var result = ajaxSynchPostJson("user/menuManage/searchRoot", params);
                     if (result.code == '200') {
                         $('#manager').datagrid('loadData', result.data);
                     }
@@ -216,7 +217,7 @@
                     $('#menuIconChildEdit').val(iconCls);
                     $('#menuUrlChildEdit').val(url);
                     $('#menuSortChildEdit').numberbox('setValue', sort);
-                    $("input:radio[name=menuStateChildEdit][value=" + menuState + "]").attr("checked",true);
+                    $("input:radio[name=menuStateChildEdit][value=" + menuState + "]").prop("checked",true);
                     $('#manager_listChild_edit').dialog('open');
                 } else {
                     alertWarn(result.msg);
@@ -238,7 +239,7 @@
                     var id = rows[0].id;
                     var manager = '#manager_listChild_edit';
                     var isParent = 0;
-                    save(menuName, iconCls, menuState, sort, dirLevel, null, null, id, manager, isParent);
+                    save(menuName, iconCls, menuState, sort, dirLevel, null, url, id, manager, isParent);
                 }
             }
         }
