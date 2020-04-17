@@ -10,8 +10,8 @@ import javax.persistence.Table;
 @ToString(callSuper = true)
 @lombok.Data
 @Entity
-@Table(name = "tb_flow_instance_user_task")
-public class TbFlowInstanceUserTask extends BaseDataIdLong {
+@Table(name = "tb_flow_instance_node_user_task")
+public class TbFlowInstanceNodeUserTask extends BaseDataIdLong {
 
     @Column(name = "instance_id", columnDefinition = "BIGINT COMMENT '实例id'")
     private Long instanceId;
