@@ -1,5 +1,9 @@
 package com.rose.service;
 
-public interface DimensionService {
+import com.rose.data.entity.TbDimension;
 
+import java.util.List;
+
+public interface DimensionService {
+    List<TbDimension> getDimensionTree();
 }
