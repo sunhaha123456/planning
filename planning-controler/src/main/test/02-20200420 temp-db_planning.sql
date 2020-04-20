@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-04-18 19:37:30
+Date: 2020-04-20 11:43:09
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -254,14 +254,14 @@ INSERT INTO `tb_menu` VALUES ('2', '2018-06-23 18:11:17', '2019-01-31 15:31:26',
 INSERT INTO `tb_menu` VALUES ('3', '2018-06-23 18:11:17', '2019-01-31 15:31:32', '2', 'fa-circle-o', '角色管理', '0', '1', '2', 'user/roleManage/toRoleManage');
 INSERT INTO `tb_menu` VALUES ('4', '2018-06-23 18:11:17', '2019-01-31 15:31:37', '2', 'fa-circle-o', '菜单管理', '0', '1', '1', 'user/menuManage/toMenuManage');
 INSERT INTO `tb_menu` VALUES ('5', '2018-11-09 14:31:04', '2020-04-16 14:26:42', '1', 'fa-folder', '流程管理', '0', '0', '2', null);
-INSERT INTO `tb_menu` VALUES ('6', '2018-11-09 14:48:29', '2020-04-16 14:36:02', '2', 'fa-circle-o', '流程模板', '0', '5', '2', 'user/uploadDemo/toUploadDemo');
-INSERT INTO `tb_menu` VALUES ('7', '2020-04-16 14:36:25', '2020-04-16 14:36:25', '2', 'fa-circle-o', '流程实例', '0', '5', '1', 'xxx');
+INSERT INTO `tb_menu` VALUES ('6', '2018-11-09 14:48:29', '2020-04-20 11:41:20', '2', 'fa-circle-o', '流程模板', '0', '5', '2', 'user/menuManage/toFlowTemplate');
+INSERT INTO `tb_menu` VALUES ('7', '2020-04-16 14:36:25', '2020-04-20 11:41:48', '2', 'fa-circle-o', '流程实例', '0', '5', '1', 'user/menuManage/toFlowInstance');
 INSERT INTO `tb_menu` VALUES ('8', '2020-04-18 19:31:52', '2020-04-18 19:31:52', '1', 'fa-folder', '系统管理', '0', '0', '3', null);
-INSERT INTO `tb_menu` VALUES ('9', '2020-04-18 19:32:25', '2020-04-18 19:32:25', '2', 'fa-circle-o', '维度管理', '0', '8', '3', 'xxx');
-INSERT INTO `tb_menu` VALUES ('10', '2020-04-18 19:32:56', '2020-04-18 19:32:56', '2', 'fa-circle-o', '表单管理', '0', '8', '2', 'xxx');
-INSERT INTO `tb_menu` VALUES ('11', '2020-04-18 19:33:35', '2020-04-18 19:33:35', '2', 'fa-circle-o', '系统设置', '0', '8', '1', 'xxx');
+INSERT INTO `tb_menu` VALUES ('9', '2020-04-18 19:32:25', '2020-04-20 11:25:54', '2', 'fa-circle-o', '维度管理', '0', '8', '3', 'user/menuManage/toDimensionManage');
+INSERT INTO `tb_menu` VALUES ('10', '2020-04-18 19:32:56', '2020-04-20 11:39:32', '2', 'fa-circle-o', '表单管理', '0', '8', '2', 'user/menuManage/toFormManage');
+INSERT INTO `tb_menu` VALUES ('11', '2020-04-18 19:33:35', '2020-04-20 11:40:30', '2', 'fa-circle-o', '系统设置', '0', '8', '1', 'user/menuManage/toSystemSet');
 INSERT INTO `tb_menu` VALUES ('12', '2020-04-18 19:34:43', '2020-04-18 19:34:43', '1', 'fa-folder', '平台首页', '0', '0', '4', null);
-INSERT INTO `tb_menu` VALUES ('13', '2020-04-18 19:35:10', '2020-04-18 19:35:10', '2', 'fa-circle-o', '平台首页', '0', '12', '1', 'xxx');
+INSERT INTO `tb_menu` VALUES ('13', '2020-04-18 19:35:10', '2020-04-20 11:38:46', '2', 'fa-circle-o', '平台首页', '0', '12', '1', 'user/menuManage/toPlatformIndexPage');
 
 -- ----------------------------
 -- Table structure for tb_menu_role_group_releation
