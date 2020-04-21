@@ -87,7 +87,11 @@
             </div>
             <div style="float:left; width: 50%">
                 <p>维度名称：<input id="editDimName" type="text" style="width:200px;" /></p>
-                <p>数据类别：<input name="editDataType" type="radio" value="1" checked="checked">数值</input><input name="editDataType" type="radio" value="2">文本</input></p>
+                <p>数据类别：
+                    <input name="editDataType" type="radio" value="0" checked="checked">聚集</input>
+                    <input name="editDataType" type="radio" value="1">数值</input>
+                    <input name="editDataType" type="radio" value="2">文本</input>
+                </p>
                 <p><input type="button" value="保存" onclick="commitSave()" /></p>
             </div>
             <div style="clear:both;"></div>
