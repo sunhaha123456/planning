@@ -12,7 +12,11 @@
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
     <script th:inline="javascript">
+
         var openDim = new Array();
+
+        var addType = -1;
+        var selectDimId = -1;
 
         function treeInit() {
             var result = ajaxSynchGet("user/dimensionManage/getDimensionTree", {"pid": 0});
@@ -22,6 +26,18 @@
                     multiple : false,
                     checkbox : false,
                     data : result.data,
+                    onSelect: function(node) {
+                        var result = ajaxSynchGet("user/dimensionManage/getDetail", {"id": node.id});
+                        if (result.code == '200') {
+                            var dim = result.data;
+                            $('#dimName').val(dim.dimensionName);
+                            $("input:radio[name=dataType][value=" + dim.dataType + "]").prop("checked",true);
+
+                            selectDimId = dim.id;
+                        } else {
+                            alertWarn(result.msg);
+                        }
+                    },
                     onBeforeExpand: function(node) {
                         if (openDim.indexOf(node.id) == -1) {
                             open(node);
@@ -50,15 +66,28 @@
             }
         }
 
-        function addDimShow() {
-
+        function addDimShow(type) {
+            addType = type;
+            $('#dimName').val('');
+            if (type == 0) {
+                $("input:radio[name=dataType][value=" + 0 + "]").prop("checked",true);
+            } else {
+                $("input:radio[name=dataType][value=" + 1 + "]").prop("checked",true);
+            }
         }
 
         function commitSave() {
-            var dimName = $('#editDimName').val();
-            var dataType = $("input[name='editDataType']:checked").val();
+            var dimName = $('#dimName').val();
+            var dataType = $("input[name='dataType']:checked").val();
+            //alert(selectDimId + "  " + dimName + "   " + dataType);
 
-            alert(dimName + "   " + dataType);
+            if (addType == 0) { // 新增维度
+
+            } else if (addType == 1) { // 新增维度成员
+                if (selectDimId == -1) {
+                    alertWarn("新增维度成员时需要先选中维度！");
+                }
+            }
         }
 
         $(function () {
@@ -70,7 +99,8 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addDimShow()">新增</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addDimShow(0)">新增维度</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addDimShow(1)">新增成员</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteDim()">删除</a>
         </div>
 
@@ -86,13 +116,21 @@
                 <ul id="roleMenuTree"/>
             </div>
             <div style="float:left; width: 50%">
-                <p>维度名称：<input id="editDimName" type="text" style="width:200px;" /></p>
-                <p>数据类别：
-                    <input name="editDataType" type="radio" value="0" checked="checked">聚集</input>
-                    <input name="editDataType" type="radio" value="1">数值</input>
-                    <input name="editDataType" type="radio" value="2">文本</input>
+                <p style="margin-top: 0px">维度名称&nbsp;<input id="dimName" type="text" style="width:200px;" /></p>
+                <p>数据类别
+                    <input name="dataType" type="radio" value="1">数值</input>
+                    <input name="dataType" type="radio" value="2">文本</input>
+                    <input name="dataType" type="radio" value="0">聚集</input>
                 </p>
                 <p><input type="button" value="保存" onclick="commitSave()" /></p>
+                <p>
+                    <font size="2">
+                        注意：<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;维度的数据类型，只能是聚集 <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;维度成员，拥有子项时，数据类型只能是聚集，且所有子项只能是数值 <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;维度成员，没有子项时，数据类型不能是聚集 <br/>
+                    </font>
+                </p>
             </div>
             <div style="clear:both;"></div>
         </div>

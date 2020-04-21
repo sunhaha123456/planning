@@ -1,15 +1,12 @@
 package com.rose.service.impl;
 
 import com.rose.data.entity.TbDimension;
-import com.rose.data.entity.TbMenu;
 import com.rose.repository.DimensionRepository;
 import com.rose.service.DimensionService;
-import com.rose.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -18,6 +15,11 @@ public class DimensionServiceImpl implements DimensionService {
 
     @Inject
     private DimensionRepository dimensionRepository;
+
+    @Override
+    public TbDimension getDetail(Long id) {
+        return dimensionRepository.findOne(id);
+    }
 
     @Override
     public List<TbDimension> getDimensionTree(Long pid) {

@@ -19,6 +19,11 @@ public class DimensionManageControler {
     @Inject
 	private DimensionService dimensionService;
 
+    @GetMapping(value = "/getDetail")
+    public TbDimension getDetail(@RequestParam Long id) {
+        return dimensionService.getDetail(id);
+    }
+
     @GetMapping(value = "/getDimensionTree")
     public List<TbDimension> getDimensionTree(@RequestParam Long pid) {
         return dimensionService.getDimensionTree(pid);
