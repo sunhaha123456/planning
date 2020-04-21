@@ -12,19 +12,50 @@
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
     <script th:inline="javascript">
-        $(function () {
-            var id = 2;
-            var result = ajaxSynchGet("user/dimensionManage/getDimensionTree", {"id":id});
+        var openDim = new Array();
+
+        function treeInit() {
+            var result = ajaxSynchGet("user/dimensionManage/getDimensionTree", {"pid": 0});
             if (result.code == '200') {
                 $('#roleMenuTree').tree({
                     lines : true,
                     multiple : false,
                     checkbox : false,
+                    data : result.data,
+                    onBeforeExpand: function(node) {
+                        if (openDim.indexOf(node.id) == -1) {
+                            open(node);
+                        }
+                        //return true;
+                    }
+//                    onSelect: function(node) {
+//                        open(node);
+//                    }
+                });
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function open(node) {
+            var result = ajaxSynchGet("user/dimensionManage/getDimensionTree", {"pid": node.id});
+            if (result.code == '200') {
+                openDim.push(node.id);
+                $('#roleMenuTree').tree('append', {
+                    parent : node.target,
                     data : result.data
                 });
             } else {
                 alertWarn(result.msg);
             }
+        }
+
+        function addDimShow() {
+
+        }
+
+        $(function () {
+            treeInit();
         });
     </script>
 </head>
@@ -32,9 +63,9 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addRoleShow()">新增</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editRoleShow()">编辑</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="opertUserState(1)">删除</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addDimShow()">新增</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editDimShow()">编辑</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteDim()">删除</a>
         </div>
 
         <!--/*

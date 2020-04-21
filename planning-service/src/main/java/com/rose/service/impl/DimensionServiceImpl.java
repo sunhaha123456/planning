@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -18,15 +19,17 @@ public class DimensionServiceImpl implements DimensionService {
     @Inject
     private DimensionRepository dimensionRepository;
 
-    @Inject
-    private MenuService menuService;
-
     @Override
-    public List<TbDimension> getDimensionTree() {
-        List<TbMenu> list = menuService.getMenuTreeByRoleId(2L);
-        for (TbMenu menu : list) {
-            menu.setIconCls("");
+    public List<TbDimension> getDimensionTree(Long pid) {
+        List<TbDimension> resList = dimensionRepository.listByPid(pid);
+        if (resList != null && resList.size() > 0) {
+            for (TbDimension d : resList) {
+                d.setText(d.getDimensionName());
+                if (d.getDataType() == 0) {
+                    d.setState("closed");
+                }
+            }
         }
-        return null;
+        return resList;
     }
 }

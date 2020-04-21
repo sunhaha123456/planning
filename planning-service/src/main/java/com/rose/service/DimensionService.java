@@ -5,5 +5,5 @@ import com.rose.data.entity.TbDimension;
 import java.util.List;
 
 public interface DimensionService {
-    List<TbDimension> getDimensionTree();
+    List<TbDimension> getDimensionTree(Long pid);
 }

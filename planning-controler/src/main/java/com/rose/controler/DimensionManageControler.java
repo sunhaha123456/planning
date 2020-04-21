@@ -5,6 +5,7 @@ import com.rose.service.DimensionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
@@ -19,7 +20,7 @@ public class DimensionManageControler {
 	private DimensionService dimensionService;
 
     @GetMapping(value = "/getDimensionTree")
-    public List<TbDimension> getMenuTreeByRoleId() {
-        return dimensionService.getDimensionTree();
+    public List<TbDimension> getDimensionTree(@RequestParam Long pid) {
+        return dimensionService.getDimensionTree(pid);
     }
 }
