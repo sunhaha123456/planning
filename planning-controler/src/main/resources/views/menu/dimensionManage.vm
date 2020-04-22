@@ -15,8 +15,8 @@
 
         var openDim = new Array();
 
-        var addType = -1;
         var selectDimId = -1;
+        var addType = -1;
 
         function treeInit() {
             var result = ajaxSynchGet("user/dimensionManage/getDimensionTree", {"pid": 0});
@@ -31,7 +31,14 @@
                         if (result.code == '200') {
                             var dim = result.data;
                             $('#dimName').val(dim.dimensionName);
-                            $("input:radio[name=dataType][value=" + dim.dataType + "]").prop("checked",true);
+                            if (node.dimensionLevel == 0) {
+                                $("#dataTypeP").hide();
+                            } else {
+                                $("#dataTypeGatherRadio").show();
+                                $("#dataTypeGatherSpan").show();
+                                $("#dataTypeP").show();
+                                $("input:radio[name=dataType][value=" + dim.dataType + "]").prop("checked",true);
+                            }
 
                             selectDimId = dim.id;
                         } else {
@@ -68,11 +75,19 @@
 
         function addDimShow(type) {
             addType = type;
+
             $('#dimName').val('');
-            if (type == 0) {
-                $("input:radio[name=dataType][value=" + 0 + "]").prop("checked",true);
-            } else {
-                $("input:radio[name=dataType][value=" + 1 + "]").prop("checked",true);
+            if (type == 0) { // 新增维度
+                $("#dataTypeP").hide();
+            } else if (type == 1) { // 新增维度成员
+                if (selectDimId == -1) {
+                    alertWarn("新增维度成员时需要先选中维度！");
+                } else {
+                    $("#dataTypeGatherRadio").hide();
+                    $("#dataTypeGatherSpan").hide();
+                    $("#dataTypeP").show();
+                    $("input:radio[name=dataType][value=" + 1 + "]").prop("checked",true);
+                }
             }
         }
 
@@ -83,10 +98,13 @@
 
             if (addType == 0) { // 新增维度
 
+
+
+
             } else if (addType == 1) { // 新增维度成员
-                if (selectDimId == -1) {
-                    alertWarn("新增维度成员时需要先选中维度！");
-                }
+
+            } else { // 编辑
+
             }
         }
 
@@ -117,16 +135,15 @@
             </div>
             <div style="float:left; width: 50%">
                 <p style="margin-top: 0px">维度名称&nbsp;<input id="dimName" type="text" style="width:200px;" /></p>
-                <p>数据类别
-                    <input name="dataType" type="radio" value="1">数值</input>
-                    <input name="dataType" type="radio" value="2">文本</input>
-                    <input name="dataType" type="radio" value="0">聚集</input>
+                <p id="dataTypeP">数据类别
+                    <input id="dataTypeNumber" name="dataType" type="radio" value="1">数值</input>
+                    <input id="dataTypeText" name="dataType" type="radio" value="2">文本</input>
+                    <input id="dataTypeGatherRadio" name="dataType" type="radio" value="0"><span id="dataTypeGatherSpan">聚集</span></input>
                 </p>
                 <p><input type="button" value="保存" onclick="commitSave()" /></p>
                 <p>
                     <font size="2">
                         注意：<br/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;维度的数据类型，只能是聚集 <br/>
                         &nbsp;&nbsp;&nbsp;&nbsp;维度成员，拥有子项时，数据类型只能是聚集，且所有子项只能是数值 <br/>
                         &nbsp;&nbsp;&nbsp;&nbsp;维度成员，没有子项时，数据类型不能是聚集 <br/>
                     </font>
