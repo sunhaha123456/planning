@@ -21,7 +21,7 @@
         function treeInit() {
             var result = ajaxSynchGet("user/dimensionManage/getDimensionTree", {"pid": 0});
             if (result.code == '200') {
-                $('#roleMenuTree').tree({
+                $('#dimensionTree').tree({
                     lines : true,
                     multiple : false,
                     checkbox : false,
@@ -64,7 +64,7 @@
             var result = ajaxSynchGet("user/dimensionManage/getDimensionTree", {"pid": node.id});
             if (result.code == '200') {
                 openDim.push(node.id);
-                $('#roleMenuTree').tree('append', {
+                $('#dimensionTree').tree('append', {
                     parent : node.target,
                     data : result.data
                 });
@@ -96,16 +96,57 @@
             var dataType = $("input[name='dataType']:checked").val();
             //alert(selectDimId + "  " + dimName + "   " + dataType);
 
+            var id = null;
+            var pid = null;
+            var saveType = null;
             if (addType == 0) { // 新增维度
-
-
-
-
+                saveType = 0;
             } else if (addType == 1) { // 新增维度成员
-
+                pid = selectDimId;
+                saveType = 1;
             } else { // 编辑
-
+                if (selectDimId == -1) {
+                    alertWarn("未选中维度！");
+                    return;
+                }
+                id = selectDimId;
+                saveType = 2;
             }
+
+            var param = {
+                "id": id,
+                "dimensionName": dimName,
+                "dataType": dataType,
+                "pid": pid,
+                "saveType": saveType
+            };
+
+            var result = ajaxSynchPostJson("user/dimensionManage/save", param);
+            if (result.code == '200') {
+                openDim = new Array();
+                treeInit();
+                var totalCode = result.data.totalCode;
+                if (totalCode != '') {
+                    var totalCodeArr = totalCode.split(',');
+                    for (var x=0; x < totalCodeArr.length; x++) {
+                        var node = $('#dimensionTree').tree('find', totalCodeArr[x]);
+                        if (x < (totalCodeArr.length - 1)) {
+                            $('#dimensionTree').tree('expand', node.target);
+                        } else {
+                            $('#dimensionTree').tree('select', node.target);
+                        }
+                    }
+                }
+            }
+            alertInfo(result.msg);
+
+//            if (addType == 0) { // 新增维度
+//
+//            } else if (addType == 1) { // 新增维度成员
+//
+//            } else { // 编辑
+//
+//            }
         }
 
         $(function () {
@@ -131,7 +172,7 @@
 
         <div>
             <div style="float:left; width: 50%">
-                <ul id="roleMenuTree"/>
+                <ul id="dimensionTree"/>
             </div>
             <div style="float:left; width: 50%">
                 <p style="margin-top: 0px">维度名称&nbsp;<input id="dimName" type="text" style="width:200px;" /></p>

@@ -3,10 +3,7 @@ package com.rose.controler;
 import com.rose.data.entity.TbDimension;
 import com.rose.service.DimensionService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -27,5 +24,10 @@ public class DimensionManageControler {
     @GetMapping(value = "/getDimensionTree")
     public List<TbDimension> getDimensionTree(@RequestParam Long pid) {
         return dimensionService.getDimensionTree(pid);
+    }
+
+    @PostMapping(value= "/save")
+    public TbDimension save(@RequestBody TbDimension param) {
+        return dimensionService.save(param);
     }
 }

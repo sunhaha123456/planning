@@ -7,4 +7,5 @@ import java.util.List;
 public interface DimensionService {
     TbDimension getDetail(Long id);
     List<TbDimension> getDimensionTree(Long pid);
+    TbDimension save(TbDimension param);
 }

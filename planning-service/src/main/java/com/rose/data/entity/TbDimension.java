@@ -39,6 +39,15 @@ public class TbDimension extends BaseDataIdLong {
     private Long pid;
 
     // 数据类型 0聚集 1数值 2文本
+    // 维度成员的数据类型用0 代替
     @Column(name = "data_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '维度类型'")
     private Integer dataType;
+
+    // 编码   维度编码是idself，维度成员编码：id1,id2,idself
+    @Column(name = "total_code", columnDefinition = "VARCHAR(1000) COMMENT '编码'")
+    private String totalCode;
+
+    // 0新增维度 1新增维度成员 2编辑
+    @Transient
+    private Integer saveType;
 }
