@@ -8,4 +8,5 @@ public interface DimensionService {
     TbDimension getDetail(Long id);
     List<TbDimension> getDimensionTree(Long pid);
     TbDimension save(TbDimension param);
+    void delete(Long id);
 }

@@ -2,7 +2,6 @@ package com.rose.service.impl;
 
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
-import com.rose.common.util.StringUtil;
 import com.rose.data.entity.TbDimension;
 import com.rose.repository.DimensionRepository;
 import com.rose.service.DimensionService;
@@ -90,7 +89,7 @@ public class DimensionServiceImpl implements DimensionService {
                 dim.setLastModified(now);
                 dim.setDimensionName(param.getDimensionName());
                 if (dim.getDimensionLevel() != 0 && !dim.getDataType().equals(param.getDataType())) {
-                    List<TbDimension> childList = dimensionRepository.listChilds(dim.getTotalCode() + ",%");
+                    List<TbDimension> childList = dimensionRepository.listByTotalCode(dim.getTotalCode() + ",%");
                     if (childList == null || childList.size() == 0) { // 没有子项
                         if (param.getDataType() == 0) {
                             throw new BusinessException("没有子项的维度成员数据类型不能是聚集！");
@@ -109,6 +108,27 @@ public class DimensionServiceImpl implements DimensionService {
             }
             default: {
                 throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+            }
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delete(Long id) {
+
+        // 需要判断，如果是已被表单引用的维度，是不能删除的，只有未被引用的，才能删除
+
+        TbDimension dim = dimensionRepository.findOne(id);
+
+        dimensionRepository.delete(dim.getId());
+        dimensionRepository.deleteByTotalCode(dim.getTotalCode() + ",%");
+
+        Long pid = dim.getPid();
+        if (pid != 0) {
+            TbDimension pDim = dimensionRepository.findOne(pid);
+            List<TbDimension> childList = dimensionRepository.listByTotalCode(pDim.getTotalCode() + ",%");
+            if (childList == null || childList.size() == 0) { // 没有子项
+                dimensionRepository.updateDataType(pid, 1);
             }
         }
     }

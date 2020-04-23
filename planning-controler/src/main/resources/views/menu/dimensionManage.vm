@@ -134,6 +134,7 @@
                             $('#dimensionTree').tree('expand', node.target);
                         } else {
                             $('#dimensionTree').tree('select', node.target);
+                            selectDimId = result.data.id;
                         }
                     }
                 }
@@ -147,6 +148,24 @@
 //            } else { // 编辑
 //
 //            }
+        }
+
+        function deleteDim() {
+            if (selectDimId == -1) {
+                alertWarn("未选中维度！");
+                return;
+            }
+            $.messager.confirm('确定操作', '确定要删除吗？', function (flag) {
+                if (flag) {
+                    var result = ajaxSynchGet("user/dimensionManage/delete", {"id": selectDimId});
+                    if (result.code == '200') {
+                        openDim = new Array();
+                        selectDimId = -1;
+                        treeInit();
+                        alertInfo(result.msg);
+                    }
+                }
+            });
         }
 
         $(function () {

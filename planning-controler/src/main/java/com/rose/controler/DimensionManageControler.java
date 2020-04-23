@@ -30,4 +30,9 @@ public class DimensionManageControler {
     public TbDimension save(@RequestBody TbDimension param) {
         return dimensionService.save(param);
     }
+
+    @GetMapping(value = "/delete")
+    public void delete(@RequestParam Long id) {
+        dimensionService.delete(id);
+    }
 }
