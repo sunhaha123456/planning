@@ -13,12 +13,18 @@ import javax.persistence.Table;
 @Table(name = "tb_form_definition")
 public class TbFormDefinition extends BaseDataIdLong {
 
-    @Column(name = "formName", columnDefinition = "VARCHAR(255) COMMENT '表单名'")
-    private String formName;
+    @Column(name = "form_id", columnDefinition = "BIGINT COMMENT '表单id'")
+    private Long formId;
 
-    @Column(name = "row_expression", columnDefinition = "VARCHAR(1000) COMMENT '行表达式'")
-    private String rowExpression;
+    // 0行 1列
+    @Column(name = "layout_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '布局类型'")
+    private Integer layoutType;
 
-    @Column(name = "column_expression", columnDefinition = "VARCHAR(1000) COMMENT '列表达式'")
-    private String columnExpression;
+    // 维度id，注意：不是维度成员id
+    @Column(name = "dim_id", columnDefinition = "BIGINT COMMENT '维度id'")
+    private Long dimId;
+
+    // 维度成员表达式  维度成员id1,维度成员id2
+    @Column(name = "dim_member_expression", columnDefinition = "text COMMENT '维度成员表达式'")
+    private String dimMemberExpression;
 }

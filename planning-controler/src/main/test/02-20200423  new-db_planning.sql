@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-04-22 22:39:51
+Date: 2020-04-23 20:53:43
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -193,6 +193,22 @@ CREATE TABLE `tb_flow_template_node_form` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for tb_form
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_form`;
+CREATE TABLE `tb_form` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_date` datetime NOT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `form_name` varchar(255) DEFAULT NULL COMMENT '表单名',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of tb_form
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for tb_form_data
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_form_data`;
@@ -221,8 +237,10 @@ CREATE TABLE `tb_form_definition` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `create_date` datetime NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `column_expression` varchar(1000) DEFAULT NULL COMMENT '列表达式',
-  `row_expression` varchar(1000) DEFAULT NULL COMMENT '行表达式',
+  `dim_id` bigint(20) DEFAULT NULL COMMENT '维度id',
+  `dim_member_expression` text COMMENT '维度成员表达式',
+  `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
+  `layout_type` tinyint(4) DEFAULT '0' COMMENT '布局类型',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
