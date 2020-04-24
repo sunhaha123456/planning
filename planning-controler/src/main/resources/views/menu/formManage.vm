@@ -74,6 +74,10 @@
                         <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增成员</a>
                         <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteForm()">删除</a>
                     </div>
+
+
+
+
                     <ul id="rowDimTree"/>
                 </div>
                 <div style="float:left;width: 3px;height: 500px; background: darkgray;"></div>
