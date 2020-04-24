@@ -15,6 +15,10 @@ import java.util.List;
 @Table(name = "tb_dimension")
 public class TbDimension extends BaseDataIdLong {
 
+    // 表单id：表示该维度是属于某表单
+    @Column(name = "form_id", columnDefinition = "BIGINT COMMENT '表单id'")
+    private Long formId;
+
     @Column(name = "dimension_name", columnDefinition = "VARCHAR(255) COMMENT '名称'")
     private String dimensionName;
 
