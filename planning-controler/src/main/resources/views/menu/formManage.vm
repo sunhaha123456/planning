@@ -64,7 +64,7 @@
             </div>
             <div style="float:left; width: 80%">
                 <p style="margin-top: 0px;">
-                    <font size="2">表单名称</font>&nbsp;&nbsp;<input id="dimName" type="text" style="width:200px;" />&nbsp;&nbsp;<input type="button" value="保存" onclick="commitSave()" />
+                    表单名称&nbsp;&nbsp;<input id="dimName" type="text" style="width:200px;" />&nbsp;&nbsp;<input type="button" value="保存名称" onclick="saveFormName()" />
                     <br/>
                     <br/>
                     <font size="2">
@@ -75,18 +75,18 @@
                 <div style="float:left; width: 44%;">
                     <div>
                         <font size="2">表单行维</font>
-                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增维度</a>
-                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增成员</a>
-                        <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteForm()">删除</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addRowDim()">新增维度</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addRowMember()">新增成员</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteRowDim()">删除</a>
                     </div>
-                    <div>
-                        <p style="margin-top: 0px">维度名称&nbsp;<input id="dimName" type="text" style="width:200px;" /></p>
-                        <p id="dataTypeP">数据类别
-                            <input id="dataTypeNumber" name="dataType" type="radio" value="1">数值</input>
-                            <input id="dataTypeText" name="dataType" type="radio" value="2">文本</input>
-                            <input id="dataTypeGatherRadio" name="dataType" type="radio" value="0"><span id="dataTypeGatherSpan">聚集</span></input>
+                    <div style="margin-top: 10px;">
+                        <p style="margin: 0px; padding: 0px;">维度名称&nbsp;<input id="rowDimName" type="text" style="width:200px;" /></p>
+                        <p id="rowDimDataTypeP" style="margin: 0px; padding: 0px;">数据类别
+                            <input id="rowDimDataTypeNumber" name="rowDimDataType" type="radio" value="1">数值</input>
+                            <input id="rowDimDataTypeText" name="rowDimDataType" type="radio" value="2">文本</input>
+                            <input id="rowDimDataTypeGatherRadio" name="rowDimDataType" type="radio" value="0"><span id="rowDimDataTypeGatherSpan">聚集</span></input>
                         </p>
-                        <p><input type="button" value="保存" onclick="commitSave()" /></p>
+                        <p style="margin: 0px; padding: 0px;"><input type="button" value="保存" onclick="rowDimSave()" /></p>
                     </div>
                     <ul id="rowDimTree"/>
                 </div>
@@ -94,9 +94,18 @@
                 <div style="float:left; width: 48%">
                     <div>
                         &nbsp;&nbsp;&nbsp;<font size="2">表单列维</font>
-                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增维度</a>
-                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增成员</a>
-                        <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteForm()">删除</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addColDim()">新增维度</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addColMember()">新增成员</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteColDim()">删除</a>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <p style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;维度名称&nbsp;<input id="colDimName" type="text" style="width:200px;" /></p>
+                        <p id="colDimDataTypeP" style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;数据类别
+                            <input id="colDimDataTypeNumber" name="dataType" type="radio" value="1">数值</input>
+                            <input id="colDimDataTypeText" name="dataType" type="radio" value="2">文本</input>
+                            <input id="colDimDataTypeGatherRadio" name="dataType" type="radio" value="0"><span id="colDimDataTypeGatherSpan">聚集</span></input>
+                        </p>
+                        <p style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;<input type="button" value="保存" onclick="colDimSave()" /></p>
                     </div>
                     <ul id="colDimTree"/>
                 </div>
