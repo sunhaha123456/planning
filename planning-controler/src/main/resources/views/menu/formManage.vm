@@ -58,29 +58,32 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteForm()">删除表单</a>
         </div>
 
-        <!--/*
-        <div style="padding:0 0 0 7px;color:#333;">
-            角色名：<input type="text" class="textbox" id="unameSearch" style="width:110px" />
-            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchRole()">查询</a>
-        </div>
-        */-->
-
         <div>
             <div style="float:left; width: 20%">
                 <ul id="formTree"/>
             </div>
             <div style="float:left; width: 80%">
                 <p style="margin-top: 0px">
-                    表单名称&nbsp;&nbsp;<input id="dimName" type="text" style="width:200px;" />
+                    <font size="2">表单名称</font>&nbsp;&nbsp;<input id="dimName" type="text" style="width:200px;" />
                     &nbsp;&nbsp;<input type="button" value="保存" onclick="commitSave()" />
                 </p>
                 <div style="float:left; width: 44%">
-                    表单行维
+                    <div>
+                        <font size="2">表单行维</font>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增维度</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增成员</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteForm()">删除</a>
+                    </div>
                     <ul id="rowDimTree"/>
                 </div>
                 <div style="float:left;width: 3px;height: 500px; background: darkgray;"></div>
                 <div style="float:left; width: 48%">
-                    &nbsp;&nbsp;&nbsp;表单列维
+                    <div>
+                        &nbsp;&nbsp;&nbsp;<font size="2">表单列维</font>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增维度</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addForm()">新增成员</a>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="deleteForm()">删除</a>
+                    </div>
                     <ul id="colDimTree"/>
                 </div>
                 <div style="clear:both;"></div>
