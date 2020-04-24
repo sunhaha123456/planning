@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-04-23 20:53:43
+Date: 2020-04-24 18:43:15
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,6 +26,7 @@ CREATE TABLE `tb_dimension` (
   `data_type` tinyint(4) DEFAULT '0' COMMENT '维度类型',
   `dimension_level` int(11) DEFAULT '0' COMMENT '维度深度',
   `dimension_name` varchar(255) DEFAULT NULL COMMENT '名称',
+  `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
   `pid` bigint(20) DEFAULT '0' COMMENT '父级id',
   `total_code` varchar(1000) DEFAULT NULL COMMENT '编码',
   PRIMARY KEY (`id`)
