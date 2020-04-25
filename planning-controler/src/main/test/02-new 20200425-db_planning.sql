@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-04-24 18:43:15
+Date: 2020-04-25 15:28:13
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -228,25 +228,6 @@ CREATE TABLE `tb_form_data` (
 
 -- ----------------------------
 -- Records of tb_form_data
--- ----------------------------
-
--- ----------------------------
--- Table structure for tb_form_definition
--- ----------------------------
-DROP TABLE IF EXISTS `tb_form_definition`;
-CREATE TABLE `tb_form_definition` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `create_date` datetime NOT NULL,
-  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `dim_id` bigint(20) DEFAULT NULL COMMENT '维度id',
-  `dim_member_expression` text COMMENT '维度成员表达式',
-  `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
-  `layout_type` tinyint(4) DEFAULT '0' COMMENT '布局类型',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of tb_form_definition
 -- ----------------------------
 
 -- ----------------------------

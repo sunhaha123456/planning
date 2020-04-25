@@ -12,6 +12,11 @@
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
     <script th:inline="javascript">
+        var addFlag = true;
+        var selectFromId = -1;
+
+        var openDim = new Array();
+
         function treeInit() {
             var result = ajaxSynchGet("user/formManage/getFormTree", null);
             if (result.code == '200') {
@@ -21,6 +26,9 @@
                     checkbox : false,
                     data : result.data,
                     onSelect: function(node) {
+                        addFlag = false;
+                        selectFromId = node.id;
+
 //                        var result = ajaxSynchGet("user/dimensionManage/getDetail", {"id": node.id});
 //                        if (result.code == '200') {
 //                            var dim = result.data;
@@ -42,6 +50,18 @@
                 });
             } else {
                 alertWarn(result.msg);
+            }
+        }
+
+        function addForm() {
+            addFlag = true;
+        }
+
+        function saveFormName() {
+            if (addFlag) { // 新增
+
+            } else { // 修改
+
             }
         }
 
@@ -68,8 +88,8 @@
                     <br/>
                     <br/>
                     <font size="2">
-                        维度成员，拥有子项时，数据类型只能是聚集，且所有子项只能是数值 <br/>
-                        维度成员，没有子项时，数据类型不能是聚集 <br/>
+                        行维成员，拥有子项时，数据类型只能是聚集，且所有子项只能是数值 <br/>
+                        行维成员，没有子项时，数据类型不能是聚集 <br/>
                     </font>
                 </p>
                 <div style="float:left; width: 44%;">
@@ -100,11 +120,6 @@
                     </div>
                     <div style="margin-top: 10px;">
                         <p style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;维度名称&nbsp;<input id="colDimName" type="text" style="width:200px;" /></p>
-                        <p id="colDimDataTypeP" style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;数据类别
-                            <input id="colDimDataTypeNumber" name="dataType" type="radio" value="1">数值</input>
-                            <input id="colDimDataTypeText" name="dataType" type="radio" value="2">文本</input>
-                            <input id="colDimDataTypeGatherRadio" name="dataType" type="radio" value="0"><span id="colDimDataTypeGatherSpan">聚集</span></input>
-                        </p>
                         <p style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;<input type="button" value="保存" onclick="colDimSave()" /></p>
                     </div>
                     <ul id="colDimTree"/>
