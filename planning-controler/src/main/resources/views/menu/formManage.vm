@@ -26,11 +26,12 @@
                     checkbox : false,
                     data : result.data,
                     onSelect: function(node) {
-                        addFlag = false;
-                        selectFromId = node.id;
+                        var result = ajaxSynchGet("user/formManage/getDetail", {"id": node.id});
+                        if (result.code == '200') {
+                            var formName = result.data.formName;
+                            var rowDimData = result.data.rowList
+                            var colDimData = result.data.colList
 
-//                        var result = ajaxSynchGet("user/dimensionManage/getDetail", {"id": node.id});
-//                        if (result.code == '200') {
 //                            var dim = result.data;
 //                            $('#dimName').val(dim.dimensionName);
 //                            if (node.dimensionLevel == 0) {
@@ -41,11 +42,12 @@
 //                                $("#dataTypeP").show();
 //                                $("input:radio[name=dataType][value=" + dim.dataType + "]").prop("checked",true);
 //                            }
-//
-//                            selectDimId = dim.id;
-//                        } else {
-//                            alertWarn(result.msg);
-//                        }
+
+                            addFlag = false;
+                            selectFromId = node.id;
+                        } else {
+                            alertWarn(result.msg);
+                        }
                     }
                 });
             } else {

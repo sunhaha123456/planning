@@ -19,6 +19,10 @@ public class TbDimension extends BaseDataIdLong {
     @Column(name = "form_id", columnDefinition = "BIGINT COMMENT '表单id'")
     private Long formId;
 
+    // 0：行  1：列
+    @Column(name = "layout_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '布局类别'")
+    private Integer layoutType;
+
     @Column(name = "dimension_name", columnDefinition = "VARCHAR(255) COMMENT '名称'")
     private String dimensionName;
 

@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
 
 /**
  * 描述：表单主体对象表
@@ -18,7 +19,7 @@ import javax.persistence.Transient;
 @Table(name = "tb_form")
 public class TbForm extends BaseDataIdLong {
 
-    @Column(name = "formName", columnDefinition = "VARCHAR(255) COMMENT '表单名'")
+    @Column(name = "form_name", columnDefinition = "VARCHAR(255) COMMENT '表单名'")
     private String formName;
 
     // easyui中的菜单名称
@@ -28,4 +29,10 @@ public class TbForm extends BaseDataIdLong {
     // 是否打开 open 打开 closed 关闭
     @Transient
     private String state;
+
+    @Transient
+    List<TbDimension> rowList;
+
+    @Transient
+    List<TbDimension> colList;
 }

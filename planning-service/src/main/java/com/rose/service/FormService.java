@@ -7,4 +7,5 @@ import java.util.List;
 public interface FormService {
     List<TbForm> getFormTree();
 
+    TbForm getDetail(Long id);
 }

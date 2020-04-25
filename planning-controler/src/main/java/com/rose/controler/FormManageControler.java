@@ -23,4 +23,9 @@ public class FormManageControler {
     public List<TbForm> getFormTree() {
         return formService.getFormTree();
     }
+
+    @GetMapping(value = "/getDetail")
+    public TbForm getDetail(@RequestParam Long id) {
+        return formService.getDetail(id);
+    }
 }
