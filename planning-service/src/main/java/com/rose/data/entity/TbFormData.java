@@ -25,6 +25,12 @@ public class TbFormData extends BaseDataIdLong {
     @Column(name = "cell_content", columnDefinition = "VARCHAR(255) COMMENT '单元格内容'")
     private String cellContent;
 
+    @Column(name = "row_dim_id", columnDefinition = "VARCHAR(1000) COMMENT '行维id'")
+    private String rowDimId;
+
+    @Column(name = "col_dim_id", columnDefinition = "VARCHAR(1000) COMMENT '列维id'")
+    private String colDimId;
+
     // 是否是聚集单元格 0否 1是
     @Column(name = "gather_flag", columnDefinition = "TINYINT DEFAULT 0 COMMENT '是否是聚集单元格'")
     private Integer gatherFlag;

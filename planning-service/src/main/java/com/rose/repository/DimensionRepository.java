@@ -21,14 +21,25 @@ public interface DimensionRepository extends CrudRepository<TbDimension, Long> {
     List<TbDimension> listByTotalCode(@Param("totalCode") String totalCode);
 
     @Modifying
+    @Query(value = "delete from tb_dimension where id in :idList", nativeQuery = true)
+    int deleteByIdList(@Param(value = "idList") List<Long> idList);
+
+    @Modifying
     @Query(value = "delete from tb_dimension where total_code like :totalCode", nativeQuery = true)
     int deleteByTotalCode(@Param(value = "totalCode") String totalCode);
+
+    @Query(value = "select id from tb_dimension where total_code like :totalCode", nativeQuery = true)
+    List<Long> findByTotalCode(@Param(value = "totalCode") String totalCode);
 
     @Query(value = "select * from tb_dimension where form_id = :formId and dimension_level = 0 and layout_type = 0 order by id asc", nativeQuery = true)
     List<TbDimension> listFormRowDim(@Param("formId") Long formId);
 
     @Query(value = "select * from tb_dimension where form_id = :formId and dimension_level = 0 and layout_type = 1 order by id asc", nativeQuery = true)
     List<TbDimension> listFormColDim(@Param("formId") Long formId);
+
+    @Modifying
+    @Query(value = "delete from tb_dimension where form_id = :formId", nativeQuery = true)
+    int deleteByFormId(@Param(value = "formId") Long formId);
 
 //    @Query(value = "select * from tb_dimension where dimension_level != 0", nativeQuery = true)
 //    List<TbDimension> listDimMember();

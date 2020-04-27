@@ -28,7 +28,7 @@ public class TbFlowInstance extends BaseDataIdLong {
 
     // 0：已启动（启动流程且未完成）
     // 1：冻结（启动流程未完成时冻结）
-    // 2：已完成（流程已走完）
+    // 2：已完成（流程已走完）     以完成的流程不允许删除
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程实例状态'")
     private Integer state;
 
