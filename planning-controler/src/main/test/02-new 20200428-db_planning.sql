@@ -10,32 +10,10 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-04-28 11:28:17
+Date: 2020-04-28 15:43:25
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for tb_dimension
--- ----------------------------
-DROP TABLE IF EXISTS `tb_dimension`;
-CREATE TABLE `tb_dimension` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `create_date` datetime NOT NULL,
-  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `data_type` tinyint(4) DEFAULT '0' COMMENT '维度类型',
-  `dimension_level` int(11) DEFAULT '0' COMMENT '维度深度',
-  `dimension_name` varchar(255) DEFAULT NULL COMMENT '名称',
-  `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
-  `layout_type` tinyint(4) DEFAULT '0' COMMENT '布局类别',
-  `pid` bigint(20) DEFAULT '0' COMMENT '父级id',
-  `total_code` varchar(1000) DEFAULT NULL COMMENT '编码',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of tb_dimension
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for tb_flow_instance
@@ -195,45 +173,6 @@ CREATE TABLE `tb_flow_template_node_form` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for tb_form
--- ----------------------------
-DROP TABLE IF EXISTS `tb_form`;
-CREATE TABLE `tb_form` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `create_date` datetime NOT NULL,
-  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `form_name` varchar(255) DEFAULT NULL COMMENT '表单名',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of tb_form
--- ----------------------------
-
--- ----------------------------
--- Table structure for tb_form_data
--- ----------------------------
-DROP TABLE IF EXISTS `tb_form_data`;
-CREATE TABLE `tb_form_data` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `create_date` datetime NOT NULL,
-  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `cell_content` varchar(255) DEFAULT NULL COMMENT '单元格内容',
-  `col_dim_id` varchar(1000) DEFAULT NULL COMMENT '列维id',
-  `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
-  `gather_expression` varchar(1000) DEFAULT NULL COMMENT '聚集达式',
-  `gather_flag` tinyint(4) DEFAULT '0' COMMENT '是否是聚集单元格',
-  `row_dim_id` varchar(1000) DEFAULT NULL COMMENT '行维id',
-  `x_index` int(11) DEFAULT '0' COMMENT 'x坐标',
-  `y_index` int(11) DEFAULT '0' COMMENT 'y坐标',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of tb_form_data
--- ----------------------------
-
--- ----------------------------
 -- Table structure for tb_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_menu`;
@@ -249,7 +188,7 @@ CREATE TABLE `tb_menu` (
   `sort` int(20) DEFAULT NULL COMMENT '排序',
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '跳转链接',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of tb_menu
@@ -258,15 +197,11 @@ INSERT INTO `tb_menu` VALUES ('1', '2018-06-23 18:11:17', '2019-01-31 15:30:12',
 INSERT INTO `tb_menu` VALUES ('2', '2018-06-23 18:11:17', '2019-01-31 15:31:26', '2', 'fa-circle-o', '用户管理', '0', '1', '3', 'user/userManage/toUserManage');
 INSERT INTO `tb_menu` VALUES ('3', '2018-06-23 18:11:17', '2019-01-31 15:31:32', '2', 'fa-circle-o', '角色管理', '0', '1', '2', 'user/roleManage/toRoleManage');
 INSERT INTO `tb_menu` VALUES ('4', '2018-06-23 18:11:17', '2019-01-31 15:31:37', '2', 'fa-circle-o', '菜单管理', '0', '1', '1', 'user/menuManage/toMenuManage');
-INSERT INTO `tb_menu` VALUES ('5', '2018-11-09 14:31:04', '2020-04-16 14:26:42', '1', 'fa-folder', '流程管理', '0', '0', '2', null);
-INSERT INTO `tb_menu` VALUES ('6', '2018-11-09 14:48:29', '2020-04-20 11:41:20', '2', 'fa-circle-o', '流程模板', '0', '5', '2', 'user/menuManage/toFlowTemplate');
-INSERT INTO `tb_menu` VALUES ('7', '2020-04-16 14:36:25', '2020-04-20 11:41:48', '2', 'fa-circle-o', '流程实例', '0', '5', '1', 'user/menuManage/toFlowInstance');
-INSERT INTO `tb_menu` VALUES ('8', '2020-04-18 19:31:52', '2020-04-18 19:31:52', '1', 'fa-folder', '系统管理', '0', '0', '3', null);
-INSERT INTO `tb_menu` VALUES ('9', '2020-04-18 19:32:25', '2020-04-20 11:25:54', '2', 'fa-circle-o', '维度管理', '0', '8', '3', 'user/menuManage/toDimensionManage');
-INSERT INTO `tb_menu` VALUES ('10', '2020-04-18 19:32:56', '2020-04-20 11:39:32', '2', 'fa-circle-o', '表单管理', '0', '8', '2', 'user/menuManage/toFormManage');
-INSERT INTO `tb_menu` VALUES ('11', '2020-04-18 19:33:35', '2020-04-20 11:40:30', '2', 'fa-circle-o', '系统设置', '0', '8', '1', 'user/menuManage/toSystemSet');
-INSERT INTO `tb_menu` VALUES ('12', '2020-04-18 19:34:43', '2020-04-18 19:34:43', '1', 'fa-folder', '平台首页', '0', '0', '4', null);
-INSERT INTO `tb_menu` VALUES ('13', '2020-04-18 19:35:10', '2020-04-20 11:38:46', '2', 'fa-circle-o', '平台首页', '0', '12', '1', 'user/menuManage/toPlatformIndexPage');
+INSERT INTO `tb_menu` VALUES ('5', '2018-11-09 14:31:04', '2020-04-28 15:14:33', '1', 'fa-folder', '平台首页', '0', '0', '3', null);
+INSERT INTO `tb_menu` VALUES ('6', '2018-11-09 14:48:29', '2020-04-28 15:21:48', '2', 'fa-circle-o', '平台首页', '0', '5', '1', 'user/menuManage/toPlatformIndexPage');
+INSERT INTO `tb_menu` VALUES ('7', '2020-04-28 15:17:25', '2020-04-28 15:17:25', '1', 'fa-folder', '流程管理', '0', '0', '2', null);
+INSERT INTO `tb_menu` VALUES ('8', '2020-04-28 15:18:02', '2020-04-28 15:22:19', '2', 'fa-circle-o', '流程模板', '0', '7', '2', 'user/menuManage/toFlowTemplate');
+INSERT INTO `tb_menu` VALUES ('9', '2020-04-28 15:18:23', '2020-04-28 15:22:47', '2', 'fa-circle-o', '流程实例', '0', '7', '1', 'user/menuManage/toFlowInstance');
 
 -- ----------------------------
 -- Table structure for tb_menu_role_group_releation
@@ -279,24 +214,20 @@ CREATE TABLE `tb_menu_role_group_releation` (
   `menu_id` int(20) DEFAULT NULL COMMENT '菜单id',
   `role_group_id` int(20) DEFAULT NULL COMMENT '角色组id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of tb_menu_role_group_releation
 -- ----------------------------
-INSERT INTO `tb_menu_role_group_releation` VALUES ('18', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '1', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('19', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '2', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('20', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '3', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('21', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '4', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('22', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '5', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('23', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '6', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('24', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '7', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('25', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '8', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('26', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '9', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('27', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '10', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('28', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '11', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('29', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '12', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('30', '2020-04-18 19:35:29', '2020-04-18 19:35:29', '13', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('11', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '1', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('12', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '2', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('13', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '3', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('14', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '4', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('15', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '5', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('16', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '6', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('17', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '7', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('18', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '8', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('19', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '9', '1');
 
 -- ----------------------------
 -- Table structure for tb_role_group

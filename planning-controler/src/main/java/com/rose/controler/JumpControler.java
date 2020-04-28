@@ -49,33 +49,6 @@ public class JumpControler {
     }
 
     /**
-     * 功能：跳转维度管理页面
-     * @return
-     */
-    @GetMapping(value = "/user/menuManage/toDimensionManage")
-    public String toDimensionManage() {
-        return "menu/dimensionManage";
-    }
-
-    /**
-     * 功能：跳转表单管理页面
-     * @return
-     */
-    @GetMapping(value = "/user/menuManage/toFormManage")
-    public String toFormManage() {
-        return "menu/formManage";
-    }
-
-    /**
-     * 功能：跳转系统设置页面
-     * @return
-     */
-    @GetMapping(value = "/user/menuManage/toSystemSet")
-    public String toSystemSet() {
-        return "menu/systemSet";
-    }
-
-    /**
      * 功能：跳转流程模板
      * @return
      */
