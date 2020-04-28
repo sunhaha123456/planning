@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-04-25 15:28:13
+Date: 2020-04-28 11:28:17
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,6 +27,7 @@ CREATE TABLE `tb_dimension` (
   `dimension_level` int(11) DEFAULT '0' COMMENT '维度深度',
   `dimension_name` varchar(255) DEFAULT NULL COMMENT '名称',
   `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
+  `layout_type` tinyint(4) DEFAULT '0' COMMENT '布局类别',
   `pid` bigint(20) DEFAULT '0' COMMENT '父级id',
   `total_code` varchar(1000) DEFAULT NULL COMMENT '编码',
   PRIMARY KEY (`id`)
@@ -218,9 +219,11 @@ CREATE TABLE `tb_form_data` (
   `create_date` datetime NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `cell_content` varchar(255) DEFAULT NULL COMMENT '单元格内容',
+  `col_dim_id` varchar(1000) DEFAULT NULL COMMENT '列维id',
   `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
   `gather_expression` varchar(1000) DEFAULT NULL COMMENT '聚集达式',
   `gather_flag` tinyint(4) DEFAULT '0' COMMENT '是否是聚集单元格',
+  `row_dim_id` varchar(1000) DEFAULT NULL COMMENT '行维id',
   `x_index` int(11) DEFAULT '0' COMMENT 'x坐标',
   `y_index` int(11) DEFAULT '0' COMMENT 'y坐标',
   PRIMARY KEY (`id`)
