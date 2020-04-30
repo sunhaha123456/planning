@@ -33,10 +33,6 @@ public class TbFlowTemplateNode extends BaseDataIdLong {
     @Column(name = "instruction", columnDefinition = "VARCHAR(255) COMMENT '说明'")
     private String instruction;
 
-    // 节点类型 0编制节点 1审批节点
-    @Column(name = "node_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '节点类型'")
-    private Integer nodeType;
-
     // 执行方式 0抢占 1会签
     @Column(name = "operate_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '执行方式'")
     private Integer operateType;

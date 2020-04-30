@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-04-28 15:43:25
+Date: 2020-04-30 14:56:03
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -47,7 +47,6 @@ CREATE TABLE `tb_flow_instance_node` (
   `instruction` varchar(255) DEFAULT NULL COMMENT '说明',
   `node_level` int(11) DEFAULT '1' COMMENT '节点级别',
   `node_name` varchar(255) DEFAULT NULL COMMENT '节点名称',
-  `node_type` tinyint(4) DEFAULT '0' COMMENT '节点类型',
   `operate_type` tinyint(4) DEFAULT '0' COMMENT '执行方式',
   `pid` bigint(20) DEFAULT NULL COMMENT '父节点id',
   `total_code` varchar(1000) DEFAULT NULL COMMENT '节点编码',
@@ -59,21 +58,21 @@ CREATE TABLE `tb_flow_instance_node` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for tb_flow_instance_node_form
+-- Table structure for tb_flow_instance_node_file
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_flow_instance_node_form`;
-CREATE TABLE `tb_flow_instance_node_form` (
+DROP TABLE IF EXISTS `tb_flow_instance_node_file`;
+CREATE TABLE `tb_flow_instance_node_file` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `create_date` datetime NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
-  `instance_id` bigint(20) DEFAULT NULL COMMENT '流程id',
-  `instance_node_id` bigint(20) DEFAULT NULL COMMENT '流程节点id',
+  `file_id` bigint(20) DEFAULT NULL COMMENT '文件id',
+  `instance_id` bigint(20) DEFAULT NULL COMMENT '实例id',
+  `node_id` bigint(20) DEFAULT NULL COMMENT '节点id',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
--- Records of tb_flow_instance_node_form
+-- Records of tb_flow_instance_node_file
 -- ----------------------------
 
 -- ----------------------------
@@ -142,7 +141,6 @@ CREATE TABLE `tb_flow_template_node` (
   `instruction` varchar(255) DEFAULT NULL COMMENT '说明',
   `node_level` int(11) DEFAULT '1' COMMENT '节点级别',
   `node_name` varchar(255) DEFAULT NULL COMMENT '节点名称',
-  `node_type` tinyint(4) DEFAULT '0' COMMENT '节点类型',
   `operate_type` tinyint(4) DEFAULT '0' COMMENT '执行方式',
   `pid` bigint(20) DEFAULT NULL COMMENT '父节点id',
   `template_id` bigint(20) DEFAULT NULL COMMENT '模板id',
@@ -152,24 +150,6 @@ CREATE TABLE `tb_flow_template_node` (
 
 -- ----------------------------
 -- Records of tb_flow_template_node
--- ----------------------------
-
--- ----------------------------
--- Table structure for tb_flow_template_node_form
--- ----------------------------
-DROP TABLE IF EXISTS `tb_flow_template_node_form`;
-CREATE TABLE `tb_flow_template_node_form` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `create_date` datetime NOT NULL,
-  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `form_id` bigint(20) DEFAULT NULL COMMENT '表单id',
-  `template_id` bigint(20) DEFAULT NULL COMMENT '模板id',
-  `template_node_id` bigint(20) DEFAULT NULL COMMENT '模板节点id',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of tb_flow_template_node_form
 -- ----------------------------
 
 -- ----------------------------
@@ -289,4 +269,22 @@ CREATE TABLE `tb_sys_user_log` (
 
 -- ----------------------------
 -- Records of tb_sys_user_log
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for tb_upload_file
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_upload_file`;
+CREATE TABLE `tb_upload_file` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_date` datetime NOT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `new_file_name` varchar(255) DEFAULT NULL COMMENT '文件新名称',
+  `old_file_name` varchar(255) DEFAULT NULL COMMENT '文件原名称',
+  `upload_user_id` bigint(20) DEFAULT NULL COMMENT '上传文件用户id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of tb_upload_file
 -- ----------------------------
