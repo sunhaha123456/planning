@@ -16,6 +16,7 @@
             $('#manager_add').dialog('open');
             $('#loginNameAdd').focus();
         }
+
         function opertUserState(state) {
             var showMsg = '';
             if (state == 0) {
@@ -41,6 +42,7 @@
                 alertWarn("请先选择记录！");
             }
         }
+
         function editUserShow() {
             var rows = $('#manager').datagrid('getSelections');
             if (rows.length > 0) {
@@ -61,6 +63,7 @@
                 alertWarn("请先选择记录！");
             }
         }
+
         function editUserPasswordShow() {
             var rows = $('#manager').datagrid('getSelections');
             if (rows.length > 0) {
@@ -69,6 +72,7 @@
                 alertWarn("请先选择记录！");
             }
         }
+
         function addUserCommit() {
             if ($('#manager_add').form('validate')) {
                 var loginNameAdd = $('#loginNameAdd').val();
@@ -193,6 +197,7 @@
                 ]]
             });
         }
+
         function dataGridPageInit() {
             var p = $('#manager').datagrid('getPager');
             $(p).pagination({
