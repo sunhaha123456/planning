@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-04-30 14:56:03
+Date: 2020-05-01 14:51:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -168,7 +168,7 @@ CREATE TABLE `tb_menu` (
   `sort` int(20) DEFAULT NULL COMMENT '排序',
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '跳转链接',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of tb_menu
@@ -177,11 +177,12 @@ INSERT INTO `tb_menu` VALUES ('1', '2018-06-23 18:11:17', '2019-01-31 15:30:12',
 INSERT INTO `tb_menu` VALUES ('2', '2018-06-23 18:11:17', '2019-01-31 15:31:26', '2', 'fa-circle-o', '用户管理', '0', '1', '3', 'user/userManage/toUserManage');
 INSERT INTO `tb_menu` VALUES ('3', '2018-06-23 18:11:17', '2019-01-31 15:31:32', '2', 'fa-circle-o', '角色管理', '0', '1', '2', 'user/roleManage/toRoleManage');
 INSERT INTO `tb_menu` VALUES ('4', '2018-06-23 18:11:17', '2019-01-31 15:31:37', '2', 'fa-circle-o', '菜单管理', '0', '1', '1', 'user/menuManage/toMenuManage');
-INSERT INTO `tb_menu` VALUES ('5', '2018-11-09 14:31:04', '2020-04-28 15:14:33', '1', 'fa-folder', '平台首页', '0', '0', '3', null);
-INSERT INTO `tb_menu` VALUES ('6', '2018-11-09 14:48:29', '2020-04-28 15:21:48', '2', 'fa-circle-o', '平台首页', '0', '5', '1', 'user/menuManage/toPlatformIndexPage');
+INSERT INTO `tb_menu` VALUES ('5', '2018-11-09 14:31:04', '2020-05-01 13:36:22', '1', 'fa-folder', '自助办公', '0', '0', '3', null);
+INSERT INTO `tb_menu` VALUES ('6', '2018-11-09 14:48:29', '2020-05-01 14:32:52', '2', 'fa-circle-o', '我的首页', '0', '5', '2', 'user/menuManage/toMyIndexPage');
 INSERT INTO `tb_menu` VALUES ('7', '2020-04-28 15:17:25', '2020-04-28 15:17:25', '1', 'fa-folder', '流程管理', '0', '0', '2', null);
 INSERT INTO `tb_menu` VALUES ('8', '2020-04-28 15:18:02', '2020-04-28 15:22:19', '2', 'fa-circle-o', '流程模板', '0', '7', '2', 'user/menuManage/toFlowTemplate');
 INSERT INTO `tb_menu` VALUES ('9', '2020-04-28 15:18:23', '2020-04-28 15:22:47', '2', 'fa-circle-o', '流程实例', '0', '7', '1', 'user/menuManage/toFlowInstance');
+INSERT INTO `tb_menu` VALUES ('10', '2020-05-01 13:37:29', '2020-05-01 14:43:13', '2', 'fa-circle-o', '发起申请', '0', '5', '1', 'user/menuManage/toStartApplyPage');
 
 -- ----------------------------
 -- Table structure for tb_menu_role_group_releation
@@ -194,20 +195,21 @@ CREATE TABLE `tb_menu_role_group_releation` (
   `menu_id` int(20) DEFAULT NULL COMMENT '菜单id',
   `role_group_id` int(20) DEFAULT NULL COMMENT '角色组id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of tb_menu_role_group_releation
 -- ----------------------------
-INSERT INTO `tb_menu_role_group_releation` VALUES ('11', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '1', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('12', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '2', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('13', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '3', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('14', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '4', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('15', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '5', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('16', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '6', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('17', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '7', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('18', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '8', '1');
-INSERT INTO `tb_menu_role_group_releation` VALUES ('19', '2020-04-28 15:18:37', '2020-04-28 15:18:37', '9', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('20', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '1', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('21', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '2', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('22', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '3', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('23', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '4', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('24', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '5', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('25', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '6', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('26', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '10', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('27', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '7', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('28', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '8', '1');
+INSERT INTO `tb_menu_role_group_releation` VALUES ('29', '2020-05-01 14:47:40', '2020-05-01 14:47:40', '9', '1');
 
 -- ----------------------------
 -- Table structure for tb_role_group

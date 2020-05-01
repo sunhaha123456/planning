@@ -40,12 +40,21 @@ public class JumpControler {
     }
 
     /**
-     * 功能：跳转平台首页
+     * 功能：跳转我的首页
      * @return
      */
-    @GetMapping(value = "/user/menuManage/toPlatformIndexPage")
-    public String toPlatformIndexPage() {
-        return "menu/platformIndexPage";
+    @GetMapping(value = "/user/menuManage/toMyIndexPage")
+    public String toMyIndexPage() {
+        return "menu/myIndexPage";
+    }
+
+    /**
+     * 功能：跳转发起申请
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toStartApplyPage")
+    public String toStartApplyPage() {
+        return "menu/startApplyPage";
     }
 
     /**
