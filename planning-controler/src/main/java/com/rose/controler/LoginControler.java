@@ -44,7 +44,7 @@ public class LoginControler {
     public String toSuccess(HttpServletRequest request) throws Exception {
         if (loginService.tokenValidate(request)) {
             TbSysUser user = sysUserRepository.findOne(valueHolder.getUserIdHolder());
-            request.setAttribute("uname", user != null ? user.getUname() : "");
+            request.setAttribute("uname", user != null ? user.getUserName() : "");
             return "home";
         }
         return "login";

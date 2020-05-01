@@ -10,19 +10,19 @@ import java.util.List;
 
 public interface SysUserRepository extends CrudRepository<TbSysUser, Long> {
 
-    @Query(value = "select * from tb_sys_user where uname = :uname and upwd = :upwd", nativeQuery = true)
-    TbSysUser findUserNormal(@Param(value = "uname") String uname, @Param(value = "upwd") String upwd);
+    @Query(value = "select * from tb_sys_user where login_name = :loginName and upwd = :upwd", nativeQuery = true)
+    TbSysUser findUserNormal(@Param(value = "loginName") String loginName, @Param(value = "upwd") String upwd);
 
-    @Query(value = "select count(1) from tb_sys_user where uname = :uname", nativeQuery = true)
-    long countByName(@Param(value = "uname") String uname);
+    @Query(value = "select count(1) from tb_sys_user where login_name = :loginName", nativeQuery = true)
+    long countByName(@Param(value = "loginName") String loginName);
 
     @Modifying
     @Query(value = "update tb_sys_user set user_state = :userState where id = :id", nativeQuery = true)
     int updateStateById(@Param(value = "id") Long id, @Param(value = "userState") Integer userState);
 
     @Modifying
-    @Query(value = "update tb_sys_user set role_group_id = :roleId where id = :id", nativeQuery = true)
-    int updateRole(@Param(value = "id") Long id, @Param(value = "roleId") Long roleId);
+    @Query(value = "update tb_sys_user set role_group_id = :roleId, user_name = :userName where id = :id", nativeQuery = true)
+    int updateRoleAndUserName(@Param(value = "id") Long id, @Param(value = "roleId") Long roleId, @Param(value = "userName") String userName);
 
     @Modifying
     @Query(value = "update tb_sys_user set upwd = :userNewPassword where id = :id", nativeQuery = true)

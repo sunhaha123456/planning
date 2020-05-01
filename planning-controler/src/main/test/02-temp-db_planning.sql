@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-05-01 14:51:42
+Date: 2020-05-01 15:37:49
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -238,20 +238,18 @@ CREATE TABLE `tb_sys_user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `create_date` datetime NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `role_group_id` int(20) DEFAULT NULL COMMENT '角色组id',
-  `uname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用户名',
+  `login_name` varchar(255) DEFAULT NULL COMMENT '登录用户名',
+  `role_group_id` bigint(20) DEFAULT NULL COMMENT '角色组id',
   `upwd` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '密码',
-  `user_state` int(1) DEFAULT '0' COMMENT '用户状态',
+  `user_name` varchar(255) DEFAULT NULL COMMENT '用户名',
+  `user_state` tinyint(4) DEFAULT '0' COMMENT '用户状态',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of tb_sys_user
 -- ----------------------------
-INSERT INTO `tb_sys_user` VALUES ('1', '2018-07-24 15:35:24', '2018-09-03 09:42:52', '1', 'superAdmin', 'e10adc3949ba59abbe56e057f20f883e', '0');
-INSERT INTO `tb_sys_user` VALUES ('2', '2018-09-04 19:00:30', '2018-11-08 15:39:58', '1', 'admin1', 'e10adc3949ba59abbe56e057f20f883e', '0');
-INSERT INTO `tb_sys_user` VALUES ('3', '2018-09-04 19:04:15', '2018-11-08 15:39:59', '1', 'admin2', 'e10adc3949ba59abbe56e057f20f883e', '0');
-INSERT INTO `tb_sys_user` VALUES ('4', '2018-09-04 19:06:35', '2018-11-08 15:40:01', '1', 'admin3', 'e10adc3949ba59abbe56e057f20f883e', '0');
+INSERT INTO `tb_sys_user` VALUES ('1', '2020-05-01 15:37:13', '2020-05-01 15:37:27', 'superAdmin', '1', 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', '0');
 
 -- ----------------------------
 -- Table structure for tb_sys_user_log

@@ -3,15 +3,12 @@ package com.rose.controler;
 import com.rose.common.data.base.PageList;
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
-import com.rose.common.util.JsonUtil;
 import com.rose.common.util.StringUtil;
 import com.rose.data.entity.TbSysUser;
-import com.rose.data.to.request.UserAddRequest;
+import com.rose.data.to.request.UserSaveRequest;
 import com.rose.data.to.request.UserSearchRequest;
 import com.rose.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -35,13 +32,9 @@ public class UserManageControler {
         return userService.search(param);
     }
 
-    @PostMapping(value= "/add")
-    public void add(@RequestBody @Validated(UserAddRequest.BaseInfo.class) UserAddRequest param, BindingResult result) throws Exception {
-        if (result.hasErrors()) {
-            log.info("【接口 -/user/userManage/add】【参数错误】【前端入参：{}】", JsonUtil.objectToJson(param));
-            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
-        }
-        userService.add(param);
+    @PostMapping(value= "/save")
+    public void save(@RequestBody UserSaveRequest param) throws Exception {
+        userService.save(param);
     }
 
     /**
@@ -53,11 +46,6 @@ public class UserManageControler {
     @GetMapping(value= "/opert")
     public void opert(@RequestParam Long id, @RequestParam Integer state) throws Exception {
         userService.opert(id, state);
-    }
-
-    @GetMapping(value= "/updateRole")
-    public void updateRole(@RequestParam Long id, @RequestParam Long roleId) throws Exception {
-        userService.updateRole(id, roleId);
     }
 
     @PostMapping(value= "/updatePasswodAdmin")

@@ -25,7 +25,7 @@
         var key = null;
         function funOk() {
             if ($.formValidator.pageIsValid('1')) {
-                var params = {"uname": $('#uname').val(), "upwd" : $('#upwd').val(), "code" : $('#code').val(), "key"  : key};
+                var params = {"loginName": $('#uname').val(), "upwd" : $('#upwd').val(), "code" : $('#code').val(), "key"  : key};
                 var res = ajaxSynchPostJson("login/verify", params);
                 if (res.code == "200") {
                     interceptorToken = res.data.token;

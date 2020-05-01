@@ -14,7 +14,7 @@
     <script th:inline="javascript">
         function addUserShow() {
             $('#manager_add').dialog('open');
-            $('#unameAdd').focus();
+            $('#loginNameAdd').focus();
         }
         function opertUserState(state) {
             var showMsg = '';
@@ -41,17 +41,19 @@
                 alertWarn("请先选择记录！");
             }
         }
-        function distriUserAuthShow() {
+        function editUserShow() {
             var rows = $('#manager').datagrid('getSelections');
             if (rows.length > 0) {
                 var id = rows[0].id;
                 var result = ajaxSynchGet("user/userManage/getDetail", {"id":id});
                 if (result.code == '200') {
-                    var uname = result.data.uname;
+                    var loginName = result.data.loginName;
+                    var userName = result.data.userName;
                     var roleGroupId = result.data.roleGroupId;
-                    $('#unameDistriAuth').val(uname);
-                    $('#authDistriAuth').combobox('setValue', roleGroupId);
-                    $('#manager_distriAuth').dialog('open');
+                    $('#loginNameEditUser').val(loginName);
+                    $('#userNameEditUser').val(userName);
+                    $('#authEditUser').combobox('setValue', roleGroupId);
+                    $('#manager_editUser').dialog('open');
                 } else {
                     alertWarn(result.msg);
                 }
@@ -69,13 +71,14 @@
         }
         function addUserCommit() {
             if ($('#manager_add').form('validate')) {
-                var unameAdd = $('#unameAdd').val();
+                var loginNameAdd = $('#loginNameAdd').val();
+                var userNameAdd = $('#userNameAdd').val();
                 var passwordAdd = $('#passwordAdd').val();
                 var authAdd = $('#authAdd').combobox('getValue');
                 if (authAdd == '请选择') {
                     alertWarn('请选择用户角色！');
                 } else {
-                    var result = ajaxSynchPostJson("user/userManage/add", {"uname":unameAdd, "upwd":passwordAdd, "roleGroupId":authAdd})
+                    var result = ajaxSynchPostJson("user/userManage/save", {"loginName":loginNameAdd, "userName":userNameAdd, "upwd":passwordAdd, "roleGroupId":authAdd})
                     if (result.code == '200') {
                         alertSuccess();
                         $('#manager_add').dialog('close');
@@ -87,15 +90,16 @@
             }
         }
 
-        function distriUserAuthCommit() {
+        function editUserCommit() {
             var rows = $('#manager').datagrid('getSelections');
             if (rows.length > 0) {
                 var id = rows[0].id;
-                var authDistriAuth = $('#authDistriAuth').combobox('getValue');
-                var result = ajaxSynchGet("user/userManage/updateRole", {"id":id, "roleId":authDistriAuth});
+                var userName = $('#userNameEditUser').val();
+                var auth = $('#authEditUser').combobox('getValue');
+                var result = ajaxSynchPostJson("user/userManage/save", {"id":id, "userName":userName:, "roleId":auth});
                 if (result.code == '200') {
                     alertSuccess();
-                    $('#manager_distriAuth').dialog('close');
+                    $('#manager_editUser').dialog('close');
                     searchUser();
                 } else {
                     alertWarn(result.msg);
@@ -124,7 +128,7 @@
         }
 
         function searchUser() {
-            var result = ajaxSynchPostJson("user/userManage/search", {"uname": $('#unameSearch').val(), "page":1, "rows":10});
+            var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":1, "rows":10});
             if (result.code == '200') {
                 dataGridPageInit();
                 $('#manager').datagrid('loadData', result.data);
@@ -150,14 +154,19 @@
                         hidden : true
                     },
                     {
-                        field : 'uname',
+                        field : 'loginName',
+                        title : '登录用户名',
+                        width : 100
+                    },
+                    {
+                        field : 'userName',
                         title : '用户名',
-                        width : 100,
+                        width : 100
                     },
                     {
                         field : 'roleGroupName',
                         title : '所属角色',
-                        width : 100,
+                        width : 100
                     },
                     {
                         field : 'roleGroupId',
@@ -179,7 +188,7 @@
                     {
                         field : 'createDate',
                         title : '创建日期',
-                        width : 100,
+                        width : 100
                     }
                 ]]
             });
@@ -191,7 +200,7 @@
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var result = ajaxSynchPostJson("user/userManage/search", {"uname": $('#uname').val(), "page":pageNumber, "rows":pageSize});
+                    var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":pageNumber, "rows":pageSize});
                     if (result.code == '200') {
                         $('#manager').datagrid('loadData', result.data);
                     }
@@ -203,7 +212,7 @@
             var result = ajaxSynchGet("user/roleManage/list", {"roleState": 0});
             if (result.code == '200') {
                 $('#authAdd').combobox('loadData',result.data);
-                $('#authDistriAuth').combobox('loadData',result.data);
+                $('#authEditUser').combobox('loadData',result.data);
             }
         }
 
@@ -219,14 +228,14 @@
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addUserShow()">新增</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="distriUserAuthShow()">分配角色</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editUserShow()">编辑</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editUserPasswordShow()">修改密码</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="opertUserState(1)">冻结</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="opertUserState(0)">启用</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="opertUserState(2)">注销</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
-            帐号用户名：<input type="text" class="textbox" id="unameSearch" style="width:110px" />
+            用户登录名：<input type="text" class="textbox" id="loginNameSearch" style="width:110px" />
             <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchUser()">查询</a>
         </div>
     </div>
@@ -250,7 +259,8 @@
                     $('#manager_add').dialog('close');
 					}
 				}]">
-    <p>用户名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入用户名',invalidMessage:'用户名长度至少为1位'," type="text" id="unameAdd" style="width:200px;" /></p>
+    <p>登录名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入登录名',invalidMessage:'登录名长度至少为1位'," type="text" id="loginNameAdd" style="width:200px;" /></p>
+    <p>用户名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入用户名',invalidMessage:'用户名长度至少为1位'," type="text" id="userNameAdd" style="width:200px;" /></p>
     <p>密&nbsp;&nbsp;&nbsp;码：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入密码',invalidMessage:'密码长度至少为1位'," type="text" id="passwordAdd" style="width:200px;" /></p>
     <p>角&nbsp;&nbsp;&nbsp;色：
         <select class="easyui-combobox" id="authAdd" style="width:100px;" data-options="valueField:'id',textField:'roleName'">
@@ -259,27 +269,28 @@
     </p>
 </form>
 
-<form id="manager_distriAuth" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+<form id="manager_editUser" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
       data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
        onClose:function () {
-            $('#manager_distriAuth').form('reset');
+            $('#manager_editUser').form('reset');
        },
 		buttons:[{
 					text : '提交',
 					iconCls : 'icon-add-green',
 					handler : function () {
-                    distriUserAuthCommit();
+                    editUserCommit();
 					}
 				},{
 					text:'关闭',
 					iconCls : 'icon-redo',
 					handler:function(){
-                    $('#manager_distriAuth').dialog('close');
+                    $('#manager_editUser').dialog('close');
 					}
 				}]">
-    <p>用户名：<input class="easyui-validatebox" type="text" id="unameDistriAuth" style="width:200px;" disabled="disabled" /></p>
+    <p>登录名：<input class="easyui-validatebox" type="text" id="loginNameEditUser" style="width:200px;" disabled="disabled" /></p>
+    <p>用户名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入用户名',invalidMessage:'用户名长度至少为1位'," type="text" id="userNameEditUser" style="width:200px;" /></p>
     <p>角&nbsp;&nbsp;&nbsp;色：
-        <select class="easyui-combobox" id="authDistriAuth" style="width:100px;" data-options="valueField:'id',textField:'roleName'" />
+        <select class="easyui-combobox" id="authEditUser" style="width:100px;" data-options="valueField:'id',textField:'roleName'" />
     </p>
 </form>
 

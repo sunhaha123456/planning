@@ -8,7 +8,7 @@ public class UserLoginRequest {
 
     // 用户名
     @NotBlank(message = "用户名不能为空！", groups = BaseInfo.class)
-    private String uname;
+    private String loginName;
 
     // 密码
     @NotBlank(message = "密码不能为空！", groups = BaseInfo.class)

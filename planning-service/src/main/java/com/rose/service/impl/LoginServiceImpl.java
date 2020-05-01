@@ -46,7 +46,7 @@ public class LoginServiceImpl implements LoginService {
             throw new BusinessException(ResponseResultCode.CODE_ERROR);
         }
         // 2、校验用户名和密码，并且用户状态正常
-        TbSysUser sysUser = sysUserRepository.findUserNormal(user.getUname(), Md5Util.MD5Encode(user.getUpwd()));
+        TbSysUser sysUser = sysUserRepository.findUserNormal(user.getLoginName(), Md5Util.MD5Encode(user.getUpwd()));
         if (sysUser == null) {
             throw new BusinessException(ResponseResultCode.LOGIN_ERROR);
         }
@@ -68,7 +68,7 @@ public class LoginServiceImpl implements LoginService {
             throw new BusinessException("用户所属角色组已被冻结！");
         }
         // 3、更新redis用户信息，更新用户token、用户状态
-        UserRedisVo userRedis = new UserRedisVo(IdUtil.getID() + IdUtil.getID(), 0);
+        UserRedisVo userRedis = new UserRedisVo(IdUtil.getID() + IdUtil.getID());
         userService.userRedisInfoSave(RedisKeyUtil.getRedisUserInfoKey(sysUser.getId()), userRedis);
         // 4、删除redis验证码
         redisRepositoryCustom.delete(SystemConstant.LOGIN_CODE_PREFIX + user.getKey());
@@ -109,10 +109,6 @@ public class LoginServiceImpl implements LoginService {
         }
         if (!token.equals(userRedis.getToken())) {
             log.error("Request url：{}，method：{}，userId：{}，token：{}，拦截此请求：003-redis中userId对应redis中用户信息的token，与前端传入token，不一致！", url, method, userId, token);
-            return false;
-        }
-        if (userRedis.getUserState() == null || userRedis.getUserState() !=0) {
-            log.error("Request url：{}，method：{}，userId：{}，token：{}，拦截此请求：004-redis中userId对应用户状态不正常！", url, method, userId, token);
             return false;
         }
         userService.userRedisInfoSave(RedisKeyUtil.getRedisUserInfoKey(userId), userRedis);

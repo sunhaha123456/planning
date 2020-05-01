@@ -8,7 +8,7 @@ import com.rose.common.util.*;
 import com.rose.data.constant.SystemConstant;
 import com.rose.data.entity.TbRoleGroup;
 import com.rose.data.entity.TbSysUser;
-import com.rose.data.to.request.UserAddRequest;
+import com.rose.data.to.request.UserSaveRequest;
 import com.rose.data.to.request.UserSearchRequest;
 import com.rose.data.to.vo.UserRedisVo;
 import com.rose.repository.RoleGroupRepository;
@@ -40,22 +40,53 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageList<TbSysUser> search(UserSearchRequest param) throws Exception {
-        return sysUserRepositoryCustom.list(param.getUname(), param.getPage(), param.getRows());
+        return sysUserRepositoryCustom.list(param.getLoginName(), param.getPage(), param.getRows());
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void add(UserAddRequest param) throws Exception {
-        long c = sysUserRepository.countByName(param.getUname());
-        if (0 < c) {
-            throw new BusinessException("用户名重复！");
+    public void save(UserSaveRequest param) throws Exception {
+        Long id = param.getId();
+        if (id == null) { // 新增
+            long c = sysUserRepository.countByName(param.getLoginName());
+            if (0 < c) {
+                throw new BusinessException("用户名重复！");
+            }
+            TbSysUser user = new TbSysUser();
+            BeanUtils.copyProperties(param, user);
+            Date now = new Date();
+            user.setId(null);
+            user.setCreateDate(now);
+            user.setLastModified(now);
+            user.setUserState(0);
+            user.setUpwd(Md5Util.MD5Encode(user.getUpwd()));
+            sysUserRepository.save(user);
+        } else { // 修改
+            Long roleId = param.getRoleGroupId();
+            String userName = param.getUserName();
+
+            TbSysUser user = sysUserRepository.findOne(id);
+            if (user == null) {
+                throw new BusinessException("该用户不存在！");
+            }
+            if (user.getUserState() == 2) {
+                throw new BusinessException("查无此用户！");
+            }
+            if (user.getUserState() != 0) {
+                throw new BusinessException("该用户已被冻结！");
+            }
+            TbRoleGroup role = roleGroupRepository.findOne(roleId);
+            if (role == null) {
+                throw new BusinessException("角色组不存在！");
+            }
+            if (role.getRoleState() != 0) {
+                throw new BusinessException("该角色组已被冻结！");
+            }
+            int c = sysUserRepository.updateRoleAndUserName(id, roleId, userName);
+            if (c <= 0) {
+                throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+            }
         }
-        TbSysUser user = new TbSysUser();
-        BeanUtils.copyProperties(param, user);
-        user.setCreateDate(new Date());
-        user.setUserState(0);
-        user.setUpwd(Md5Util.MD5Encode(user.getUpwd()));
-        sysUserRepository.save(user);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -89,33 +120,6 @@ public class UserServiceImpl implements UserService {
             // 更新redis
             String userInfoKey = RedisKeyUtil.getRedisUserInfoKey(sysUser.getId());
             redisRepositoryCustom.delete(userInfoKey);
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void updateRole(Long id, Long roleId) {
-        TbSysUser user = sysUserRepository.findOne(id);
-        if (user == null) {
-            throw new BusinessException("该用户不存在！");
-        }
-        if (user.getUserState() == 2) {
-            log.error("【接口 -user/userManage/updateRole】【该用户已被注销！】【userId：{}】", id);
-            throw new BusinessException("查无此用户！");
-        }
-        if (user.getUserState() != 0) {
-            throw new BusinessException("该用户已被冻结！");
-        }
-        TbRoleGroup role = roleGroupRepository.findOne(roleId);
-        if (role == null) {
-            throw new BusinessException("角色组不存在！");
-        }
-        if (role.getRoleState() != 0) {
-            throw new BusinessException("该角色组已被冻结！");
-        }
-        int c = sysUserRepository.updateRole(id, roleId);
-        if (c <= 0) {
-            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
         }
     }
 

@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class UserSearchRequest extends PageParam {
-    private String uname; //用户名称
+    private String loginName; //用户登录名
 }

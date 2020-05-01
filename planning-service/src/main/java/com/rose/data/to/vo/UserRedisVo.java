@@ -14,14 +14,10 @@ public class UserRedisVo implements Serializable {
     // 用户token
     private String token;
 
-    // 用户状态 0：正常 1：该用户被冻结 2：该用户所属角色组被冻结
-    private Integer userState;
-
     public UserRedisVo() {
     }
 
-    public UserRedisVo(String token, Integer userState) {
+    public UserRedisVo(String token) {
         this.token = token;
-        this.userState = userState;
     }
 }
