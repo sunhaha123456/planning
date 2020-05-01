@@ -20,6 +20,9 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "template_id", columnDefinition = "BIGINT COMMENT '模板id'")
     private Long templateId;
 
+    @Column(name = "start_template_name", columnDefinition = "VARCHAR(255) COMMENT '启动时流程模板名称'")
+    private String startTemplateName;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_time", columnDefinition="datetime COMMENT '流程实例启动时间'")
@@ -28,7 +31,7 @@ public class TbFlowInstance extends BaseDataIdLong {
 
     // 0：已启动（启动流程且未完成）
     // 1：冻结（启动流程未完成时冻结）
-    // 2：已完成（流程已走完）     以完成的流程不允许删除
+    // 2：已完成（流程已走完）     已完成的流程不允许删除
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程实例状态'")
     private Integer state;
 
