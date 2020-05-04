@@ -22,7 +22,13 @@ public class TbFlowInstanceNodeUserTask extends BaseDataIdLong {
     @Column(name = "user_id", columnDefinition = "BIGINT COMMENT '用户id'")
     private Long userId;
 
-    // 执行状态 0待操作 1不需要操作（已操作 或 该节点已被走过）
+    // 执行状态
+    // 0待操作（需要操作，但未操作）
+    // 1已操作（需要操作，且已操作）
+    // 2已被抢占（抢占模式下，需要操作，但被别人抢到操作了）
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '状态'")
     private Integer state;
+
+    @Column(name = "remark_info", columnDefinition = "VARCHAR(500) COMMENT '备注信息'")
+    private String remarkInfo;
 }

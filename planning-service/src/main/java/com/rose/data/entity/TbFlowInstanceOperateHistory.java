@@ -17,14 +17,14 @@ public class TbFlowInstanceOperateHistory extends BaseDataIdLong {
     @Column(name = "instance_id", columnDefinition = "BIGINT COMMENT '流程实例id'")
     private Long instanceId;
 
-    @Column(name = "instance_name", columnDefinition = "VARCHAR(255) COMMENT '流程实例名称'")
+    @Column(name = "instance_name", columnDefinition = "VARCHAR(255) COMMENT '流程名称'")
     private String instanceName;
 
     @Column(name = "instance_node_id", columnDefinition = "BIGINT COMMENT '流程实例节点id'")
     private Long instanceNodeId;
 
-    @Column(name = "instance_node_name", columnDefinition = "VARCHAR(255) COMMENT '流程实例节点名称'")
-    private Long instanceNodeName;
+    @Column(name = "instance_node_name", columnDefinition = "VARCHAR(255) COMMENT '流程节点名称'")
+    private String instanceNodeName;
 
     @Column(name = "operate_info", columnDefinition = "VARCHAR(500) COMMENT '流程实例操作info'")
     private String operateInfo;

@@ -20,8 +20,11 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "template_id", columnDefinition = "BIGINT COMMENT '模板id'")
     private Long templateId;
 
-    @Column(name = "start_template_name", columnDefinition = "VARCHAR(255) COMMENT '启动时流程模板名称'")
-    private String startTemplateName;
+    //@Column(name = "start_template_name", columnDefinition = "VARCHAR(255) COMMENT '启动时流程模板名称'")
+    //private String startTemplateName;
+
+    @Column(name = "start_user_id", columnDefinition = "BIGINT COMMENT '流程启动用户'")
+    private Long startUserId;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Temporal(TemporalType.TIMESTAMP)
@@ -29,15 +32,15 @@ public class TbFlowInstance extends BaseDataIdLong {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
 
-    // 0：已启动（启动流程且未完成）
-    // 1：冻结（启动流程未完成时冻结）
-    // 2：已完成（流程已走完）     已完成的流程不允许删除
+    @Column(name = "remark_info", columnDefinition = "VARCHAR(500) COMMENT '启动时用户备注信息'")
+    private String remarkInfo;
+
+    //0已启动 1已完成 2用户作废 3管理员冻结
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程实例状态'")
     private Integer state;
 
-    // 当前需要操作的流程实例节点id
-    // -1 表示 流程已经走完了，已无需要操作的流程节点
-    // 其中，流程被冻结时，不会重置成 -1
-    @Column(name = "current_need_operate_instance_node_id", columnDefinition = "BIGINT COMMENT '当前需要操作的流程实例节点id'")
-    private Long currentNeedOperateInstanceNodeId;
+    // 当前正在处理的流程实例节点id
+    // 注意：空：流程已经走完了，没有需要操作的流程节点
+    @Column(name = "processing_instance_node_id", columnDefinition = "BIGINT COMMENT '当前正在处理的流程实例节点id'")
+    private Long processingInstanceNodeId;
 }
