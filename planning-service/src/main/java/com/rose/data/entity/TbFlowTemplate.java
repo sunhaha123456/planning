@@ -6,6 +6,8 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.List;
 
 @ToString(callSuper = true)
 @lombok.Data
@@ -17,6 +19,17 @@ public class TbFlowTemplate extends BaseDataIdLong {
     private String templateName;
 
     // 模板状态 0：正常 1：冻结
-    @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '模板状态'")
-    private Integer state;
+    @Column(name = "status", columnDefinition = "TINYINT DEFAULT 0 COMMENT '模板状态'")
+    private Integer status;
+
+    // easyui中的菜单名称
+    @Transient
+    private String text;
+
+    // 是否打开 open 打开 closed 关闭
+    @Transient
+    private String state;
+
+    @Transient
+    List<TbFlowInstanceNode> nodeList;
 }

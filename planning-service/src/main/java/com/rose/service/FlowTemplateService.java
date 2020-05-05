@@ -1,5 +1,10 @@
 package com.rose.service;
 
-public interface FlowTemplateService {
+import com.rose.data.entity.TbFlowTemplate;
 
+import java.util.List;
+
+public interface FlowTemplateService {
+    List<TbFlowTemplate> getTemplateTree();
+    TbFlowTemplate getTemplateNodeTree(Long id);
 }

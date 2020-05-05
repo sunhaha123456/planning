@@ -1,4 +1,326 @@
-流程实例<br/>
-    根据流程模板搜索<br/>
-    根据启动用户搜索<br/>
-    已完成状态的流程不能删除
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/static/easyui/themes/easy.common.css}"></link>
+    <script th:inline="javascript">
+        var contextPath = [[@{/}]];
+        var interceptorToken = [[${token}]];
+        var interceptorUserId = [[${userId}]];
+    </script>
+    <script th:src="@{/static/easyui/easy.common.js}"></script>
+    <script th:src="@{/static/easyuiMask.js}"></script>
+    <script th:src="@{/static/myFun.js}"></script>
+    <script th:inline="javascript">
+        var addFormFlag = true; // true：新增表单 false：编辑表单
+        var rowDimFlag = 0;     // 0：新增行维 1：新增行维成员 2：编辑
+        var colDimFlag = 0;     // 0：新增列维 1：新增列维成员 2：编辑
+
+        var selectFormId = -1;
+        var selectRowDimId = -1;
+        var selectColDimId = -1;
+
+        var rowDimArr = new Array();
+        var colDimArr = new Array();
+
+        function formTreeInit() {
+            var result = ajaxSynchGet("user/formManage/getFormTree", null);
+            if (result.code == '200') {
+                addFormFlag = true;
+                rowDimFlag = 0;
+                colDimFlag = 0;
+
+                selectFormId = -1;
+                selectRowDimId = -1;
+                selectColDimId = -1;
+
+                rowDimArr = new Array();
+                colDimArr = new Array();
+
+                $('#formTree').tree({
+                    lines : true,
+                    multiple : false,
+                    checkbox : false,
+                    data : result.data,
+                    onSelect: function(formNode) {
+                        var formResult = ajaxSynchGet("user/formManage/getFormDetail", {"id": formNode.id});
+                        if (formResult.code == '200') {
+                            addFormFlag = false;
+                            rowDimFlag = 0;
+                            colDimFlag = 0;
+
+                            selectFormId = formNode.id;
+                            selectRowDimId = -1;
+                            selectColDimId = -1;
+
+                            rowDimArr = new Array();
+                            colDimArr = new Array();
+
+                            var formName = formResult.data.formName;
+                            var rowDimData = formResult.data.rowList;
+                            var colDimData = formResult.data.colList;
+
+                            $('#formName').val(formName);
+
+                            rowDimTreeInit(rowDimData);
+
+                            colDimTreeInit(colDimData);
+                        } else {
+                            alertWarn(result.msg);
+                        }
+                    }
+                });
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function rowDimTreeInit(rowDimData) {
+            $("#rowDimName").val("");
+            $("input:radio[name=rowDimDataType][value=" + 1 + "]").prop("checked",true);
+            $('#rowDimTree').tree({
+                lines : true,
+                multiple : false,
+                checkbox : false,
+                data : rowDimData,
+                onSelect: function(rowDimNode) {
+                    var rowDimResult = ajaxSynchGet("user/formManage/getDimDetail", {"id": rowDimNode.id});
+                    if (rowDimResult.code == '200') {
+                        $('#rowDimName').val(rowDimNode.dimensionName);
+                        $("input:radio[name=rowDimDataType][value=" + rowDimNode.dataType + "]").prop("checked",true);
+
+                        selectRowDimId = rowDimNode.id;
+                        rowDimFlag = 2;
+                    } else {
+                        alertWarn(rowDimResult.msg);
+                    }
+                },
+                onBeforeExpand: function(rowDimNode) {
+                    if (rowDimArr.indexOf(rowDimNode.id) == -1) {
+                        openDim(rowDimNode, 0);
+                    }
+                    //return true;
+                }
+            });
+        }
+
+        function colDimTreeInit(colDimData) {
+            $("#colDimName").val("");
+            $('#colDimTree').tree({
+                lines : true,
+                multiple : false,
+                checkbox : false,
+                data : colDimData,
+                onSelect: function(colDimNode) {
+                    var colDimResult = ajaxSynchGet("user/formManage/getDimDetail", {"id": colDimNode.id});
+                    if (colDimResult.code == '200') {
+                        $('#colDimName').val(colDimNode.dimensionName);
+
+                        selectColDimId = colDimNode.id;
+                        colDimFlag = 2;
+                    } else {
+                        alertWarn(colDimResult.msg);
+                    }
+                },
+                onBeforeExpand: function(colDimNode) {
+                    if (colDimArr.indexOf(colDimNode.id) == -1) {
+                        openDim(colDimNode, 1);
+                    }
+                    //return true;
+                }
+            });
+        }
+
+        function openDim(node, type) {
+            var result = ajaxSynchGet("user/formManage/getDimensionTreeByPid", {"pid": node.id});
+            if (result.code == '200') {
+                if (type == 0) {
+                    rowDimArr.push(node.id);
+                    $('#rowDimTree').tree('append', {
+                        parent : node.target,
+                        data : result.data
+                    });
+                } else {
+                    colDimArr.push(node.id);
+                    $('#colDimTree').tree('append', {
+                        parent : node.target,
+                        data : result.data
+                    });
+                }
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function addForm() {
+            addFormFlag = true;
+            rowDimFlag = 0;
+            colDimFlag = 0;
+
+            selectFormId = -1;
+            selectRowDimId = -1;
+            selectColDimId = -1;
+
+            rowDimArr = new Array();
+            colDimArr = new Array();
+
+            $('#formName').val(formName);
+
+            $("#rowDimName").val("");
+            $("input:radio[name=rowDimDataType][value=" + 1 + "]").prop("checked",true);
+            $("#colDimName").val("");
+
+            $('#rowDimTree').tree({
+                lines : true,
+                multiple : false,
+                checkbox : false
+            });
+
+            $('#colDimTree').tree({
+                lines : true,
+                multiple : false,
+                checkbox : false
+            });
+        }
+
+        function deleteForm() {
+            if (selectFormId != -1) {
+                var result = ajaxSynchGet("user/formManage/deleteForm", {"id": selectFormId});
+                if (result.code == '200') {
+                    formTreeInit();
+                } else {
+                    alertWarn(result.msg);
+                }
+            } else {
+                alertWarn("未选中表单！");
+            }
+        }
+
+        function saveFormName() {
+            var formName = $('#formName').val();
+
+            if (addFormFlag) { // 新增
+                var result = ajaxSynchPostJson("user/formManage/saveFormName", {"formName": formName});
+                if (result.code == '200') {
+                    formTreeInit();
+
+                    var node = $('#formTree').tree('find', result.data.id);
+                    $('#formTree').tree('select', node.target);
+                } else {
+                    alertWarn(result.msg);
+                }
+            } else { // 修改
+                if (selectFormId != -1) {
+                    var result = ajaxSynchPostJson("user/formManage/saveFormName", {"id": selectFormId, "formName": formName});
+                    if (result.code == '200') {
+                        alertInfo(result.msg);
+                    } else {
+                        alertWarn(result.msg);
+                    }
+                } else {
+                    alertWarn("未选中表单！");
+                }
+            }
+        }
+
+        function addRowDimShow(type) {
+            if (selectFormId != -1) {
+                if (type == 0) { // 新增维度
+                    rowDimFlag = 0;
+                } else { // 新增成员
+                    if (selectRowDimId != -1) {
+                        rowDimFlag = 1;
+                    } else {
+                        alertWarn("未选中行维！");
+                    }
+                }
+            } else {
+                alertWarn("未选中表单！");
+            }
+        }
+
+        function deleteRowDim() {
+            if (selectFormId != -1) {
+                if (selectRowDimId != -1) {
+                    $.messager.confirm('确定操作', '确定要删除吗？', function (flag) {
+                        if (flag) {
+                            var result = ajaxSynchGet("user/formManage/deleteDim", {"id": selectDimId});
+                            if (result.code == '200') {
+                                rowDimArr = new Array();
+                                selectRowDimId = -1;
+                                var result = ajaxSynchGet("user/formManage/getRowColDimensionTree", {"formId": selectFormId, "type":0});
+                                if (result.code == '200') {
+                                    rowDimTreeInit(result.data);
+                                    alertInfo(result.msg);
+                                } else {
+                                    alertWarn(result.msg);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    alertWarn("未选中行维！");
+                }
+            } else {
+                alertWarn("未选中表单！");
+            }
+        }
+
+        function rowDimSave {
+
+        }
+
+        function addColDimShow(type) {
+            if (type == 0) { // 新增维度
+
+            } else { // 新增成员
+
+            }
+        }
+
+        function addColDimShow() {
+
+        }
+
+        function deleteColDim {
+
+        }
+
+        $(function () {
+            formTreeInit();
+        });
+    </script>
+</head>
+<body>
+<table id="manager">
+    <div id="manager_tool">
+        <div style="margin-bottom:5px;">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addTemplateShow()">新增模板</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="operateTemplateState(0)">冻结模板</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="operateTemplateState(1)">启用模板</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)">删除表单</a>
+        </div>
+
+        <div>
+            <div style="float:left; width: 25%">
+                <ul id="formTree"/>
+            </div>
+            <div style="float:left; width: 73%">
+                <div>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addRowDimShow(0)">新增一级节点</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addRowDimShow(1)">新增子项节点</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="deleteRowDim()">编辑</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteRowDim()">删除</a>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span style="padding-left: 10px;">模板状态：状态</span>
+                </div>
+                <ul id="rowDimTree"/>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+</table>
+
+</body>
+</html>
