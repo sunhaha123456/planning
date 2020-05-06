@@ -12,6 +12,8 @@
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
     <script th:inline="javascript">
+        alert(1);
+
         var templateNodeArr = new Array();
 
         function templateTreeInit() {
@@ -92,8 +94,8 @@
         }
 
         function operateTemplateState(type) {
-
-
+            alert($("#templateTree").tree('getSelected');
+            alert($("#templateTree").tree('getSelected').id);
 
             var msg = ""
             if (type == 0) { // 冻结
