@@ -19,14 +19,15 @@ public class TbFlowTemplateNode extends BaseDataIdLong {
     @Column(name = "template_id", columnDefinition = "BIGINT COMMENT '模板id'")
     private Long templateId;
 
+    // 第一层节点pid：0
     @Column(name = "pid", columnDefinition = "BIGINT COMMENT '父节点id'")
     private Long pid;
 
-    // 第一层节点：1，依次类推
+    // 第一层节点：0，依次类推
     @Column(name = "node_level", columnDefinition = "INT DEFAULT 1 COMMENT '节点级别'")
     private Integer nodeLevel;
 
-    // totalcode：parentNodeId1,parentNodeId2,parentNodeId3
+    // totalcode：parentNodeId1,parentNodeId2,parentNodeId3  一级节点是本身id
     @Column(name = "total_code", columnDefinition = "VARCHAR(1000) COMMENT '节点编码'")
     private String totalCode;
 

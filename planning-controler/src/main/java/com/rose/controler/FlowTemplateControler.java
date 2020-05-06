@@ -1,6 +1,7 @@
 package com.rose.controler;
 
 import com.rose.data.entity.TbFlowTemplate;
+import com.rose.data.entity.TbFlowTemplateNode;
 import com.rose.service.FlowTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class FlowTemplateControler {
         return flowTemplateService.getTemplateNodeTree(id, pid);
     }
 
-    @PostMapping(value= "/save")
+    @PostMapping(value= "/saveTemplate")
     public TbFlowTemplate save(@RequestBody TbFlowTemplate param) {
         return flowTemplateService.save(param);
     }
@@ -38,5 +39,10 @@ public class FlowTemplateControler {
     @PostMapping(value= "/operateTemplateState")
     public void operateTemplateState(@RequestParam Long id, @RequestParam Integer type) {
         flowTemplateService.operateTemplateState(id, type);
+    }
+
+    @PostMapping(value= "/saveTemplateNode")
+    public TbFlowTemplateNode saveTemplateNode(@RequestBody TbFlowTemplateNode param) {
+        return flowTemplateService.saveTemplateNode(param);
     }
 }
