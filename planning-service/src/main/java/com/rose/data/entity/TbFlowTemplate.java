@@ -31,5 +31,5 @@ public class TbFlowTemplate extends BaseDataIdLong {
     private String state;
 
     @Transient
-    List<TbFlowInstanceNode> nodeList;
+    List<TbFlowTemplateNode> templateNodeList;
 }

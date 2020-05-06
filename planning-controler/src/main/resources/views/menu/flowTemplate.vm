@@ -23,7 +23,7 @@
                     checkbox : false,
                     data : result.data,
                     onSelect: function(template) {
-                        var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeTree", {"id": template.id});
+                        var result = ajaxSynchGet("user/flowTemplate/getTemplatetemplateNodeTree", {"id": template.id, "pid":0});
                         if (result.code == '200') {
                             var status = result.data.status;
                             if (status == 0) { // 正常
@@ -32,15 +32,15 @@
                                 $("#templateStatus").text("模板状态：冻结");
                             }
 
-                            var nodeList = result.data.nodeList;
-                            $('#nodeTree').tree({
+                            var nodeList = result.data.templateNodeList;
+                            $('#templateNodeTree').tree({
                                 lines : true,
                                 multiple : false,
                                 checkbox : false,
                                 data : nodeList,
                                 onBeforeExpand: function(node) {
                                     if (templateNodeArr.indexOf(node.id) == -1) {
-                                        openTemplateNode(template.id, node.pid);
+                                        openTemplateNode(node, template.id, node.id);
                                     }
                                     //return true;
                                 }
@@ -55,16 +55,71 @@
             }
         }
 
-        function openTemplateNode(templateId, pid) {
-
+        function openTemplateNode(node, templateId, pid) {
+            var result = ajaxSynchGet("user/flowTemplate/getTemplatetemplateNodeTree", {"id": templateId, "pid":pid});
+            if (result.code == '200') {
+                templateNodeArr.push(pid);
+                $('#templateNodeTree').tree('append', {
+                    parent : node.target, 
+                    data : result.data
+                });
+            } else {
+                alertWarn(result.msg);
+            }
         }
 
         function addTemplateShow() {
+            $('#templateNameAddTemplateForm').dialog('open');
+        }
 
+        function addTemplateCommit() {
+            var templateName = $('#templateNameAddTemplateForm').val();
+            var result = ajaxSynchPostJson("user/flowTemplate/save", {"templateName":templateName});
+            if (result.code == '200') {
+                alertSuccess();
+                $('#templateNameAddTemplateForm').dialog('close');
+
+                $('#templateTree').tree('append', {
+                    data : {
+                        "id": result.data.id,
+                        "text": result.data.templateName,
+                        "state": "close",
+                    }
+                });
+            } else {
+                alertWarn(result.msg);
+            }
         }
 
         function operateTemplateState(type) {
 
+
+
+            var msg = ""
+            if (type == 0) { // 冻结
+                msg = "确定要冻结吗？"
+            } else if (type == 1) { // 启用
+                msg = "确定要启用吗？"
+            } else if (type == 2) { // 删除
+                msg = "确定要删除吗？"
+            }
+
+            $.messager.confirm('确定操作', msg, function (flag) {
+                if (flag) {
+                    var result = ajaxSynchPostJson("user/flowTemplate/operateTemplateState?id=" + id + "&type=" + type, null);
+                    if (result.code == '200') {
+                        rowDimArr = new Array();
+                        selectRowDimId = -1;
+                        var result = ajaxSynchGet("user/formManage/getRowColDimensionTree", {"formId": selectFormId, "type":0});
+                        if (result.code == '200') {
+                            rowDimTreeInit(result.data);
+                            alertInfo(result.msg);
+                        } else {
+                            alertWarn(result.msg);
+                        }
+                    }
+                }
+            });
         }
 
         function addNode(type) {
@@ -108,12 +163,33 @@
                 <div style="margin-top: 10px;">
                     <span id="templateStatus" style="padding-left: 10px;"></span>
                 </div>
-                <ul id="nodeTree"/>
+                <ul id="templateNodeTree"/>
             </div>
             <div style="clear:both;"></div>
         </div>
     </div>
 </table>
+
+<form id="addTemplateForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+       onClose:function () {
+            $('#addTemplateForm').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    addTemplateCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#addTemplateForm').dialog('close');
+					}
+				}]">
+    <p>模板名称：<input class="easyui-validatebox" type="text" id="templateNameAddTemplateForm" style="width:200px;" /></p>
+</form>
 
 </body>
 </html>

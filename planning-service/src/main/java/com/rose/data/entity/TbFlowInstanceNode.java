@@ -19,11 +19,12 @@ public class TbFlowInstanceNode extends BaseDataIdLong {
     @Column(name = "node_name", columnDefinition = "VARCHAR(255) COMMENT '节点名称'")
     private String nodeName;
 
-    @Column(name = "pid", columnDefinition = "BIGINT COMMENT '父节点id'")
+    // 第一层节点pid 0
+    @Column(name = "pid", columnDefinition = "BIGINT DEFAULT 0 COMMENT '父节点id'")
     private Long pid;
 
-    // 第一层节点：1，依次类推
-    @Column(name = "node_level", columnDefinition = "INT DEFAULT 1 COMMENT '节点级别'")
+    // 第一层节点：0，依次类推
+    @Column(name = "node_level", columnDefinition = "INT DEFAULT 0 COMMENT '节点级别'")
     private Integer nodeLevel;
 
     // totalcode：parentNodeId1,parentNodeId2,parentNodeId3
