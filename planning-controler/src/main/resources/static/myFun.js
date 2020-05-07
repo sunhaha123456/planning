@@ -125,3 +125,15 @@ function urlHandle(url) {
 function urlHandleContext(url) {
     return contextPath + url + '?token=' + interceptorToken + '&userId=' + interceptorUserId + '&randNum=' + Math.random();
 }
+// ------------------------ 工具方法 ------------------------
+function isTreeNodeSelected(treeId) {
+    var selectNode = $("#" + treeId).tree('getSelected');
+    if (selectNode == null || selectNode == undefined) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function getTreeSelectedNode(treeId) {
+    return $("#" + treeId).tree('getSelected');
+}

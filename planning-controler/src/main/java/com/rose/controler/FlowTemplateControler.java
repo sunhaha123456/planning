@@ -45,4 +45,9 @@ public class FlowTemplateControler {
     public TbFlowTemplateNode saveTemplateNode(@RequestBody TbFlowTemplateNode param) {
         return flowTemplateService.saveTemplateNode(param);
     }
+
+    @GetMapping(value= "/getTemplateNodeDetail")
+    public TbFlowTemplateNode getTemplateNodeDetail(@RequestParam Long id) {
+        return flowTemplateService.getTemplateNodeDetail(id);
+    }
 }

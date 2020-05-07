@@ -138,4 +138,9 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
             return flowTemplateNodeRepository.save(node);
         }
     }
+
+    @Override
+    public TbFlowTemplateNode getTemplateNodeDetail(Long id) {
+        return flowTemplateNodeRepository.findOne(id);
+    }
 }
