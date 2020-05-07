@@ -55,7 +55,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         Date now = new Date();
         param.setCreateDate(now);
         param.setLastModified(now);
-        param.setStatus(0);
+        param.setStatus(1);
         return flowTemplateRepository.save(param);
     }
 
@@ -82,6 +82,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                         throw new BusinessException("不能删除还有流程实例的流程模板！");
                     }
                     flowTemplateRepository.delete(id);
+                    flowTemplateNodeRepository.deleteByTemplateId(id);
                     break;
                 }
             }
@@ -95,6 +96,11 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                 || param.getPid() == null || param.getOperateType() == null || (param.getOperateType() != 0 && param.getOperateType() != 1)) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
+        TbFlowTemplate template = flowTemplateRepository.findOne(param.getTemplateId());
+        if (template.getStatus() != 1) {
+            throw new BusinessException("请先冻结模板！");
+        }
+
         Date now = new Date();
         if (param.getId() == null) { // 新增
             param.setCreateDate(now);
@@ -142,5 +148,21 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     @Override
     public TbFlowTemplateNode getTemplateNodeDetail(Long id) {
         return flowTemplateNodeRepository.findOne(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TbFlowTemplateNode deleteTemplateNodeAndReturnParentNode(Long nodeId, Long templateId) {
+        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
+        if (template.getStatus() != 1) {
+            throw new BusinessException("请先冻结模板！");
+        }
+        TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
+        flowTemplateNodeRepository.deleteNodeAndNodeChild(nodeId, node.getTotalCode() + ",%");
+        if (node.getPid() != 0L) {
+            return flowTemplateNodeRepository.findOne(node.getPid());
+        } else {
+            return null;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.rose.repository;
 
 import com.rose.data.entity.TbFlowTemplateNode;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +15,12 @@ public interface FlowTemplateNodeRepository extends CrudRepository<TbFlowTemplat
 
     @Query(value = "select * from tb_flow_template_node where id = :id and template_id = :templateId", nativeQuery = true)
     TbFlowTemplateNode findByIdAndTemplateId(@Param(value = "id") Long id, @Param(value = "templateId") Long templateId);
+
+    @Modifying
+    @Query(value = "delete from tb_flow_template_node where template_id = :templateId", nativeQuery = true)
+    int deleteByTemplateId(@Param(value = "templateId") Long templateId);
+
+    @Modifying
+    @Query(value = "delete from tb_flow_template_node where id = :id or total_code like :childTotalCode", nativeQuery = true)
+    int deleteNodeAndNodeChild(@Param(value = "id") Long id, @Param(value = "childTotalCode") String childTotalCode);
 }

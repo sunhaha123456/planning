@@ -12,4 +12,5 @@ public interface FlowTemplateService {
     void operateTemplateState(Long id, Integer type);
     TbFlowTemplateNode saveTemplateNode(TbFlowTemplateNode param);
     TbFlowTemplateNode getTemplateNodeDetail(Long id);
+    TbFlowTemplateNode deleteTemplateNodeAndReturnParentNode(Long nodeId, Long templateId);
 }

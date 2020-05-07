@@ -27,7 +27,7 @@
                     checkbox : false,
                     data : result.data,
                     onSelect: function(template) {
-                        templateNodeTreeInit(template.id);
+                        templateNodeTreeInit(template.id, null);
                     }
                 });
             } else {
@@ -35,9 +35,11 @@
             }
         }
 
-        function templateNodeTreeInit(templateId) {
+        function templateNodeTreeInit(templateId, totalCode) {
             var result = ajaxSynchGet("user/flowTemplate/getTemplatetemplateNodeTree", {"id": templateId, "pid":0});
             if (result.code == '200') {
+                templateNodeArr = new Array();
+
                 var status = result.data.status;
                 if (status == 0) { // 正常
                     $("#templateStatus").text("模板状态：正常");
@@ -59,6 +61,18 @@
                         //return true;
                     }
                 });
+
+                if (totalCode != null && totalCode != undefined && totalCode != "") {
+                    var totalCodeArr = totalCode.split(',');
+                    for (var x=0; x < totalCodeArr.length; x++) {
+                        var node = $('#templateNodeTree').tree('find', totalCodeArr[x]);
+                        if (x < (totalCodeArr.length - 1)) {
+                            $('#templateNodeTree').tree('expand', node.target);
+                        } else {
+                            $('#templateNodeTree').tree('select', node.target);
+                        }
+                    }
+                }
             } else {
                 alertWarn(result.msg);
             }
@@ -215,11 +229,7 @@
                 "instruction": $("#nodeNameNodeSave").val()
             });
             if (result.code == '200') {
-                templateNodeTreeInit(templateId);
-
-                var totalCode = result.data.totalCode;
-                totalCode
-
+                templateNodeTreeInit(templateId, result.data.totalCode);
                 alertSuccess();
             } else {
                 alertWarn(result.msg);
@@ -227,7 +237,28 @@
         }
 
         function deleteNode() {
+            if (!isTreeNodeSelected("templateTree")) {
+                alertWarn("请先选中模板！");
+                return;
+            }
+            if (!isTreeNodeSelected("templateNodeTree")) {
+                alertWarn("请先选中节点！");
+                return;
+            }
 
+            var templateId = getTreeSelectedNode("templateTree").id;
+            var nodeId = getTreeSelectedNode("templateNodeTree").id;
+            var result = ajaxSynchPostJson("user/flowTemplate/deleteTemplateNode?templateId=" + templateId + "&nodeId=" + nodeId, null);
+            if (result.code == '200') {
+                var parentTotalCode = null;
+                if (result.data != null) {
+                    parentTotalCode = result.data.totalCode;
+                }
+                templateNodeTreeInit(templateId, result.data);
+                alertSuccess();
+            } else {
+                alertWarn(result.msg);
+            }
         }
 
         $(function () {

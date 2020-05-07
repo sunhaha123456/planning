@@ -50,4 +50,9 @@ public class FlowTemplateControler {
     public TbFlowTemplateNode getTemplateNodeDetail(@RequestParam Long id) {
         return flowTemplateService.getTemplateNodeDetail(id);
     }
+
+    @PostMapping(value= "/deleteTemplateNodeAndReturnParentNode")
+    public TbFlowTemplateNode deleteTemplateNodeAndReturnParentNode(@RequestParam Long nodeId, @RequestParam Long templateId) {
+        return flowTemplateService.deleteTemplateNodeAndReturnParentNode(nodeId, templateId);
+    }
 }
