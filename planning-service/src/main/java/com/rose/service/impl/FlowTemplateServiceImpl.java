@@ -44,6 +44,13 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     public TbFlowTemplate getTemplateNodeTree(Long id, Long pid) {
         TbFlowTemplate template = flowTemplateRepository.findOne(id);
         List<TbFlowTemplateNode> templateNodeList = flowTemplateNodeRepository.listByTemplateIdAndPid(id, pid);
+        if (templateNodeList != null && templateNodeList.size() > 0) {
+            for (TbFlowTemplateNode node : templateNodeList) {
+                node.setText(node.getNodeName());
+                node.setState("close");
+
+            }
+        }
         template.setTemplateNodeList(templateNodeList);
         return template;
     }
@@ -51,6 +58,11 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TbFlowTemplate save(TbFlowTemplate param) {
+        TbFlowTemplate template = flowTemplateRepository.findByTemplateName(param.getTemplateName());
+        if (template != null) {
+            throw new BusinessException("模板名称重复！");
+        }
+
         param.setId(null);
         Date now = new Date();
         param.setCreateDate(now);
@@ -77,6 +89,10 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                     break;
                 }
                 case 2: { // 删除
+                    if (template.getStatus() != 1) {
+                        throw new BusinessException("请先冻结模板！");
+                    }
+
                     long c = flowInstanceRepository.countByTemplateId(id);
                     if (c > 0) {
                         throw new BusinessException("不能删除还有流程实例的流程模板！");

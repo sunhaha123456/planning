@@ -36,7 +36,7 @@
         }
 
         function templateNodeTreeInit(templateId, totalCode) {
-            var result = ajaxSynchGet("user/flowTemplate/getTemplatetemplateNodeTree", {"id": templateId, "pid":0});
+            var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeTree", {"id": templateId, "pid":0});
             if (result.code == '200') {
                 templateNodeArr = new Array();
 
@@ -64,12 +64,17 @@
 
                 if (totalCode != null && totalCode != undefined && totalCode != "") {
                     var totalCodeArr = totalCode.split(',');
-                    for (var x=0; x < totalCodeArr.length; x++) {
-                        var node = $('#templateNodeTree').tree('find', totalCodeArr[x]);
-                        if (x < (totalCodeArr.length - 1)) {
-                            $('#templateNodeTree').tree('expand', node.target);
-                        } else {
-                            $('#templateNodeTree').tree('select', node.target);
+                    if (totalCodeArr.length == 1) {
+                        var node = $('#templateNodeTree').tree('find', totalCodeArr[0]);
+                        $('#templateNodeTree').tree('select', node.target);
+                    } else {
+                        for (var x=0; x < totalCodeArr.length; x++) {
+                            var node = $('#templateNodeTree').tree('find', totalCodeArr[x]);
+                            if (x < (totalCodeArr.length - 1)) {
+                                $('#templateNodeTree').tree('expand', node.target);
+                            } else {
+                                $('#templateNodeTree').tree('select', node.target);
+                            }
                         }
                     }
                 }
@@ -92,15 +97,17 @@
         }
 
         function addTemplateShow() {
-            $('#templateNameAddTemplateForm').dialog('open');
+            $('#templateNameAddTemplateForm').val("");
+            $('#addTemplateForm').dialog('open');
         }
 
         function addTemplateCommit() {
             var templateName = $('#templateNameAddTemplateForm').val();
+            if (templateName == "") {
+                return;
+            }
             var result = ajaxSynchPostJson("user/flowTemplate/saveTemplate", {"templateName":templateName});
             if (result.code == '200') {
-                $('#templateNameAddTemplateForm').dialog('close');
-
                 $('#templateTree').tree('append', {
                     data : {
                         "id": result.data.id,
@@ -108,7 +115,7 @@
                         "state": "close",
                     }
                 });
-
+                $('#addTemplateForm').dialog('close');
                 alertSuccess();
             } else {
                 alertWarn(result.msg);
@@ -226,10 +233,11 @@
                 "templateId": templateId,
                 "pid": pid,
                 "operateType": $("input[name='nodeOperateTypeNodeSave']:checked").val(),
-                "instruction": $("#nodeNameNodeSave").val()
+                "instruction": $("#nodeInstructionNodeSave").val()
             });
             if (result.code == '200') {
                 templateNodeTreeInit(templateId, result.data.totalCode);
+                $('#saveTemplateNodeForm').dialog('close');
                 alertSuccess();
             } else {
                 alertWarn(result.msg);
@@ -319,7 +327,7 @@
 </form>
 
 <form id="saveTemplateNodeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'节点',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
        onClose:function () {
             $('#saveTemplateNodeForm').form('reset');
        },
@@ -338,7 +346,7 @@
 				}]">
     <p>节点名称：<input id="nodeNameNodeSave" class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入节点名',invalidMessage:'节点名长度至少为1位'" type="text" style="width:200px;" />
     <p>节点类型：<input name="nodeOperateTypeNodeSave" type="radio" value="0" checked="checked">抢占</input><input name="nodeOperateTypeNodeSave" type="radio" value="1">会签</input></p>
-    <p>节点描述：<input id="nodeInstructionNodeSave" class="easyui-validatebox" type="text" style="width:200px; border: 1px solid #95B8E7" /></p>
+    <p>节点描述：<textarea id="nodeInstructionNodeSave" rows="2" cols="29" /></p>
 </form>
 
 </body>

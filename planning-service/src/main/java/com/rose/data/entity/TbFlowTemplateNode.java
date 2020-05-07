@@ -6,6 +6,7 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @ToString(callSuper = true)
 @lombok.Data
@@ -15,6 +16,13 @@ public class TbFlowTemplateNode extends BaseDataIdLong {
 
     @Column(name = "node_name", columnDefinition = "VARCHAR(255) COMMENT '节点名称'")
     private String nodeName;
+
+    @Transient
+    private String text;
+
+    // 是否打开 open 打开 closed 关闭
+    @Transient
+    private String state;
 
     @Column(name = "template_id", columnDefinition = "BIGINT COMMENT '模板id'")
     private Long templateId;

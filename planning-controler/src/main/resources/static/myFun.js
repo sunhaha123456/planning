@@ -128,7 +128,7 @@ function urlHandleContext(url) {
 // ------------------------ 工具方法 ------------------------
 function isTreeNodeSelected(treeId) {
     var selectNode = $("#" + treeId).tree('getSelected');
-    if (selectNode == null || selectNode == undefined) {
+    if (selectNode != null && selectNode != undefined) {
         return true;
     } else {
         return false;
