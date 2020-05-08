@@ -205,7 +205,7 @@
                     alertWarn("请先选中节点！");
                     return;
                 }
-                var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeDetail?id=" + getTreeSelectedNode("templateNodeTree").id, null);
+                var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeDetail", {"id": getTreeSelectedNode("templateNodeTree").id});
                 if (result.code == '200') {
                     $("#nodeNameNodeSave").val(result.data.nodeName);
                     $("input:radio[name=nodeOperateTypeNodeSave][value=" + result.data.operateType + "]").prop("checked",true);
@@ -295,39 +295,20 @@
                 alertWarn("请先选中模板！");
                 return;
             }
+
             var templateId = getTreeSelectedNode("templateTree").id;
+            var result = ajaxSynchGet("user/flowTemplate/getTemplateFlowChart", {"id": templateId});
+            if (result.code == '200') {
+                $('#flowChartDiv').orgchart({
+                    'data': result.data,
+                    'nodeContent': 'title'
+                });
 
-            var data = {
-                'name': 'Lao Lao',
-                'title': 'general manager',
-                'children': [
-                    { 'name': 'Bo Miao', 'title': 'department manager' },
-                    { 'name': 'Su Miao', 'title': 'department manager',
-                        'children': [
-                            { 'name': 'Tie Hua', 'title': 'senior engineer' },
-                            { 'name': 'Hei Hei', 'title': 'senior engineer',
-                                'children': [
-                                    { 'name': 'Pang Pang', 'title': 'engineer' },
-                                    { 'name': 'Xiang Xiang', 'title': 'UE engineer' }
-                                ]
-                            }
-                        ]
-                    },
-                    { 'name': 'Yu Jie', 'title': 'department manager' },
-                    { 'name': 'Yu Li', 'title': 'department manager' },
-                    { 'name': 'Hong Miao', 'title': 'department manager' },
-                    { 'name': 'Yu Wei', 'title': 'department manager' },
-                    { 'name': 'Chun Miao', 'title': 'department manager' },
-                    { 'name': 'Yu Tie', 'title': 'department manager' }
-                ]
-            };
-
-            $('#flowChartDiv').orgchart({
-                'data': data,
-                'nodeContent': 'title'
-            });
-
-            $('#flowChartWindow').window('open');
+                $('#flowChartWindow').window('open');
+            } else {
+                alertWarn(result.msg);
+                return;
+            }
         }
 
         $(function () {

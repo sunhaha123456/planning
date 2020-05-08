@@ -5,6 +5,7 @@ import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.entity.TbFlowTemplateNode;
+import com.rose.data.to.response.FlowChartResponse;
 import com.rose.repository.FlowInstanceRepository;
 import com.rose.repository.FlowTemplateNodeRepository;
 import com.rose.repository.FlowTemplateRepository;
@@ -196,8 +197,24 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         flowTemplateNodeRepository.deleteNodeAndNodeChild(nodeId, node.getTotalCode() + ",%");
         if (node.getPid() != 0L) {
             return flowTemplateNodeRepository.findOne(node.getPid());
-        } else {
+        } else { // 无父级节点，返回 null
             return null;
         }
+    }
+
+    @Override
+    public FlowChartResponse getTemplateFlowChart(Long id) {
+        FlowChartResponse flowChart = new FlowChartResponse();
+
+        flowChart.setName("经理审批");
+        flowChart.setTitle("抢占");
+
+
+
+
+
+
+
+        return flowChart;
     }
 }

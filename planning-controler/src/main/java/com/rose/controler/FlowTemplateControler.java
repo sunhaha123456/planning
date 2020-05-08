@@ -2,6 +2,7 @@ package com.rose.controler;
 
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.entity.TbFlowTemplateNode;
+import com.rose.data.to.response.FlowChartResponse;
 import com.rose.service.FlowTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +55,10 @@ public class FlowTemplateControler {
     @PostMapping(value= "/deleteTemplateNodeAndReturnParentNode")
     public TbFlowTemplateNode deleteTemplateNodeAndReturnParentNode(@RequestParam Long nodeId, @RequestParam Long templateId) {
         return flowTemplateService.deleteTemplateNodeAndReturnParentNode(nodeId, templateId);
+    }
+
+    @GetMapping(value= "/getTemplateFlowChart")
+    public FlowChartResponse getTemplateFlowChart(@RequestParam Long id) {
+        return flowTemplateService.getTemplateFlowChart(id);
     }
 }
