@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -45,10 +46,16 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         TbFlowTemplate template = flowTemplateRepository.findOne(id);
         List<TbFlowTemplateNode> templateNodeList = flowTemplateNodeRepository.listByTemplateIdAndPid(id, pid);
         if (templateNodeList != null && templateNodeList.size() > 0) {
+            List<Long> idList = templateNodeList.stream().map(TbFlowTemplateNode::getId).collect(Collectors.toList());
+            List<TbFlowTemplateNode> allChildList= flowTemplateNodeRepository.listByPid(idList);
+            List<Long> allChildPidList = allChildList.stream().map(TbFlowTemplateNode::getPid).collect(Collectors.toList());
             for (TbFlowTemplateNode node : templateNodeList) {
                 node.setText(node.getNodeName());
-                node.setState("close");
-
+                if (allChildPidList.contains(node.getId())) {
+                    node.setState("open");
+                } else {
+                    node.setState("closed");
+                }
             }
         }
         template.setTemplateNodeList(templateNodeList);

@@ -23,4 +23,7 @@ public interface FlowTemplateNodeRepository extends CrudRepository<TbFlowTemplat
     @Modifying
     @Query(value = "delete from tb_flow_template_node where id = :id or total_code like :childTotalCode", nativeQuery = true)
     int deleteNodeAndNodeChild(@Param(value = "id") Long id, @Param(value = "childTotalCode") String childTotalCode);
+
+    @Query(value = "select * from tb_flow_template_node where pid in :pidList order by id asc", nativeQuery = true)
+    List<TbFlowTemplateNode> listByPid(@Param(value = "pidList") List<Long> pidList);
 }

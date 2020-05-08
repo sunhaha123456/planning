@@ -18,8 +18,8 @@ public class TbFlowTemplate extends BaseDataIdLong {
     @Column(name = "template_name", columnDefinition = "VARCHAR(255) COMMENT '模板名称'")
     private String templateName;
 
-    // 模板状态 0：正常 1：冻结
-    @Column(name = "status", columnDefinition = "TINYINT DEFAULT 0 COMMENT '模板状态'")
+    // 模板状态 0：正常 1：停用
+    @Column(name = "status", columnDefinition = "TINYINT DEFAULT 1 COMMENT '模板状态'")
     private Integer status;
 
     // easyui中的菜单名称

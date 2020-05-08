@@ -44,7 +44,7 @@
                 if (status == 0) { // 正常
                     $("#templateStatus").text("模板状态：正常");
                 } else { // 冻结
-                    $("#templateStatus").text("模板状态：冻结");
+                    $("#templateStatus").text("模板状态：停用");
                 }
 
                 var nodeList = result.data.templateNodeList;
@@ -142,7 +142,7 @@
                             if (type == 0) {
                                 $("#templateStatus").text("模板状态：正常");
                             } else if (type == 1) {
-                                $("#templateStatus").text("模板状态：冻结");
+                                $("#templateStatus").text("模板状态：停用");
                             } else {
                                 templateTreeInit();
                                 $("#templateStatus").text("");
@@ -279,7 +279,7 @@
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addTemplateShow()">新增模板</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="operateTemplateState(1)">冻结模板</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="operateTemplateState(1)">停用模板</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="operateTemplateState(0)">启用模板</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)">删除表单</a>
         </div>
