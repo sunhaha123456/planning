@@ -301,7 +301,7 @@
             if (result.code == '200') {
                 $('#flowChartDiv').orgchart({
                     'data': result.data,
-                    'nodeContent': 'title'
+                    'nodeContent': 'content'
                 });
 
                 $('#flowChartWindow').window('open');

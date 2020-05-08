@@ -7,33 +7,33 @@ import java.util.List;
 
 //{
 //        'name': 'Lao Lao',
-//        'title': 'general manager',
+//        'content': 'general manager',
 //        'children': [
-//            {'name': 'Bo Miao','title': 'department manager'},
+//            {'name': 'Bo Miao','content': 'department manager'},
 //            {
 //                'name': 'Su Miao',
-//                'title': 'department manager',
+//                'content': 'department manager',
 //                'children': [{
 //                    'name': 'Tie Hua',
-//                    'title': 'senior engineer'
+//                    'content': 'senior engineer'
 //                },{
 //                    'name': 'Hei Hei',
-//                    'title': 'senior engineer',
+//                    'content': 'senior engineer',
 //                    'children': [{
 //                        'name': 'Pang Pang',
-//                        'title': 'engineer'
+//                        'content': 'engineer'
 //                    },{
 //                        'name': 'Xiang Xiang',
-//                        'title': 'UE engineer'
+//                        'content': 'UE engineer'
 //                    }]
 //                }]
 //            },
-//            {'name': 'Yu Jie','title': 'department manager'}
+//            {'name': 'Yu Jie','content': 'department manager'}
 //        ]
 //}
 @Data
 public class FlowChartResponse {
     private String name;
-    private String title;
+    private String content;
     private List<FlowChartResponse> children;
 }
