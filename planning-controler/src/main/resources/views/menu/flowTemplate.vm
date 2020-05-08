@@ -277,6 +277,10 @@
             });
         }
 
+        function flowChartShow() {
+            alert("流程图预览");
+        }
+
         $(function () {
             templateTreeInit();
         });
@@ -302,6 +306,7 @@
                     <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="saveNodeShow(1)">新增子项节点</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="saveNodeShow(2)">编辑</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteNode()">删除</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="flowChartShow()">流程预览</a>
                 </div>
                 <div style="margin-top: 10px;">
                     <span id="templateStatus" style="padding-left: 10px;"></span>
