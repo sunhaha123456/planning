@@ -278,7 +278,16 @@
         }
 
         function flowChartShow() {
-            alert("流程图预览");
+            if (!isTreeNodeSelected("templateTree")) {
+                alertWarn("请先选中模板！");
+                return;
+            }
+
+            var templateId = getTreeSelectedNode("templateTree").id;
+
+
+
+            $('#flowChartWindow').window('open');
         }
 
         $(function () {
@@ -362,5 +371,8 @@
     <p>节点描述：<textarea id="nodeInstructionNodeSave" rows="2" cols="29" /></p>
 </form>
 
+<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-user-add',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:950px;height:580px;">
+
+</div>
 </body>
 </html>
