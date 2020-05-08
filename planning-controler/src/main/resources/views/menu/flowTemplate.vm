@@ -169,6 +169,7 @@
                             } else {
                                 templateTreeInit();
                             }
+                            alertSuccess();
                         } else {
                             alertWarn(result.msg);
                         }
@@ -367,7 +368,7 @@
 </table>
 
 <form id="addTemplateForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-save',
        onClose:function () {
             $('#addTemplateForm').form('reset');
        },
@@ -388,7 +389,7 @@
 </form>
 
 <form id="saveTemplateNodeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'节点',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'节点',modal:true,closed:true,cache:false,iconCls:'icon-save',
        onClose:function () {
             $('#saveTemplateNodeForm').form('reset');
        },
