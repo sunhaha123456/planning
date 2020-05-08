@@ -392,7 +392,7 @@
     <p>节点描述：<textarea id="nodeInstructionNodeSave" rows="2" cols="29" /></p>
 </form>
 
-<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:1200px;height:580px;">
+<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:850px;height:400px;">
     <div id="flowChartDiv"></div>
 </div>
 </body>
