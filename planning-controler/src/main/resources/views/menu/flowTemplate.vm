@@ -11,6 +11,17 @@
     <script th:src="@{/static/easyui/easy.common.js}"></script>
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
+    <!-- flow chart start -->
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/jquery.orgchart.css}"></link>
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/font-awesome.min.css}"></link>
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/style.css}"></link>
+    <style type="text/css">
+        .orgchart { background: #fff; }
+        .orgchart .node .title { background-color: #006699; }
+        .orgchart .node .content { border-color: #006699; }
+    </style>
+    <script th:src="@{/static/flowChart/js/jquery.orgchart.js}"></script>
+    <!-- flow chart end -->
     <script th:inline="javascript">
         var templateNodeArr = new Array();
 
@@ -29,6 +40,13 @@
                     onSelect: function(template) {
                         templateNodeTreeInit(template.id, null);
                     }
+                });
+                $("#templateStatus").text("");
+                $('#templateNodeTree').tree({
+                    lines : true,
+                    multiple : false,
+                    checkbox : false,
+                    data: []
                 });
             } else {
                 alertWarn(result.msg);
@@ -150,12 +168,6 @@
                                 $("#templateStatus").text("模板状态：停用");
                             } else {
                                 templateTreeInit();
-                                $("#templateStatus").text("");
-                                $('#templateNodeTree').tree({
-                                    lines : true,
-                                    multiple : false,
-                                    checkbox : false
-                                });
                             }
                         } else {
                             alertWarn(result.msg);
@@ -282,10 +294,37 @@
                 alertWarn("请先选中模板！");
                 return;
             }
-
             var templateId = getTreeSelectedNode("templateTree").id;
 
+            var data = {
+                'name': 'Lao Lao',
+                'title': 'general manager',
+                'children': [
+                    { 'name': 'Bo Miao', 'title': 'department manager' },
+                    { 'name': 'Su Miao', 'title': 'department manager',
+                        'children': [
+                            { 'name': 'Tie Hua', 'title': 'senior engineer' },
+                            { 'name': 'Hei Hei', 'title': 'senior engineer',
+                                'children': [
+                                    { 'name': 'Pang Pang', 'title': 'engineer' },
+                                    { 'name': 'Xiang Xiang', 'title': 'UE engineer' }
+                                ]
+                            }
+                        ]
+                    },
+                    { 'name': 'Yu Jie', 'title': 'department manager' },
+                    { 'name': 'Yu Li', 'title': 'department manager' },
+                    { 'name': 'Hong Miao', 'title': 'department manager' },
+                    { 'name': 'Yu Wei', 'title': 'department manager' },
+                    { 'name': 'Chun Miao', 'title': 'department manager' },
+                    { 'name': 'Yu Tie', 'title': 'department manager' }
+                ]
+            };
 
+            $('#flowChartDiv').orgchart({
+                'data': data,
+                'nodeContent': 'title'
+            });
 
             $('#flowChartWindow').window('open');
         }
@@ -315,7 +354,7 @@
                     <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="saveNodeShow(1)">新增子项节点</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="saveNodeShow(2)">编辑</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteNode()">删除</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="flowChartShow()">流程预览</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowChartShow()">流程预览</a>
                 </div>
                 <div style="margin-top: 10px;">
                     <span id="templateStatus" style="padding-left: 10px;"></span>
@@ -371,8 +410,8 @@
     <p>节点描述：<textarea id="nodeInstructionNodeSave" rows="2" cols="29" /></p>
 </form>
 
-<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-user-add',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:950px;height:580px;">
-
+<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:1200px;height:580px;">
+    <div id="flowChartDiv"></div>
 </div>
 </body>
 </html>
