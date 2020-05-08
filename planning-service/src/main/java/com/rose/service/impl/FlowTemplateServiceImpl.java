@@ -42,9 +42,9 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     }
 
     @Override
-    public TbFlowTemplate getTemplateNodeTree(Long id, Long pid) {
-        TbFlowTemplate template = flowTemplateRepository.findOne(id);
-        List<TbFlowTemplateNode> templateNodeList = flowTemplateNodeRepository.listByTemplateIdAndPid(id, pid);
+    public TbFlowTemplate getTemplateNodeTree(Long templateId, Long nodePid) {
+        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
+        List<TbFlowTemplateNode> templateNodeList = flowTemplateNodeRepository.listByTemplateIdAndPid(templateId, nodePid);
         if (templateNodeList != null && templateNodeList.size() > 0) {
             List<Long> idList = templateNodeList.stream().map(TbFlowTemplateNode::getId).collect(Collectors.toList());
             List<TbFlowTemplateNode> allChildList= flowTemplateNodeRepository.listByPid(idList);
@@ -52,8 +52,6 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
             for (TbFlowTemplateNode node : templateNodeList) {
                 node.setText(node.getNodeName());
                 if (allChildPidList.contains(node.getId())) {
-                    node.setState("open");
-                } else {
                     node.setState("closed");
                 }
             }
@@ -116,7 +114,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     @Override
     public TbFlowTemplateNode saveTemplateNode(TbFlowTemplateNode param) {
         if (param == null || StringUtil.isEmpty(param.getNodeName()) || param.getTemplateId() == null
-                || param.getPid() == null || param.getOperateType() == null || (param.getOperateType() != 0 && param.getOperateType() != 1)) {
+                || param.getOperateType() == null || (param.getOperateType() != 0 && param.getOperateType() != 1)) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
         TbFlowTemplate template = flowTemplateRepository.findOne(param.getTemplateId());
@@ -126,6 +124,15 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
 
         Date now = new Date();
         if (param.getId() == null) { // 新增
+            if (param.getPid() == null) {
+                throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+            }
+
+            List<TbFlowTemplateNode> nodeListByNodeName = flowTemplateNodeRepository.listByTemplateIdAndNodeName(param.getTemplateId(), param.getNodeName());
+            if (nodeListByNodeName != null && nodeListByNodeName.size() > 0) {
+                throw new BusinessException("节点名称重复！");
+            }
+
             param.setCreateDate(now);
             param.setLastModified(now);
 
@@ -157,6 +164,11 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
             TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(param.getId(), param.getTemplateId());
             if (node == null) {
                 throw new BusinessException("模板节点不存在！");
+            }
+
+            List<TbFlowTemplateNode> nodeListByNodeName = flowTemplateNodeRepository.listByTemplateIdAndNodeName(param.getTemplateId(), param.getNodeName(), param.getId());
+            if (nodeListByNodeName != null && nodeListByNodeName.size() > 0) {
+                throw new BusinessException("节点名称重复！");
             }
 
             node.setLastModified(now);

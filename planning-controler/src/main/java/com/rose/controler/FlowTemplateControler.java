@@ -27,8 +27,8 @@ public class FlowTemplateControler {
     }
 
     @GetMapping(value= "/getTemplateNodeTree")
-    public TbFlowTemplate getTemplateNodeTree(@RequestParam Long id, @RequestParam Long pid) {
-        return flowTemplateService.getTemplateNodeTree(id, pid);
+    public TbFlowTemplate getTemplateNodeTree(@RequestParam Long templateId, @RequestParam Long nodePid) {
+        return flowTemplateService.getTemplateNodeTree(templateId, nodePid);
     }
 
     @PostMapping(value= "/saveTemplate")

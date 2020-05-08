@@ -36,7 +36,7 @@
         }
 
         function templateNodeTreeInit(templateId, totalCode) {
-            var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeTree", {"id": templateId, "pid":0});
+            var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeTree", {"templateId": templateId, "nodePid":0});
             if (result.code == '200') {
                 templateNodeArr = new Array();
 
@@ -64,9 +64,9 @@
 
                 if (totalCode != null && totalCode != undefined && totalCode != "") {
                     var totalCodeArr = totalCode.split(',');
-                    if (totalCodeArr.length == 1) {
+                    if (totalCodeArr.length == 1 && nodeList[0].state == "closed") {
                         var node = $('#templateNodeTree').tree('find', totalCodeArr[0]);
-                        $('#templateNodeTree').tree('select', node.target);
+                        $('#templateNodeTree').tree('expand', node.target);
                     } else {
                         for (var x=0; x < totalCodeArr.length; x++) {
                             var node = $('#templateNodeTree').tree('find', totalCodeArr[x]);
@@ -77,6 +77,11 @@
                             }
                         }
                     }
+                } else {
+                    if (nodeList.length == 1 && nodeList[0].state == "closed") {
+                        var node = $('#templateNodeTree').tree('find', nodeList[0].id);
+                        $('#templateNodeTree').tree('expand', node.target);
+                    }
                 }
             } else {
                 alertWarn(result.msg);
@@ -84,12 +89,12 @@
         }
 
         function openTemplateNode(node, templateId, pid) {
-            var result = ajaxSynchGet("user/flowTemplate/getTemplatetemplateNodeTree", {"id": templateId, "pid":pid});
+            var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeTree", {"templateId": templateId, "nodePid":pid});
             if (result.code == '200') {
                 templateNodeArr.push(pid);
                 $('#templateNodeTree').tree('append', {
                     parent : node.target,
-                    data : result.data
+                    data : result.data.templateNodeList
                 });
             } else {
                 alertWarn(result.msg);
@@ -187,7 +192,7 @@
                     alertWarn("请先选中节点！");
                     return;
                 }
-                var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeDetail?id=" + id, null);
+                var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeDetail?id=" + getTreeSelectedNode("templateNodeTree").id, null);
                 if (result.code == '200') {
                     $("#nodeNameNodeSave").val(result.data.nodeName);
                     $("input:radio[name=nodeOperateTypeNodeSave][value=" + result.data.operateType + "]").prop("checked",true);
@@ -253,20 +258,23 @@
                 alertWarn("请先选中节点！");
                 return;
             }
-
-            var templateId = getTreeSelectedNode("templateTree").id;
-            var nodeId = getTreeSelectedNode("templateNodeTree").id;
-            var result = ajaxSynchPostJson("user/flowTemplate/deleteTemplateNode?templateId=" + templateId + "&nodeId=" + nodeId, null);
-            if (result.code == '200') {
-                var parentTotalCode = null;
-                if (result.data != null) {
-                    parentTotalCode = result.data.totalCode;
+            $.messager.confirm('确定操作', "确定要删除？", function (flag) {
+                if (flag) {
+                    var templateId = getTreeSelectedNode("templateTree").id;
+                    var nodeId = getTreeSelectedNode("templateNodeTree").id;
+                    var result = ajaxSynchPostJson("user/flowTemplate/deleteTemplateNodeAndReturnParentNode?templateId=" + templateId + "&nodeId=" + nodeId, null);
+                    if (result.code == '200') {
+                        var parentTotalCode = null;
+                        if (result.data != null) {
+                            parentTotalCode = result.data.totalCode;
+                        }
+                        templateNodeTreeInit(templateId, parentTotalCode);
+                        alertSuccess();
+                    } else {
+                        alertWarn(result.msg);
+                    }
                 }
-                templateNodeTreeInit(templateId, result.data);
-                alertSuccess();
-            } else {
-                alertWarn(result.msg);
-            }
+            });
         }
 
         $(function () {

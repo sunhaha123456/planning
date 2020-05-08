@@ -26,4 +26,10 @@ public interface FlowTemplateNodeRepository extends CrudRepository<TbFlowTemplat
 
     @Query(value = "select * from tb_flow_template_node where pid in :pidList order by id asc", nativeQuery = true)
     List<TbFlowTemplateNode> listByPid(@Param(value = "pidList") List<Long> pidList);
+
+    @Query(value = "select * from tb_flow_template_node where template_id = :templateId and node_name = :nodeName order by id asc", nativeQuery = true)
+    List<TbFlowTemplateNode> listByTemplateIdAndNodeName(@Param(value = "templateId") Long templateId, @Param(value = "nodeName") String nodeName);
+
+    @Query(value = "select * from tb_flow_template_node where template_id = :templateId and node_name = :nodeName and id != :id order by id asc", nativeQuery = true)
+    List<TbFlowTemplateNode> listByTemplateIdAndNodeName(@Param(value = "templateId") Long templateId, @Param(value = "nodeName") String nodeName, @Param(value = "id") Long id);
 }

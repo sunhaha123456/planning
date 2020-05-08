@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FlowTemplateService {
     List<TbFlowTemplate> getTemplateTree();
-    TbFlowTemplate getTemplateNodeTree(Long id, Long pid);
+    TbFlowTemplate getTemplateNodeTree(Long templateId, Long nodePid);
     TbFlowTemplate save(TbFlowTemplate param);
     void operateTemplateState(Long id, Integer type);
     TbFlowTemplateNode saveTemplateNode(TbFlowTemplateNode param);
