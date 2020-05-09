@@ -37,4 +37,8 @@ public class TbFlowInstanceNode extends BaseDataIdLong {
     // 执行方式 0抢占 1会签
     @Column(name = "operate_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '执行方式'")
     private Integer operateType;
+
+    // 流程节点状态：0未到达 1正在进行中 2已完成
+    @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程节点状态'")
+    private Integer state;
 }

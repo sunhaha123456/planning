@@ -41,6 +41,6 @@ public class TbFlowInstance extends BaseDataIdLong {
 
     // 当前正在处理的流程实例节点id
     // 注意：空：流程已经走完了，没有需要操作的流程节点
-    @Column(name = "processing_instance_node_id", columnDefinition = "BIGINT COMMENT '当前正在处理的流程实例节点id'")
-    private Long processingInstanceNodeId;
+    //@Column(name = "processing_instance_node_id", columnDefinition = "BIGINT COMMENT '当前正在处理的流程实例节点id'")
+    //private Long processingInstanceNodeId;
 }
