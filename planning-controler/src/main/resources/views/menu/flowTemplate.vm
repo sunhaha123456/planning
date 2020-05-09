@@ -291,6 +291,8 @@
         }
 
         function flowChartShow() {
+            $("#flowChartDiv").empty();
+
             if (!isTreeNodeSelected("templateTree")) {
                 alertWarn("请先选中模板！");
                 return;
