@@ -207,7 +207,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         FlowChartResponse flowChart = new FlowChartResponse();
 
         flowChart.setName("项目经理审批");
-        flowChart.setContent("xxxxttttttttttttttttttttt");
+        flowChart.setContent("啥快递焚枯食淡附近就克里斯多夫接口了接口了发动机克里斯多夫了愧疚");
 
 
 

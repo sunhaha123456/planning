@@ -303,7 +303,12 @@
             if (result.code == '200') {
                 $('#flowChartDiv').orgchart({
                     'data': result.data,
-                    'nodeContent': 'content'
+                    'nodeContent': 'content',
+                    'createNode': function (node, nodeData) {
+                        var nodeDom = $(node);
+                        $('.title', nodeDom).attr('title', nodeData.name);
+                        $('.content', nodeDom).attr("title", nodeData.content);
+                    }
                 });
 
                 $('#flowChartWindow').window('open');
