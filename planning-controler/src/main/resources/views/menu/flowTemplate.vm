@@ -301,15 +301,17 @@
             var templateId = getTreeSelectedNode("templateTree").id;
             var result = ajaxSynchGet("user/flowTemplate/getTemplateFlowChart", {"id": templateId});
             if (result.code == '200') {
-                $('#flowChartDiv').orgchart({
-                    'data': result.data,
-                    'nodeContent': 'content',
-                    'createNode': function (node, nodeData) {
-                        var nodeDom = $(node);
-                        $('.title', nodeDom).attr('title', nodeData.name);
-                        $('.content', nodeDom).attr("title", nodeData.content);
-                    }
-                });
+                if (result.data.name != null && result.data.name != '') {
+                    $('#flowChartDiv').orgchart({
+                        'data': result.data,
+                        'nodeContent': 'content',
+                        'createNode': function (node, nodeData) {
+                            var nodeDom = $(node);
+                            $('.title', nodeDom).attr('title', nodeData.name);
+                            $('.content', nodeDom).attr("title", nodeData.content);
+                        }
+                    });
+                }
 
                 $('#flowChartWindow').window('open');
             } else {

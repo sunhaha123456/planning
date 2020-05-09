@@ -8,6 +8,7 @@ import com.rose.data.entity.TbFlowTemplateNode;
 import com.rose.data.to.response.FlowChartResponse;
 import com.rose.repository.FlowInstanceRepository;
 import com.rose.repository.FlowTemplateNodeRepository;
+import com.rose.repository.FlowTemplateNodeUserTaskRepository;
 import com.rose.repository.FlowTemplateRepository;
 import com.rose.service.FlowTemplateService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,6 +27,8 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     private FlowTemplateRepository flowTemplateRepository;
     @Inject
     private FlowTemplateNodeRepository flowTemplateNodeRepository;
+    @Inject
+    private FlowTemplateNodeUserTaskRepository flowTemplateNodeUserTaskRepository;
     @Inject
     private FlowInstanceRepository flowInstanceRepository;
 
@@ -105,6 +107,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                     }
                     flowTemplateRepository.delete(id);
                     flowTemplateNodeRepository.deleteByTemplateId(id);
+                    flowTemplateNodeUserTaskRepository.deleteByTmeplateId(id);
                     break;
                 }
             }
@@ -194,7 +197,18 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
             throw new BusinessException("请先冻结模板！");
         }
         TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
-        flowTemplateNodeRepository.deleteNodeAndNodeChild(nodeId, node.getTotalCode() + ",%");
+        if (node == null) {
+            throw new BusinessException("节点不存在！");
+        }
+
+        List<Long> nodeIdList = flowTemplateNodeRepository.listNodeIdByTotalCode(node.getTotalCode() + ",%");
+        if (nodeIdList == null) {
+            nodeIdList = new ArrayList<>();
+        }
+        nodeIdList.add(nodeId);
+        flowTemplateNodeRepository.deleteByIdList(nodeIdList);
+        flowTemplateNodeUserTaskRepository.deleteByTmeplateIdAndNodeIdList(templateId, nodeIdList);
+
         if (node.getPid() != 0L) {
             return flowTemplateNodeRepository.findOne(node.getPid());
         } else { // 无父级节点，返回 null
@@ -204,16 +218,41 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
 
     @Override
     public FlowChartResponse getTemplateFlowChart(Long id) {
+        TbFlowTemplate template = flowTemplateRepository.findOne(id);
+        if (template == null) {
+            throw new BusinessException("模板不存在！");
+        }
+        Map<Integer, List<TbFlowTemplateNode>> map = new HashMap<>();
+        List<TbFlowTemplateNode> nodeListTemp = null;
+        List<TbFlowTemplateNode> templateNodeList = flowTemplateNodeRepository.listByTemplateId(id);
+        if (templateNodeList != null && templateNodeList.size() > 0) {
+            for (TbFlowTemplateNode node : templateNodeList) {
+                Integer level = node.getNodeLevel();
+                nodeListTemp = map.get(level);
+                if (nodeListTemp == null) {
+                    nodeListTemp = new ArrayList<>();
+                    map.put(level, nodeListTemp);
+                }
+                nodeListTemp.add(node);
+            }
+        }
         FlowChartResponse flowChart = new FlowChartResponse();
 
-        flowChart.setName("项目经理审批");
-        flowChart.setContent("啥快递焚枯食淡附近就克里斯多夫接口了接口了发动机克里斯多夫了愧疚");
+        //flowChart.setName("项目经理审批");
+        //flowChart.setContent("啥快递焚枯食淡附近就克里斯多夫接口了接口了发动机克里斯多夫了愧疚");
 
-
-
-
-
-
+        int maxSize = map.size();
+        if (maxSize > 0) {
+            TbFlowTemplateNode nodeTemp = null;
+            for (int x = 0; x < maxSize; x++) {
+                nodeListTemp = map.get(x);
+                if (x == 0) {
+                    nodeTemp = nodeListTemp.get(0);
+                    //flowChart.setName(nodeTemp.getNodeName());
+                    //flowChart.setContent(nodeTemp.getu);
+                }
+            }
+        }
 
         return flowChart;
     }

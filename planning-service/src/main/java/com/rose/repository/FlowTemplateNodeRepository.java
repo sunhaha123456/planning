@@ -20,9 +20,8 @@ public interface FlowTemplateNodeRepository extends CrudRepository<TbFlowTemplat
     @Query(value = "delete from tb_flow_template_node where template_id = :templateId", nativeQuery = true)
     int deleteByTemplateId(@Param(value = "templateId") Long templateId);
 
-    @Modifying
-    @Query(value = "delete from tb_flow_template_node where id = :id or total_code like :childTotalCode", nativeQuery = true)
-    int deleteNodeAndNodeChild(@Param(value = "id") Long id, @Param(value = "childTotalCode") String childTotalCode);
+    @Query(value = "select id from tb_flow_template_node where total_code like :totalCode order by id asc", nativeQuery = true)
+    List<Long> listNodeIdByTotalCode(@Param(value = "totalCode") String totalCode);
 
     @Query(value = "select * from tb_flow_template_node where pid in :pidList order by id asc", nativeQuery = true)
     List<TbFlowTemplateNode> listByPid(@Param(value = "pidList") List<Long> pidList);
@@ -32,4 +31,11 @@ public interface FlowTemplateNodeRepository extends CrudRepository<TbFlowTemplat
 
     @Query(value = "select * from tb_flow_template_node where template_id = :templateId and node_name = :nodeName and id != :id order by id asc", nativeQuery = true)
     List<TbFlowTemplateNode> listByTemplateIdAndNodeName(@Param(value = "templateId") Long templateId, @Param(value = "nodeName") String nodeName, @Param(value = "id") Long id);
+
+    @Query(value = "select * from tb_flow_template_node where template_id = :templateId order by id asc", nativeQuery = true)
+    List<TbFlowTemplateNode> listByTemplateId(@Param(value = "templateId") Long templateId);
+
+    @Modifying
+    @Query(value = "delete from tb_flow_template_node where id in :idList", nativeQuery = true)
+    int deleteByIdList(@Param(value = "idList") List<Long> idList);
 }
