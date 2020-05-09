@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
 
 @ToString(callSuper = true)
 @lombok.Data
@@ -45,4 +46,7 @@ public class TbFlowTemplateNode extends BaseDataIdLong {
     // 执行方式 0抢占 1会签
     @Column(name = "operate_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '执行方式'")
     private Integer operateType;
+
+    @Transient
+    private List<Long> userIdLisk;
 }
