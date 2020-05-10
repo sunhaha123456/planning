@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -200,7 +201,6 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                 resp = new EasyuiTreeResponse();
                 resp.setId(user.getId());
                 resp.setText(user.getLoginName() + "（" + user.getUserName() + "）");
-                resp.setState("closed");
                 userTreeList.add(resp);
             }
         }
@@ -221,11 +221,8 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
             throw new BusinessException("节点不存在！");
         }
 
-        List<Long> nodeIdList = flowTemplateNodeRepository.listNodeIdByTotalCode(node.getTotalCode() + ",%");
-        if (nodeIdList == null) {
-            nodeIdList = new ArrayList<>();
-        }
-        nodeIdList.add(nodeId);
+        List<Long> nodeIdList = flowTemplateNodeRepository.listNodeAndChildId(nodeId, node.getTotalCode() + ",%");
+
         flowTemplateNodeRepository.deleteByIdList(nodeIdList);
         flowTemplateNodeUserTaskRepository.deleteByTmeplateIdAndNodeIdList(templateId, nodeIdList);
 
@@ -285,6 +282,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         Date now = new Date();
         param.setCreateDate(now);
         param.setLastModified(now);
+        param.setUserId(user.getId());
 
         TbFlowTemplateNodeUserTask res = flowTemplateNodeUserTaskRepository.save(param);
         res.setLoginName(user.getLoginName());

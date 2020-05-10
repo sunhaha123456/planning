@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public interface FlowTemplateNodeRepository extends CrudRepository<TbFlowTemplateNode, Long> {
@@ -20,8 +21,8 @@ public interface FlowTemplateNodeRepository extends CrudRepository<TbFlowTemplat
     @Query(value = "delete from tb_flow_template_node where template_id = :templateId", nativeQuery = true)
     int deleteByTemplateId(@Param(value = "templateId") Long templateId);
 
-    @Query(value = "select id from tb_flow_template_node where total_code like :totalCode order by id asc", nativeQuery = true)
-    List<Long> listNodeIdByTotalCode(@Param(value = "totalCode") String totalCode);
+    @Query(value = "select id from tb_flow_template_node where id = :id or total_code like :totalCode order by id asc", nativeQuery = true)
+    List<Long> listNodeAndChildId(@Param(value = "id") Long id, @Param(value = "totalCode") String totalCode);
 
     @Query(value = "select * from tb_flow_template_node where pid in :pidList order by id asc", nativeQuery = true)
     List<TbFlowTemplateNode> listByPid(@Param(value = "pidList") List<Long> pidList);
