@@ -11,10 +11,10 @@ import java.util.List;
 public interface SysUserRepository extends CrudRepository<TbSysUser, Long> {
 
     @Query(value = "select * from tb_sys_user where login_name = :loginName and upwd = :upwd", nativeQuery = true)
-    TbSysUser findUserNormal(@Param(value = "loginName") String loginName, @Param(value = "upwd") String upwd);
+    TbSysUser findByLoginNameAndUpwd(@Param(value = "loginName") String loginName, @Param(value = "upwd") String upwd);
 
     @Query(value = "select count(1) from tb_sys_user where login_name = :loginName", nativeQuery = true)
-    long countByName(@Param(value = "loginName") String loginName);
+    long countByLoginName(@Param(value = "loginName") String loginName);
 
     @Modifying
     @Query(value = "update tb_sys_user set user_state = :userState where id = :id", nativeQuery = true)
@@ -34,4 +34,7 @@ public interface SysUserRepository extends CrudRepository<TbSysUser, Long> {
 
     @Query(value = "select * from tb_sys_user where role_group_id = :roleGroupId", nativeQuery = true)
     List<TbSysUser> findByRoleGroupId(@Param(value = "roleGroupId") Long roleGroupId);
+
+    @Query(value = "select * from tb_sys_user where login_name = :loginName", nativeQuery = true)
+    TbSysUser findByLoginName(@Param(value = "loginName") String loginName);
 }

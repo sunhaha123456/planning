@@ -1,6 +1,7 @@
 package com.rose.data.entity;
 
 import com.rose.common.data.base.BaseDataIdLong;
+import com.rose.data.to.response.EasyuiTreeResponse;
 import lombok.ToString;
 
 import javax.persistence.Column;
@@ -48,5 +49,5 @@ public class TbFlowTemplateNode extends BaseDataIdLong {
     private Integer operateType;
 
     @Transient
-    private List<Long> userIdLisk;
+    private List<EasyuiTreeResponse> userTreeResponse;
 }

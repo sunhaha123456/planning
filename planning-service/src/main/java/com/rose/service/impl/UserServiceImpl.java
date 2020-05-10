@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     public void save(UserSaveRequest param) throws Exception {
         Long id = param.getId();
         if (id == null) { // 新增
-            long c = sysUserRepository.countByName(param.getLoginName());
+            long c = sysUserRepository.countByLoginName(param.getLoginName());
             if (0 < c) {
                 throw new BusinessException("用户名重复！");
             }

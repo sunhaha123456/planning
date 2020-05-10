@@ -5,11 +5,11 @@ import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.entity.TbFlowTemplateNode;
+import com.rose.data.entity.TbFlowTemplateNodeUserTask;
+import com.rose.data.entity.TbSysUser;
+import com.rose.data.to.response.EasyuiTreeResponse;
 import com.rose.data.to.response.FlowChartResponse;
-import com.rose.repository.FlowInstanceRepository;
-import com.rose.repository.FlowTemplateNodeRepository;
-import com.rose.repository.FlowTemplateNodeUserTaskRepository;
-import com.rose.repository.FlowTemplateRepository;
+import com.rose.repository.*;
 import com.rose.service.FlowTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,11 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     @Inject
     private FlowTemplateNodeUserTaskRepository flowTemplateNodeUserTaskRepository;
     @Inject
+    private FlowTemplateNodeUserTaskRepositoryCustom flowTemplateNodeUserTaskRepositoryCustom;
+    @Inject
     private FlowInstanceRepository flowInstanceRepository;
+    @Inject
+    private SysUserRepository sysUserRepository;
 
     @Override
     public List<TbFlowTemplate> getTemplateTree() {
@@ -98,7 +102,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                 }
                 case 2: { // 删除
                     if (template.getStatus() != 1) {
-                        throw new BusinessException("请先冻结模板！");
+                        throw new BusinessException("请先停用模板！");
                     }
 
                     long c = flowInstanceRepository.countByTemplateId(id);
@@ -123,7 +127,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         }
         TbFlowTemplate template = flowTemplateRepository.findOne(param.getTemplateId());
         if (template.getStatus() != 1) {
-            throw new BusinessException("请先冻结模板！");
+            throw new BusinessException("请先停用模板！");
         }
 
         Date now = new Date();
@@ -186,7 +190,23 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
 
     @Override
     public TbFlowTemplateNode getTemplateNodeDetail(Long id) {
-        return flowTemplateNodeRepository.findOne(id);
+        TbFlowTemplateNode node = flowTemplateNodeRepository.findOne(id);
+
+        List<EasyuiTreeResponse> userTreeList = new ArrayList<>();
+        List<TbFlowTemplateNodeUserTask> userList = flowTemplateNodeUserTaskRepositoryCustom.queryNodeUserList(id);
+        if (userList != null && userList.size() > 0) {
+            EasyuiTreeResponse resp = null;
+            for (TbFlowTemplateNodeUserTask user : userList) {
+                resp = new EasyuiTreeResponse();
+                resp.setId(user.getId());
+                resp.setText(user.getLoginName() + "（" + user.getUserName() + "）");
+                resp.setState("closed");
+                userTreeList.add(resp);
+            }
+        }
+        node.setUserTreeResponse(userTreeList);
+
+        return node;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -194,7 +214,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     public TbFlowTemplateNode deleteTemplateNodeAndReturnParentNode(Long nodeId, Long templateId) {
         TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
         if (template.getStatus() != 1) {
-            throw new BusinessException("请先冻结模板！");
+            throw new BusinessException("请先停用模板！");
         }
         TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
         if (node == null) {
@@ -214,6 +234,63 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         } else { // 无父级节点，返回 null
             return null;
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteTemplateNodeUser(Long id, Long templateId, Long nodeId) {
+        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
+        if (template.getStatus() != 1) {
+            throw new BusinessException("请先停用模板！");
+        }
+        TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
+        if (node == null) {
+            throw new BusinessException("节点不存在！");
+        }
+        int c = flowTemplateNodeUserTaskRepository.deleteByIdAndTmeplateIdAndNodeId(id, templateId, nodeId);
+        if (c <= 0) {
+            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TbFlowTemplateNodeUserTask addTemplateNodeUser(TbFlowTemplateNodeUserTask param) {
+        Long templateId = param.getTemplateId();
+        Long nodeId = param.getTemplateNodeId();
+        String loginName = param.getLoginName();
+
+        if (StringUtil.isEmpty(loginName)) {
+            throw new BusinessException("用户登陆名不能为空！");
+        }
+        TbSysUser user = sysUserRepository.findByLoginName(loginName);
+        if (user == null) {
+            throw new BusinessException("查无对应用户！");
+        }
+        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
+        if (template.getStatus() != 1) {
+            throw new BusinessException("请先停用模板！");
+        }
+        TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
+        if (node == null) {
+            throw new BusinessException("节点不存在！");
+        }
+
+        List<TbFlowTemplateNodeUserTask> userTaskList = flowTemplateNodeUserTaskRepository.findByTmeplateIdAndNodeIdAndUserId(templateId, nodeId, user.getId());
+        if (userTaskList != null && userTaskList.size() > 0) {
+            throw new BusinessException("节点下已关联过了该用户！");
+        }
+
+        param.setId(null);
+        Date now = new Date();
+        param.setCreateDate(now);
+        param.setLastModified(now);
+
+        TbFlowTemplateNodeUserTask res = flowTemplateNodeUserTaskRepository.save(param);
+        res.setLoginName(user.getLoginName());
+        res.setUserName(user.getUserName());
+
+        return res;
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.rose.controler;
 
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.entity.TbFlowTemplateNode;
+import com.rose.data.entity.TbFlowTemplateNodeUserTask;
+import com.rose.data.to.response.EasyuiTreeResponse;
 import com.rose.data.to.response.FlowChartResponse;
 import com.rose.service.FlowTemplateService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,12 @@ public class FlowTemplateControler {
         return flowTemplateService.getTemplateTree();
     }
 
+    /**
+     * 功能：获取指定模板的节点下的子节点tree
+     * @param templateId
+     * @param nodePid
+     * @return
+     */
     @GetMapping(value= "/getTemplateNodeTree")
     public TbFlowTemplate getTemplateNodeTree(@RequestParam Long templateId, @RequestParam Long nodePid) {
         return flowTemplateService.getTemplateNodeTree(templateId, nodePid);
@@ -55,6 +63,16 @@ public class FlowTemplateControler {
     @PostMapping(value= "/deleteTemplateNodeAndReturnParentNode")
     public TbFlowTemplateNode deleteTemplateNodeAndReturnParentNode(@RequestParam Long nodeId, @RequestParam Long templateId) {
         return flowTemplateService.deleteTemplateNodeAndReturnParentNode(nodeId, templateId);
+    }
+
+    @PostMapping(value= "/deleteTemplateNodeUser")
+    public void deleteTemplateNodeUser(@RequestParam Long id, @RequestParam Long templateId, @RequestParam Long nodeId) {
+        flowTemplateService.deleteTemplateNodeUser(id, templateId, nodeId);
+    }
+
+    @PostMapping(value= "/addTemplateNodeUser")
+    public TbFlowTemplateNodeUserTask addTemplateNodeUser(@RequestBody TbFlowTemplateNodeUserTask param) {
+        return flowTemplateService.addTemplateNodeUser(param);
     }
 
     @GetMapping(value= "/getTemplateFlowChart")

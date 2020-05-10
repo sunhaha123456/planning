@@ -46,7 +46,7 @@ public class LoginServiceImpl implements LoginService {
             throw new BusinessException(ResponseResultCode.CODE_ERROR);
         }
         // 2、校验用户名和密码，并且用户状态正常
-        TbSysUser sysUser = sysUserRepository.findUserNormal(user.getLoginName(), Md5Util.MD5Encode(user.getUpwd()));
+        TbSysUser sysUser = sysUserRepository.findByLoginNameAndUpwd(user.getLoginName(), Md5Util.MD5Encode(user.getUpwd()));
         if (sysUser == null) {
             throw new BusinessException(ResponseResultCode.LOGIN_ERROR);
         }

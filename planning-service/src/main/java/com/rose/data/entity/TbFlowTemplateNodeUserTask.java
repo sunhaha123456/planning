@@ -6,6 +6,7 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @ToString(callSuper = true)
 @lombok.Data
@@ -21,4 +22,10 @@ public class TbFlowTemplateNodeUserTask extends BaseDataIdLong {
 
     @Column(name = "user_id", columnDefinition = "BIGINT COMMENT '用户id'")
     private Long userId;
+
+    @Transient
+    private String loginName;
+
+    @Transient
+    private String userName;
 }

@@ -262,6 +262,109 @@
             }
         }
 
+        function chooseUserShow() {
+            if (!isTreeNodeSelected("templateTree")) {
+                alertWarn("请先选中模板！");
+                return;
+            }
+            if (!isTreeNodeSelected("templateNodeTree")) {
+                alertWarn("请先选中节点！");
+                return;
+            }
+
+            var nodeId = getTreeSelectedNode("templateNodeTree").id;
+            var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeDetail", {"id":nodeId});
+            if (result.code == '200') {
+                var userTree =  result.data.userTreeResponse;
+
+                userTreeInit(userTree);
+                $("#userLoginNameAdd").val("");
+
+                $('#chooseUserForm').dialog('open');
+            } else {
+                alertWarn(result.msg);
+                return;
+            }
+        }
+
+        function userTreeInit(userTree) {
+            if (userTree == null) {
+                userTree = new Array();
+            }
+
+            $('#userTree').tree({
+                lines : true,
+                multiple : false,
+                checkbox : false,
+                data : userTree
+            });
+        }
+
+        function deleteChooseUser() {
+            if (!isTreeNodeSelected("templateTree")) {
+                alertWarn("请先选中模板！");
+                return;
+            }
+            if (!isTreeNodeSelected("templateNodeTree")) {
+                alertWarn("请先选中节点！");
+                return;
+            }
+            if (!isTreeNodeSelected("userTree")) {
+                alertWarn("请先选中用户！");
+                return;
+            }
+
+            $.messager.confirm('确定操作', "确定删除吗？", function (flag) {
+                if (flag) {
+                    var id = getTreeSelectedNode("userTree").id;
+                    var templateId = getTreeSelectedNode("templateTree").id;
+                    var nodeId = getTreeSelectedNode("templateNodeTree").id;
+                    var param = "?id=" + id + "&templateId=" + templateId + "&nodeId" + nodeId;
+                    var result = ajaxSynchPostJson("user/flowTemplate/saveTemplateNode" + param, null);
+                    if (result.code == '200') {
+                        var userTree = $("#userTree");
+                        var node = userTree.tree("find", id);
+                        userTree.tree("remove", node.target);
+                        alertSuccess();
+                    } else {
+                        alertWarn(result.msg);
+                        return;
+                    }
+                }
+            });
+        }
+
+        function addUser() {
+            if (!isTreeNodeSelected("templateTree")) {
+                alertWarn("请先选中模板！");
+                return;
+            }
+            if (!isTreeNodeSelected("templateNodeTree")) {
+                alertWarn("请先选中节点！");
+                return;
+            }
+            var templateId = getTreeSelectedNode("templateTree").id;
+            var nodeId = getTreeSelectedNode("templateNodeTree").id;
+            var result = ajaxSynchPostJson("user/flowTemplate/addTemplateNodeUser", {
+                "templateId": templateId,
+                "templateNodeId": nodeId,
+                "loginName": $("#userLoginNameAdd").val()
+            });
+            if (result.code == '200') {
+                $('#userTree').tree('append', {
+                    data: {
+                        "id": result.data.id,
+                        "text": result.data.loginName + "（" + result.data.userName + "）",
+                        "state": "closed"
+                    }
+                });
+                alertSuccess();
+            } else {
+                alertWarn(result.msg);
+                return;
+            }
+        }
+
         function deleteNode() {
             if (!isTreeNodeSelected("templateTree")) {
                 alertWarn("请先选中模板！");
@@ -379,7 +482,8 @@
 </form>
 
 <form id="saveTemplateNodeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'节点',modal:true,closed:true,cache:false,iconCls:'icon-save',
+      data-options="top:150,width:335,title:'节点',modal:true,closed:true,cache:false,iconCls:'icon-save',
+       toolbar:'#saveTemplateNodeFormToolbar',
        onClose:function () {
             $('#saveTemplateNodeForm').form('reset');
        },
@@ -400,6 +504,27 @@
     <p>节点类型：<input name="nodeOperateTypeNodeSave" type="radio" value="0" checked="checked">抢占</input><input name="nodeOperateTypeNodeSave" type="radio" value="1">会签</input></p>
     <p>节点描述：<textarea id="nodeInstructionNodeSave" rows="2" cols="29" /></p>
 </form>
+<div id="saveTemplateNodeFormToolbar" style="margin-bottom:5px;">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="chooseUserShow()">执行人</a>
+</div>
+
+<div id="chooseUserForm" class="easyui-dialog"
+     data-options="top:150,width:380,height:400,title:'执行人',modal:true,closed:true,cache:false,iconCls:'icon-user-add',toolbar:'#chooseUserFormToolbar'">
+    <ul id="userTree"/>
+</div>
+<div id="chooseUserFormToolbar" style="padding:2px 0">
+    <table cellpadding="0" cellspacing="0" style="width:100%">
+        <tr>
+            <td style="padding-left:2px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true" onclick="deleteChooseUser()">删除</a>
+            </td>
+            <td style="text-align:right;padding-right:2px">
+                <input id="userLoginNameAdd" style="width:150px;margin-top:5px;"></input>
+                <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="addUser()">新增</a>
+            </td>
+        </tr>
+    </table>
+</div>
 
 <div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:850px;height:400px;">
     <div id="flowChartDiv"></div>
