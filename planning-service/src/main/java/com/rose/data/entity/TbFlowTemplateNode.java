@@ -2,6 +2,7 @@ package com.rose.data.entity;
 
 import com.rose.common.data.base.BaseDataIdLong;
 import com.rose.data.to.response.EasyuiTreeResponse;
+import com.rose.data.to.response.FlowChartResponse;
 import lombok.ToString;
 
 import javax.persistence.Column;
@@ -50,4 +51,8 @@ public class TbFlowTemplateNode extends BaseDataIdLong {
 
     @Transient
     private List<EasyuiTreeResponse> userTreeResponse;
+
+    // 用于记录流程图的children
+    @Transient
+    private List<FlowChartResponse> children;
 }

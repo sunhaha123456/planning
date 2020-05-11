@@ -532,7 +532,7 @@
     </table>
 </div>
 
-<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:850px;height:400px;">
+<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
     <div id="flowChartDiv"></div>
 </div>
 </body>

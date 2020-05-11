@@ -311,20 +311,52 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                 nodeListTemp.add(node);
             }
         }
+
         FlowChartResponse flowChart = new FlowChartResponse();
 
         //flowChart.setName("项目经理审批");
         //flowChart.setContent("啥快递焚枯食淡附近就克里斯多夫接口了接口了发动机克里斯多夫了愧疚");
 
-        int maxSize = map.size();
-        if (maxSize > 0) {
-            TbFlowTemplateNode nodeTemp = null;
-            for (int x = 0; x < maxSize; x++) {
-                nodeListTemp = map.get(x);
-                if (x == 0) {
+        Integer level = null;
+        TbFlowTemplateNode nodeTemp = null;
+        List<FlowChartResponse> children = null;
+        FlowChartResponse flowChartTemp = null;
+        for (Map.Entry<Integer, List<TbFlowTemplateNode>> entry : map.entrySet()) {
+            level = entry.getKey();
+            nodeListTemp = entry.getValue();
+            if (level != null && nodeListTemp != null) {
+                if (level == 0) {
                     nodeTemp = nodeListTemp.get(0);
-                    //flowChart.setName(nodeTemp.getNodeName());
-                    //flowChart.setContent(nodeTemp.getu);
+                    flowChart.setName(nodeTemp.getNodeName());
+                    flowChart.setContent("xxx,xxx,xxx");
+                    flowChart.setChildren(new ArrayList<FlowChartResponse>());
+                } else if (level == 1) {
+                    children = flowChart.getChildren();
+                    for (TbFlowTemplateNode node : nodeListTemp) {
+                        flowChartTemp = new FlowChartResponse();
+                        flowChartTemp.setName(node.getNodeName());
+                        flowChartTemp.setContent("xxx,xxx,xxx");
+                        flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
+                        children.add(flowChartTemp);
+                        node.setChildren(flowChartTemp.getChildren());
+                    }
+                } else {
+                    List<TbFlowTemplateNode> upperList = map.get(level - 1);
+                    Map<Long, TbFlowTemplateNode> upperMap = upperList.stream().collect(Collectors.toMap(TbFlowTemplateNode::getId, TbFlowTemplateNode -> TbFlowTemplateNode));
+
+                    for (TbFlowTemplateNode node : nodeListTemp) {
+                        flowChartTemp = new FlowChartResponse();
+                        flowChartTemp.setName(node.getNodeName());
+                        flowChartTemp.setContent("xxx,xxx,xxx");
+                        flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
+                        node.setChildren(flowChartTemp.getChildren());
+
+                        nodeTemp = upperMap.get(node.getPid());
+                        if (nodeTemp == null) {
+                            throw new BusinessException("获取父级node失败！");
+                        }
+                        nodeTemp.getChildren().add(flowChartTemp);
+                    }
                 }
             }
         }
