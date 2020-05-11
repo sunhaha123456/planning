@@ -440,7 +440,7 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addTemplateShow()">新增模板</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="operateTemplateState(1)">停用模板</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="operateTemplateState(0)">启用模板</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)">删除表单</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)">删除模板</a>
         </div>
 
         <div>

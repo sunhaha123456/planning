@@ -35,7 +35,7 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "remark_info", columnDefinition = "VARCHAR(500) COMMENT '启动时用户备注信息'")
     private String remarkInfo;
 
-    //0已启动 1已完成 2用户作废 3管理员冻结
+    //0已启动 1已完成 2用户撤回 3管理员冻结
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程实例状态'")
     private Integer state;
 
