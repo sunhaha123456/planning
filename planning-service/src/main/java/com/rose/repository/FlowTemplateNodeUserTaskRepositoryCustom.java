@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FlowTemplateNodeUserTaskRepositoryCustom extends BaseRepository {
     List<TbFlowTemplateNodeUserTask> queryNodeUserList(Long nodeId);
+    List<TbFlowTemplateNodeUserTask> queryTemplateNodeUserList(Long templateId);
 }

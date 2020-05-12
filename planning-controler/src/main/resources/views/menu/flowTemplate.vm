@@ -415,8 +415,13 @@
                         'nodeContent': 'content',
                         'createNode': function (node, nodeData) {
                             var nodeDom = $(node);
-                            $('.title', nodeDom).attr('title', nodeData.name);
-                            $('.content', nodeDom).attr("title", nodeData.content);
+
+                            if (nodeData.name != null && nodeData.name != '') {
+                                $('.title', nodeDom).attr('title', nodeData.name);
+                            }
+                            if (nodeData.content != null && nodeData.content != '') {
+                                $('.content', nodeDom).attr("title", nodeData.content);
+                            }
                         }
                     });
                 }
@@ -434,36 +439,32 @@
     </script>
 </head>
 <body>
-<table id="manager">
-    <div id="manager_tool">
-        <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addTemplateShow()">新增模板</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="operateTemplateState(1)">停用模板</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="operateTemplateState(0)">启用模板</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)">删除模板</a>
-        </div>
+<div style="margin-bottom:5px;">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addTemplateShow()">新增模板</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="operateTemplateState(1)">停用模板</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="operateTemplateState(0)">启用模板</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)">删除模板</a>
+</div>
 
-        <div>
-            <div style="float:left; width: 25%">
-                <ul id="templateTree"/>
-            </div>
-            <div style="float:left; width: 73%">
-                <div>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="saveNodeShow(0)">新增一级节点</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="saveNodeShow(1)">新增子项节点</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="saveNodeShow(2)">编辑</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteNode()">删除</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowChartShow()">流程预览</a>
-                </div>
-                <div style="margin-top: 10px;">
-                    <span id="templateStatus" style="padding-left: 10px;"></span>
-                </div>
-                <ul id="templateNodeTree"/>
-            </div>
-            <div style="clear:both;"></div>
-        </div>
+<div>
+    <div style="float:left; width: 25%">
+        <ul id="templateTree"/>
     </div>
-</table>
+    <div style="float:left; width: 73%">
+        <div>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="saveNodeShow(0)">新增一级节点</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="saveNodeShow(1)">新增子项节点</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="saveNodeShow(2)">编辑</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteNode()">删除</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowChartShow()">流程预览</a>
+        </div>
+        <div style="margin-top: 10px;">
+            <span id="templateStatus" style="padding-left: 10px;"></span>
+        </div>
+        <ul id="templateNodeTree"/>
+    </div>
+    <div style="clear:both;"></div>
+</div>
 
 <form id="addTemplateForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
       data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-save',

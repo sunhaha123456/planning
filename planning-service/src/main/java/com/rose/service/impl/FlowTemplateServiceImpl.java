@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -312,10 +311,21 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
             }
         }
 
-        FlowChartResponse flowChart = new FlowChartResponse();
+        Map<Long, List<String>> nodeUserMap = new HashMap<>();
+        List<String> userLoginNameListTemp = null;
+        List<TbFlowTemplateNodeUserTask> userList = flowTemplateNodeUserTaskRepositoryCustom.queryTemplateNodeUserList(id);
+        if (userList != null && userList.size() > 0) {
+            for (TbFlowTemplateNodeUserTask t : userList) {
+                userLoginNameListTemp = nodeUserMap.get(t.getTemplateNodeId());
+                if (userLoginNameListTemp == null) {
+                    userLoginNameListTemp = new ArrayList<>();
+                    nodeUserMap.put(t.getTemplateNodeId(), userLoginNameListTemp);
+                }
+                userLoginNameListTemp.add(t.getLoginName());
+            }
+        }
 
-        //flowChart.setName("项目经理审批");
-        //flowChart.setContent("啥快递焚枯食淡附近就克里斯多夫接口了接口了发动机克里斯多夫了愧疚");
+        FlowChartResponse flowChart = new FlowChartResponse();
 
         Integer level = null;
         TbFlowTemplateNode nodeTemp = null;
@@ -328,14 +338,24 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                 if (level == 0) {
                     nodeTemp = nodeListTemp.get(0);
                     flowChart.setName(nodeTemp.getNodeName());
-                    flowChart.setContent("xxx,xxx,xxx");
+
+                    userLoginNameListTemp = nodeUserMap.get(nodeTemp.getId());
+                    if (userLoginNameListTemp != null) {
+                        flowChart.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                    }
+
                     flowChart.setChildren(new ArrayList<FlowChartResponse>());
                 } else if (level == 1) {
                     children = flowChart.getChildren();
                     for (TbFlowTemplateNode node : nodeListTemp) {
                         flowChartTemp = new FlowChartResponse();
                         flowChartTemp.setName(node.getNodeName());
-                        flowChartTemp.setContent("xxx,xxx,xxx");
+
+                        userLoginNameListTemp = nodeUserMap.get(node.getId());
+                        if (userLoginNameListTemp != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                        }
+
                         flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
                         children.add(flowChartTemp);
                         node.setChildren(flowChartTemp.getChildren());
@@ -347,7 +367,12 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                     for (TbFlowTemplateNode node : nodeListTemp) {
                         flowChartTemp = new FlowChartResponse();
                         flowChartTemp.setName(node.getNodeName());
-                        flowChartTemp.setContent("xxx,xxx,xxx");
+
+                        userLoginNameListTemp = nodeUserMap.get(node.getId());
+                        if (userLoginNameListTemp != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                        }
+
                         flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
                         node.setChildren(flowChartTemp.getChildren());
 

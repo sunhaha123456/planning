@@ -24,25 +24,108 @@
     <!-- flow chart end -->
     <script th:inline="javascript">
 
-        $(function () {
+        function searchUser() {
+            var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":1, "rows":10});
+            if (result.code == '200') {
+                dataGridPageInit();
+                $('#flowInstanceManager').datagrid('loadData', result.data);
+            } else {
+                alertWarn(result.msg);
+            }
+        }
 
+        function dataGridInit() {
+            $('#flowInstanceManager').datagrid({
+                fit : true,
+                fitColumns : true,
+                striped : true,
+                rownumbers : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                toolbar : '#flowInstanceManager_tool',
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'loginName',
+                        title : '登录用户名',
+                        width : 100
+                    },
+                    {
+                        field : 'userName',
+                        title : '用户名',
+                        width : 100
+                    },
+                    {
+                        field : 'roleGroupName',
+                        title : '所属角色',
+                        width : 100
+                    },
+                    {
+                        field : 'roleGroupId',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'userState',
+                        title : '状态',
+                        width : 100,
+                        formatter: function(value,row,index){
+                            if (value == 0){
+                                return "正常";
+                            } else {
+                                return "冻结";
+                            }
+                        }
+                    },
+                    {
+                        field : 'createDate',
+                        title : '创建日期',
+                        width : 100
+                    }
+                ]]
+            });
+        }
+
+        function dataGridPageInit() {
+            var p = $('#flowInstanceManager').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 10,
+                pageList : [10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":pageNumber, "rows":pageSize});
+                    if (result.code == '200') {
+                        $('#flowInstanceManager').datagrid('loadData', result.data);
+                    }
+                },
+            });
+        }
+
+        $(function () {
+            dataGridInit();
+            //searchUser();
         });
     </script>
 </head>
 <body>
-<table id="manager">
-    <div id="manager_tool">
-        <div style="margin-bottom:5px;">
-            &nbsp;&nbsp;
-            模板名称：<input type="text" class="textbox" id="templateNameSearch" style="width:180px" />
-            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchTemplate()">查询</a>
-        </div>
+<div style="margin-bottom:5px;">
+    &nbsp;&nbsp;
+    模板名称：<input type="text" class="textbox" id="templateNameSearch" style="width:180px" />
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchTemplate()">查询</a>
+</div>
 
-        <div>
-            <div style="float:left; width: 25%">
-                <ul id="templateTree"/>
-            </div>
-            <div style="float:left; width: 73%">
+<div>
+    <div style="float:left; width: 25%">
+        <ul id="templateTree"/>
+    </div>
+    <div style="float:left; width: 73%">
+        <table id="flowInstanceManager">
+            <div id="flowInstanceManager_tool">
                 <div>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="startFlowInstance()">启动流程</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="undoFlowInstance()">撤回流程</a>
@@ -53,15 +136,14 @@
                     &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
                     <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
                 </div>
-                <ul id="templateNodeTree"/>
             </div>
-            <div style="clear:both;"></div>
-        </div>
+        </table>
     </div>
-</table>
+    <div style="clear:both;"></div>
+</div>
 
-<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
-    <div id="flowChartDiv"></div>
+<div id="flowInstanceChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
+    <div id="flowInstanceChartDiv"></div>
 </div>
 </body>
 </html>

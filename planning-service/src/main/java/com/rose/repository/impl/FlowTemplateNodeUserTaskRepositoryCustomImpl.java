@@ -20,4 +20,13 @@ public class FlowTemplateNodeUserTaskRepositoryCustomImpl extends BaseRepository
         sql.append(" ON a.user_id = b.id AND a.template_node_id = ? order by a.id asc ");
         return queryList(sql.toString(), TbFlowTemplateNodeUserTask.class, new Object[]{nodeId});
     }
+
+    @Override
+    public List<TbFlowTemplateNodeUserTask> queryTemplateNodeUserList(Long templateId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT a.id, a.template_node_id templateNodeId, b.login_name loginName, b.user_name userName ");
+        sql.append(" FROM tb_flow_template_node_user_task a JOIN tb_sys_user b ");
+        sql.append(" ON a.user_id = b.id AND a.template_id = ? order by a.id asc ");
+        return queryList(sql.toString(), TbFlowTemplateNodeUserTask.class, new Object[]{templateId});
+    }
 }
