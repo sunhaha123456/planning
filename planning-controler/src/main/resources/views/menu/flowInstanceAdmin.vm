@@ -51,28 +51,18 @@
                         hidden : true
                     },
                     {
-                        field : 'loginName',
-                        title : '登录用户名',
+                        field : 'instanceName',
+                        title : '流程名称',
                         width : 100
                     },
                     {
-                        field : 'userName',
-                        title : '用户名',
+                        field : 'startTime',
+                        title : '启动时间',
                         width : 100
                     },
                     {
-                        field : 'roleGroupName',
-                        title : '所属角色',
-                        width : 100
-                    },
-                    {
-                        field : 'roleGroupId',
-                        width : 100,
-                        hidden : true
-                    },
-                    {
-                        field : 'userState',
-                        title : '状态',
+                        field : 'state',
+                        title : '流程状态',
                         width : 100,
                         formatter: function(value,row,index){
                             if (value == 0){
@@ -81,11 +71,6 @@
                                 return "冻结";
                             }
                         }
-                    },
-                    {
-                        field : 'createDate',
-                        title : '创建日期',
-                        width : 100
                     }
                 ]]
             });

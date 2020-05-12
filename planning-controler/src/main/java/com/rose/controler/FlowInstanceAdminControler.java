@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 
 /**
- * 描述：流程实例 controler
+ * 描述：流程实例 管理员 controler
  * @author sunpeng
  */
 @Slf4j
 @RestController
-@RequestMapping("/user/flowInstance")
-public class FlowInstanceControler {
+@RequestMapping("/user/flowInstanceAdmin")
+public class FlowInstanceAdminControler {
 
     @Inject
 	private FlowInstanceService flowInstanceService;

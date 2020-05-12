@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/static/easyui/themes/easy.common.css}"></link>
+    <script th:inline="javascript">
+        var contextPath = [[@{/}]];
+        var interceptorToken = [[${token}]];
+        var interceptorUserId = [[${userId}]];
+    </script>
+    <script th:src="@{/static/easyui/easy.common.js}"></script>
+    <script th:src="@{/static/easyuiMask.js}"></script>
+    <script th:src="@{/static/myFun.js}"></script>
+    <!-- flow chart start -->
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/jquery.orgchart.css}"></link>
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/font-awesome.min.css}"></link>
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/style.css}"></link>
+    <style type="text/css">
+        .orgchart { background: #fff; }
+        .orgchart .node .title { background-color: #006699; }
+        .orgchart .node .content { border-color: #006699; }
+    </style>
+    <script th:src="@{/static/flowChart/js/jquery.orgchart.js}"></script>
+    <!-- flow chart end -->
+    <script th:inline="javascript">
+        function templateTreeInit() {
+            var result = ajaxSynchGet("user/flowInstanceNormal/getTemplateTree", null);
+            if (result.code == '200') {
+                $('#templateTree').tree({
+                    lines : true,
+                    multiple : false,
+                    checkbox : false,
+                    data : result.data,
+                    onSelect: function(node) {
+                        $("#flowInstanceNameSearch").val();
+                    }
+                });
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function searchTemplate() {
+            var templateName = $("#templateNameSearch").val();
+            if (templateName == '') {
+                return;
+            }
+            var result = ajaxSynchPostJson("user/flowInstanceNormal/getIdList", {"flowTemplateName": templateName});
+            if (result.code == '200') {
+                var idArr = result.data;
+                if (idArr == null || idArr.length == 0) {
+                    return;
+                }
+                if (idArr.length == 1) {
+                    var node = $('#templateTree').tree('find', idArr[0]);
+                    $('#templateTree').tree('select', node.target);
+                    return;
+                }
+
+                var id = arr[0];
+                if (isTreeNodeSelected("templateTree") && idArr.indexOf(getTreeSelectedNode("templateNodeTree").id) != -1) {
+                    var pos = getTreeSelectedNode("templateNodeTree").id;
+                    if (pos < (idArr.length - 1)) {
+                        id = idArr[pos + 1]
+                    }
+                }
+
+                var node = $('#templateTree').tree('find', id);
+                $('#templateTree').tree('select', node.target);
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function searchUser() {
+            var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":1, "rows":10});
+            if (result.code == '200') {
+                dataGridPageInit();
+                $('#flowInstanceManager').datagrid('loadData', result.data);
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function dataGridInit() {
+            $('#flowInstanceManager').datagrid({
+                fit : true,
+                fitColumns : true,
+                striped : true,
+                rownumbers : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                toolbar : '#flowInstanceManager_tool',
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'instanceName',
+                        title : '流程名称',
+                        width : 100
+                    },
+                    {
+                        field : 'startTime',
+                        title : '启动时间',
+                        width : 100
+                    },
+                    {
+                        field : 'state',
+                        title : '流程状态',
+                        width : 100,
+                        formatter: function(value,row,index){
+                            if (value == 0){
+                                return "正常";
+                            } else {
+                                return "冻结";
+                            }
+                        }
+                    }
+                ]]
+            });
+        }
+
+        function dataGridPageInit() {
+            var p = $('#flowInstanceManager').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 10,
+                pageList : [10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":pageNumber, "rows":pageSize});
+                    if (result.code == '200') {
+                        $('#flowInstanceManager').datagrid('loadData', result.data);
+                    }
+                },
+            });
+        }
+
+        $(function () {
+            templateTreeInit();
+            dataGridInit();
+        });
+    </script>
+</head>
+<body>
+<div style="margin-bottom:5px;">
+    &nbsp;&nbsp;
+    模板名称：<input type="text" class="textbox" id="templateNameSearch" style="width:180px" />
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchTemplate()">查询</a>
+</div>
+
+<div>
+    <div style="float:left; width: 25%">
+        <ul id="templateTree"/>
+    </div>
+    <div style="float:left; width: 73%">
+        <table id="flowInstanceManager">
+            <div id="flowInstanceManager_tool">
+                <div>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="startFlowInstance()">启动流程</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="undoFlowInstance()">撤回流程</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="delFlowInstance()">删除流程</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="detailFlowInstance()">查看详情</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstanceChartShow()">流程预览</a>
+                </div>
+                <div>
+                    &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
+                </div>
+            </div>
+        </table>
+    </div>
+    <div style="clear:both;"></div>
+</div>
+
+<div id="flowInstanceChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
+    <div id="flowInstanceChartDiv"></div>
+</div>
+</body>
+</html>

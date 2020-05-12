@@ -42,7 +42,17 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         if (list != null && list.size() > 0) {
             for (TbFlowTemplate t : list) {
                 t.setText(t.getTemplateName());
-                t.setState("close");
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<TbFlowTemplate> getTemplateTreeByStatus(Integer status) {
+        List<TbFlowTemplate> list = flowTemplateRepository.listByStatus(status);
+        if (list != null && list.size() > 0) {
+            for (TbFlowTemplate t : list) {
+                t.setText(t.getTemplateName());
             }
         }
         return list;
@@ -387,5 +397,15 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         }
 
         return flowChart;
+    }
+
+    @Override
+    public List<Long> getIdList(String templateName, Integer state) {
+        List<Long> idList = new ArrayList<>();
+        List<TbFlowTemplate> list = flowTemplateRepository.listByNameAndStatus(templateName, state);
+        if (list != null && list.size() > 0) {
+            idList = list.stream().map(TbFlowTemplate::getId).collect(Collectors.toList());
+        }
+        return idList;
     }
 }
