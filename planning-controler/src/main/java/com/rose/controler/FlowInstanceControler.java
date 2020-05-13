@@ -36,7 +36,7 @@ public class FlowInstanceControler {
 
     @GetMapping(value= "/getTemplateTree")
     public List<TbFlowTemplate> getTemplateTree() {
-        return flowTemplateService.getTemplateTreeByStatus(0);
+        return flowTemplateService.getTemplateTree();
     }
 
     @PostMapping(value= "/getIdList")
@@ -44,7 +44,7 @@ public class FlowInstanceControler {
         if (param == null || StringUtil.isEmpty(param.getFlowTemplateName())) {
             return new ArrayList<>();
         }
-        return flowTemplateService.getIdList(param.getFlowTemplateName(), 0);
+        return flowTemplateService.getIdList(param.getFlowTemplateName(), null);
     }
 
     @PostMapping(value= "/searchFlowInstance")
@@ -52,7 +52,6 @@ public class FlowInstanceControler {
         if (param == null || param.getTemplateId() == null) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
-        param.setStartUserId(valueHolder.getUserIdHolder());
         return flowInstanceService.searchFlowInstance(param);
     }
 }

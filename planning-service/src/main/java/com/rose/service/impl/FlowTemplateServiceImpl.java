@@ -401,11 +401,18 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
 
     @Override
     public List<Long> getIdList(String templateName, Integer state) {
+        List<TbFlowTemplate> list = null;
+        if (state == null) {
+            list = flowTemplateRepository.listByName(templateName);
+        } else {
+            list = flowTemplateRepository.listByNameAndStatus(templateName, state);
+        }
+
         List<Long> idList = new ArrayList<>();
-        List<TbFlowTemplate> list = flowTemplateRepository.listByNameAndStatus(templateName, state);
         if (list != null && list.size() > 0) {
             idList = list.stream().map(TbFlowTemplate::getId).collect(Collectors.toList());
         }
+
         return idList;
     }
 }

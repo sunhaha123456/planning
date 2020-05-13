@@ -26,6 +26,9 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "start_user_id", columnDefinition = "BIGINT COMMENT '流程启动用户'")
     private Long startUserId;
 
+    @Transient
+    private String startUserLoginName;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_time", columnDefinition="datetime COMMENT '流程实例启动时间'")

@@ -19,6 +19,6 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Override
     public PageList<TbFlowInstance> searchFlowInstance(FlowInstanceRequest param) throws Exception {
-        return flowInstanceRepositoryCustom.list(param.getTemplateId(), param.getFlowInstanceName(), param.getStartUserId(), param.getPage(), param.getRows());
+        return flowInstanceRepositoryCustom.list(param.getTemplateId(), param.getFlowInstanceName(), param.getPage(), param.getRows());
     }
 }

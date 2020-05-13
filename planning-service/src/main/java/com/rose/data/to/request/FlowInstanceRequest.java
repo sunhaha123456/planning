@@ -7,5 +7,4 @@ import lombok.Data;
 public class FlowInstanceRequest extends PageParam {
     private Long templateId;
     private String flowInstanceName;
-    private Long startUserId; // 启动流程的用户id，其中 0：表示查全部
 }

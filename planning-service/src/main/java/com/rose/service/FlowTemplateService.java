@@ -36,5 +36,11 @@ public interface FlowTemplateService {
 
     FlowChartResponse getTemplateFlowChart(Long id);
 
+    /**
+     * 功能：获取模板id
+     * @param templateName
+     * @param state 0：正常 1：停用
+     * @return
+     */
     List<Long> getIdList(String templateName, Integer state);
 }

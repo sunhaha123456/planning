@@ -24,7 +24,7 @@
     <!-- flow chart end -->
     <script th:inline="javascript">
         function templateTreeInit() {
-            var result = ajaxSynchGet("user/flowInstanceNormal/getTemplateTree", null);
+            var result = ajaxSynchGet("user/flowInstance/getTemplateTree", null);
             if (result.code == '200') {
                 $('#templateTree').tree({
                     lines : true,
@@ -32,7 +32,7 @@
                     checkbox : false,
                     data : result.data,
                     onSelect: function(node) {
-                        $("#flowInstanceNameSearch").val();
+                        searchFlowInstance();
                     }
                 });
             } else {
@@ -45,23 +45,26 @@
             if (templateName == '') {
                 return;
             }
-            var result = ajaxSynchPostJson("user/flowInstanceNormal/getIdList", {"flowTemplateName": templateName});
+            var result = ajaxSynchPostJson("user/flowInstance/getIdList", {"flowTemplateName": templateName});
             if (result.code == '200') {
                 var idArr = result.data;
                 if (idArr == null || idArr.length == 0) {
                     return;
                 }
                 if (idArr.length == 1) {
-                    var node = $('#templateTree').tree('find', idArr[0]);
-                    $('#templateTree').tree('select', node.target);
+                    if (isTreeNodeSelected("templateTree") && getTreeSelectedNode("templateTree").id != idArr[0]) {
+                        var node = $('#templateTree').tree('find', idArr[0]);
+                        $('#templateTree').tree('select', node.target);
+                    }
                     return;
                 }
 
-                var id = arr[0];
-                if (isTreeNodeSelected("templateTree") && idArr.indexOf(getTreeSelectedNode("templateNodeTree").id) != -1) {
-                    var pos = getTreeSelectedNode("templateNodeTree").id;
-                    if (pos < (idArr.length - 1)) {
-                        id = idArr[pos + 1]
+                var id = idArr[0];
+                if (isTreeNodeSelected("templateTree")) {
+                    var selectId = getTreeSelectedNode("templateTree").id;
+                    var selectIdIndex = idArr.indexOf(selectId);
+                    if (selectIdIndex != -1 && selectIdIndex != (idArr.length - 1)) {
+                        id = idArr[selectIdIndex + 1]
                     }
                 }
 
@@ -72,13 +75,9 @@
             }
         }
 
-        function searchUser() {
-            var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":1, "rows":10});
-            if (result.code == '200') {
-                dataGridPageInit();
-                $('#flowInstanceManager').datagrid('loadData', result.data);
-            } else {
-                alertWarn(result.msg);
+        function searchTemplateKeyDown() {
+            if (event.keyCode == 13) {
+                searchTemplate();
             }
         }
 
@@ -104,6 +103,11 @@
                         width : 100
                     },
                     {
+                        field : 'startUserLoginName',
+                        title : '启动用户登录名',
+                        width : 100
+                    },
+                    {
                         field : 'startTime',
                         title : '启动时间',
                         width : 100
@@ -114,14 +118,33 @@
                         width : 100,
                         formatter: function(value,row,index){
                             if (value == 0){
-                                return "正常";
+                                return "已启动";
+                            } else if (value == 1){
+                                return "已完成";
+                            } else if (value == 2){
+                                return "用户撤回";
                             } else {
-                                return "冻结";
+                                return "管理员冻结";
                             }
                         }
                     }
                 ]]
             });
+        }
+
+        function searchFlowInstance() {
+            if (isTreeNodeSelected("templateTree")) {
+                var result = ajaxSynchPostJson("user/flowInstance/searchFlowInstance", {
+                    "templateId": getTreeSelectedNode("templateTree").id,
+                    "flowInstanceName": $('#flowInstanceNameSearch').val(),
+                    "page":1, "rows":10});
+                if (result.code == '200') {
+                    $('#flowInstanceManager').datagrid('loadData', result.data);
+                }
+            } else {
+                dataGridPageInit();
+                $('#flowInstanceManager').datagrid('loadData', {"total":0, "rows":[]});
+            }
         }
 
         function dataGridPageInit() {
@@ -131,9 +154,17 @@
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":pageNumber, "rows":pageSize});
-                    if (result.code == '200') {
-                        $('#flowInstanceManager').datagrid('loadData', result.data);
+                    if (isTreeNodeSelected("templateTree")) {
+                        var result = ajaxSynchPostJson("user/flowInstance/searchFlowInstance", {
+                            "templateId": getTreeSelectedNode("templateTree").id,
+                            "flowInstanceName": $('#flowInstanceNameSearch').val(),
+                            "page":pageNumber, "rows":pageSize});
+                        if (result.code == '200') {
+                            $('#flowInstanceManager').datagrid('loadData', result.data);
+                        }
+                    } else {
+                        dataGridPageInit();
+                        $('#flowInstanceManager').datagrid('loadData', {"total":0, "rows":[]});
                     }
                 },
             });
@@ -148,7 +179,7 @@
 <body>
 <div style="margin-bottom:5px;">
     &nbsp;&nbsp;
-    模板名称：<input type="text" class="textbox" id="templateNameSearch" style="width:180px" />
+    模板名称：<input type="text" class="textbox" id="templateNameSearch" onkeydown="searchTemplateKeyDown()" style="width:180px" />
     <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchTemplate()">查询</a>
 </div>
 
@@ -160,8 +191,7 @@
         <table id="flowInstanceManager">
             <div id="flowInstanceManager_tool">
                 <div>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="startFlowInstance()">启动流程</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="undoFlowInstance()">撤回流程</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="frozenFlowInstance()">冻结流程</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="delFlowInstance()">删除流程</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="detailFlowInstance()">查看详情</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstanceChartShow()">流程预览</a>

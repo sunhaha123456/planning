@@ -19,6 +19,9 @@ public interface FlowTemplateRepository extends CrudRepository<TbFlowTemplate, L
     @Query(value = "select * from tb_flow_template where status = :status order by id asc", nativeQuery = true)
     List<TbFlowTemplate> listByStatus(@Param(value = "status") Integer status);
 
+    @Query(value = "select * from tb_flow_template where instr(template_name, :templateName) > 0 order by id asc", nativeQuery = true)
+    List<TbFlowTemplate> listByName(@Param(value = "templateName") String templateName);
+
     @Query(value = "select * from tb_flow_template where instr(template_name, :templateName) > 0 and status = :status order by id asc", nativeQuery = true)
     List<TbFlowTemplate> listByNameAndStatus(@Param(value = "templateName") String templateName, @Param(value = "status") Integer status);
 
