@@ -75,12 +75,6 @@
             }
         }
 
-        function searchTemplateKeyDown() {
-            if (event.keyCode == 13) {
-                searchTemplate();
-            }
-        }
-
         function dataGridInit() {
             $('#flowInstanceManager').datagrid({
                 fit : true,
@@ -117,11 +111,11 @@
                         title : '流程状态',
                         width : 100,
                         formatter: function(value,row,index){
-                            if (value == 0){
+                            if (value == "0"){
                                 return "已启动";
-                            } else if (value == 1){
+                            } else if (value == "1"){
                                 return "已完成";
-                            } else if (value == 2){
+                            } else if (value == "2"){
                                 return "用户撤回";
                             } else {
                                 return "管理员冻结";
@@ -139,7 +133,10 @@
                     "flowInstanceName": $('#flowInstanceNameSearch').val(),
                     "page":1, "rows":10});
                 if (result.code == '200') {
+                    dataGridPageInit();
                     $('#flowInstanceManager').datagrid('loadData', result.data);
+                } else {
+                    alertWarn(result.msg);
                 }
             } else {
                 dataGridPageInit();
@@ -161,6 +158,8 @@
                             "page":pageNumber, "rows":pageSize});
                         if (result.code == '200') {
                             $('#flowInstanceManager').datagrid('loadData', result.data);
+                        } else {
+                            alertWarn(result.msg);
                         }
                     } else {
                         dataGridPageInit();
@@ -168,6 +167,18 @@
                     }
                 },
             });
+        }
+
+        function searchTemplateKeyDown() {
+            if (event.keyCode == 13) {
+                searchTemplate();
+            }
+        }
+
+        function searchFlowInstanceKeyDown() {
+            if (event.keyCode == 13) {
+                searchFlowInstance();
+            }
         }
 
         $(function () {
@@ -184,10 +195,10 @@
 </div>
 
 <div>
-    <div style="float:left; width: 25%">
+    <div style="float:left; width: 25%;">
         <ul id="templateTree"/>
     </div>
-    <div style="float:left; width: 73%">
+    <div style="float:left; width: 73%; height: 385px;">
         <table id="flowInstanceManager">
             <div id="flowInstanceManager_tool">
                 <div>
@@ -197,7 +208,7 @@
                     <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstanceChartShow()">流程预览</a>
                 </div>
                 <div>
-                    &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
+                    &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" onkeydown="searchFlowInstanceKeyDown()" style="width:180px" />
                     <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
                 </div>
             </div>
