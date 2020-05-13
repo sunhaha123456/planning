@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 描述：流程实例 普通用户 controler
+ * 描述：流程实例 controler
  * @author sunpeng
  */
 @Slf4j
 @RestController
-@RequestMapping("/user/flowInstanceNormal")
-public class FlowInstanceNormalControler {
+@RequestMapping("/user/flowInstance")
+public class FlowInstanceControler {
 
     @Inject
     private FlowTemplateService flowTemplateService;
