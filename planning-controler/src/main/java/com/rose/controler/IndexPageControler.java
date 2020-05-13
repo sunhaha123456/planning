@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 
 /**
- * 描述：我的首页 controller
+ * 描述：首页 controller
  * @author sunpeng
  */
 @Slf4j
 @RestController
-@RequestMapping("/user/myIndexPage")
-public class MyIndexPageControler {
+@RequestMapping("/user/indexPage")
+public class IndexPageControler {
 
     @Inject
 	private SelfOfficeService selfOfficeService;

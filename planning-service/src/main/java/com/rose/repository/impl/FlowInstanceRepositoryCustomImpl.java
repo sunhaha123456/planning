@@ -22,7 +22,7 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
         StringBuilder sql = new StringBuilder();
         List<Object> paramList = new ArrayList();
         sql.append(" SELECT a.id, a.instance_name instanceName, u.user_name userName, u.user_state userState, rg.role_name roleGroupName, u.role_group_id roleGroupId, u.create_date createDate ");
-        sql.append(" FROM tb_flow_instance a JOIN tb_role_group rg on u.role_group_id = rg.id ");
+        sql.append(" FROM tb_flow_instance ");
         sql.append(" WHERE u.user_state != 2 ");
         if (StringUtil.isNotEmpty(flowInstanceName)) {
             sql.append(" AND instr(u.login_name, ?) > 0 ");

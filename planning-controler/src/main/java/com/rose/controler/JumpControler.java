@@ -58,6 +58,15 @@ public class JumpControler {
     }
 
     /**
+     * 功能：跳转我的申请
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toMyApplyPage")
+    public String toMyApplyPage() {
+        return "menu/myApplyPage";
+    }
+
+    /**
      * 功能：跳转流程模板
      * @return
      */
@@ -73,23 +82,5 @@ public class JumpControler {
     @GetMapping(value = "/user/menuManage/toFlowInstance")
     public String toFlowInstance() {
         return "menu/flowInstance";
-    }
-
-    /**
-     * 功能：跳转流程实例 admin
-     * @return
-     */
-    @GetMapping(value = "/user/menuManage/toFlowInstanceAdmin")
-    public String toFlowInstanceAdmin() {
-        return "menu/flowInstanceAdmin";
-    }
-
-    /**
-     * 功能：跳转流程实例 普通用户
-     * @return
-     */
-    @GetMapping(value = "/user/menuManage/toFlowInstanceNormal")
-    public String toFlowInstanceNormal() {
-        return "menu/flowInstanceNormal";
     }
 }
