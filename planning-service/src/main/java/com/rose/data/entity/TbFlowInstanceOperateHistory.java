@@ -20,6 +20,7 @@ public class TbFlowInstanceOperateHistory extends BaseDataIdLong {
     @Column(name = "instance_name", columnDefinition = "VARCHAR(255) COMMENT '流程名称'")
     private String instanceName;
 
+    // 当是对整个流程进行操作时，比如：冻结、撤回、删除等，instanceNodeId = 0
     @Column(name = "instance_node_id", columnDefinition = "BIGINT COMMENT '流程实例节点id'")
     private Long instanceNodeId;
 

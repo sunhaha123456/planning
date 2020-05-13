@@ -9,6 +9,7 @@ import com.rose.data.entity.TbFlowInstance;
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.request.FlowTemplateRequest;
+import com.rose.data.to.response.FlowChartResponse;
 import com.rose.service.FlowInstanceService;
 import com.rose.service.FlowTemplateService;
 import lombok.extern.slf4j.Slf4j;
@@ -53,5 +54,27 @@ public class FlowInstanceControler {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
         return flowInstanceService.searchFlowInstance(param);
+    }
+
+    /**
+     * 功能：对流程就行操作
+     * @param id 流程实例id
+     * @param type 0：管理员冻结流程 1：管理员恢复流程 2：管理员删除流程
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(value= "/operateInstance")
+    public void operateInstance(@RequestParam Long id, @RequestParam Integer type) throws Exception {
+        flowInstanceService.operateInstance(id, type);
+    }
+
+    @GetMapping(value= "/getFlowInstanceDetail")
+    public TbFlowInstance getFlowInstanceDetail(@RequestParam Long id) {
+        return flowInstanceService.getFlowInstanceDetail(id);
+    }
+
+    @GetMapping(value= "/getFlowInstanceFlowChart")
+    public FlowChartResponse getFlowInstanceFlowChart(@RequestParam Long id) {
+        return flowInstanceService.getFlowInstanceFlowChart(id);
     }
 }

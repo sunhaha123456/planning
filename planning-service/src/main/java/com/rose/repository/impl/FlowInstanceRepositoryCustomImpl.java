@@ -20,7 +20,7 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
     public PageList<TbFlowInstance> list(Long templateId, String flowInstanceName, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sql = new StringBuilder();
         List<Object> paramList = new ArrayList();
-        sql.append(" SELECT a.id, a.instance_name instanceName, b.login_name startUserLoginName, a.start_time startTime ");
+        sql.append(" SELECT a.id, a.instance_name instanceName, b.login_name startUserLoginName, a.start_time startTime, a.state ");
         sql.append(" FROM tb_flow_instance a left join tb_sys_user b on a.start_user_id = b.id ");
         sql.append(" WHERE 1 = 1 ");
         if (templateId != null) {

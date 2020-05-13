@@ -20,6 +20,9 @@ public class TbFlowInstanceFile extends BaseDataIdLong {
     @Column(name = "instance_id", columnDefinition = "BIGINT COMMENT '实例id'")
     private Long instanceId;
 
-    @Column(name = "file_id", columnDefinition = "BIGINT COMMENT '文件id'")
-    private Long fileId;
+    @Column(name = "old_file_name", columnDefinition = "VARCHAR(255) COMMENT '文件原名称'")
+    private String oldFileName;
+
+    @Column(name = "new_file_name", columnDefinition = "VARCHAR(255) COMMENT '文件新名称'")
+    private String newFileName;
 }
