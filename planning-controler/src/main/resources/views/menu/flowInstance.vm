@@ -216,7 +216,7 @@
                         $("#detailFlowInstanceHandingNode").text(data.handingInstanceNodeNames);
 
                         $('#flowInstanceDetailManager').datagrid({
-                            fit : true,
+                            //fit : true,
                             fitColumns : true,
                             striped : true,
                             rownumbers : true,
@@ -253,9 +253,9 @@
                             pageSize : 10,
                             pageList : [10, 20, 30, 40, 50],
                             onSelectPage:function(pageNumber, pageSize){
-                                var result = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
-                                if (result.code == '200') {
-                                    $('#flowInstanceDetailManager').datagrid('loadData', history.data);
+                                var h = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
+                                if (h.code == '200') {
+                                    $('#flowInstanceDetailManager').datagrid('loadData', h.data);
                                 }
                             },
                         });
