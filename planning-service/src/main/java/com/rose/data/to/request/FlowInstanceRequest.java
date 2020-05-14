@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class FlowInstanceRequest extends PageParam {
+    private Long id;
     private Long templateId;
     private String flowInstanceName;
 }

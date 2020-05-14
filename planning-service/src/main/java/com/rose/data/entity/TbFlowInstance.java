@@ -7,7 +7,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @ToString(callSuper = true)
 @lombok.Data
@@ -43,13 +42,19 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程实例状态'")
     private Integer state;
 
+    @Transient
+    private String stateShow;
+
     // 正在处理的流程实例节点id
     // 注意：空：流程已经完成，没有需要操作的流程节点
     //      当前正在处理的节点，可能有一个，也可能有多个
     //      比如，流转三个节点 a、b、c，则值为 aId,bId,cId
     //            而a 已处理完成后，则值变为 bId,cId
-    @Column(name = "handing_instance_node_id", columnDefinition = "VARCHAR(255) COMMENT '当前正在处理的流程实例节点id'")
-    private String handingInstanceNodeId;
+    @Column(name = "handing_instance_node_ids", columnDefinition = "VARCHAR(255) COMMENT '当前正在处理的流程实例节点id'")
+    private String handingInstanceNodeIds;
+
+    @Transient
+    private String handingInstanceNodeNames;
 
     //@Transient
     //private List<TbFlowInstanceOperateHistory> operateHistory;

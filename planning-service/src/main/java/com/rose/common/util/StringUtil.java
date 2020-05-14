@@ -40,4 +40,11 @@ public class StringUtil {
         builder.deleteCharAt(0);
         return builder.toString();
     }
+
+    public static boolean isInteger(String str) {
+        if (isNotEmpty(str) && str.matches("\\d+")) {
+            return true;
+        }
+        return false;
+    }
 }

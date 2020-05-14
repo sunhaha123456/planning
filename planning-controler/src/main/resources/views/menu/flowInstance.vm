@@ -203,9 +203,71 @@
         function detailFlowInstance() {
             var rows = $('#flowInstanceManager').datagrid('getSelections');
             if (rows.length > 0) {
+                var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id});
+                if (result.code == '200') {
+                    var history = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
+                    if (history.code == '200') {
+                        var data = result.data;
 
+                        $("#detailFlowInstanceName").text(data.instanceName);
+                        $("#detailFlowInstanceState").text(data.stateShow);
+                        $("#detailFlowInstanceStartUser").text(data.startUserLoginName);
+                        $("#detailFlowInstanceStartDate").text(data.startTime);
+                        $("#detailFlowInstanceHandingNode").text(data.handingInstanceNodeNames);
 
+                        $('#flowInstanceDetailManager').datagrid({
+                            fit : true,
+                            fitColumns : true,
+                            striped : true,
+                            rownumbers : true,
+                            border : false,
+                            pagination : true,
+                            singleSelect:true,
+                            columns : [[
+                                {
+                                    field : 'id',
+                                    width : 100,
+                                    hidden : true
+                                },
+                                {
+                                    field : 'createDate',
+                                    title : '操作时间',
+                                    width : 100
+                                },
+                                {
+                                    field : 'operateUserLoginName',
+                                    title : '操作用户',
+                                    width : 100
+                                },
+                                {
+                                    field : 'operateInfo',
+                                    title : '操作信息',
+                                    width : 300
+                                }
+                            ]]
+                        });
 
+                        var p = $('#flowInstanceDetailManager').datagrid('getPager');
+                        $(p).pagination({
+                            pageNumber : 1,
+                            pageSize : 10,
+                            pageList : [10, 20, 30, 40, 50],
+                            onSelectPage:function(pageNumber, pageSize){
+                                var result = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
+                                if (result.code == '200') {
+                                    $('#flowInstanceDetailManager').datagrid('loadData', history.data);
+                                }
+                            },
+                        });
+                        $('#flowInstanceDetailManager').datagrid('loadData', history.data);
+
+                        $('#flowInstanceDetailWindow').window('open');
+                    } else {
+                        alertWarn(history.msg);
+                    }
+                } else {
+                    alertWarn(result.msg);
+                }
             } else {
                 alertWarn("请先选择记录！");
             }
@@ -274,6 +336,29 @@
         </table>
     </div>
     <div style="clear:both;"></div>
+</div>
+
+<div id="flowInstanceDetailWindow" class="easyui-window" title="流程详情" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
+    <table style="margin-top: 10px; margin-bottom: 10px;">
+        <tr>
+            <td width="75">&nbsp;&nbsp;&nbsp;&nbsp;流程名称：</td>
+            <td width="280"><span id="detailFlowInstanceName"></span></td>
+            <td width="75">&nbsp;&nbsp;&nbsp;&nbsp;流程状态：</td>
+            <td width="220"><span id="detailFlowInstanceState"></span></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;启动用户：</td>
+            <td><span id="detailFlowInstanceStartUser"></span></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;启动时间：</td>
+            <td><span id="detailFlowInstanceStartDate"></span></td>
+        </tr>
+        <tr>
+            <td colspan="4">&nbsp;&nbsp;&nbsp;&nbsp;正在处理中的流程节点：<span id="detailFlowInstanceHandingNode"></span></td>
+        </tr>
+    </table>
+    <table id="flowInstanceDetailManager">
+
+    </table>
 </div>
 
 <div id="flowInstanceChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">

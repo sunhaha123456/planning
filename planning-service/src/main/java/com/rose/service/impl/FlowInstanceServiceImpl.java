@@ -3,8 +3,10 @@ package com.rose.service.impl;
 import com.rose.common.data.base.PageList;
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
+import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.TbFlowInstance;
+import com.rose.data.entity.TbFlowInstanceNode;
 import com.rose.data.entity.TbFlowInstanceOperateHistory;
 import com.rose.data.entity.TbSysUser;
 import com.rose.data.enums.FlowInstanceStateEnum;
@@ -17,7 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -33,6 +38,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     private FlowInstanceNodeUserTaskRepository flowInstanceNodeUserTaskRepository;
     @Inject
     private FlowInstanceOperateHistoryRepository flowInstanceOperateHistoryRepository;
+    @Inject
+    private FlowInstanceOperateHistoryRepositoryCustom flowInstanceOperateHistoryRepositoryCustom;
     @Inject
     private SysUserRepository sysUserRepository;
     @Inject
@@ -55,7 +62,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         }
 
         StringBuilder operateInfo = new StringBuilder();
-        TbSysUser user = sysUserRepository.findOne(id);
+        TbSysUser user = sysUserRepository.findOne(valueHolder.getUserIdHolder());
 
         if (type == 0) { // 管理员冻结流程
             if (flowInstance.getState() == FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
@@ -116,10 +123,47 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
 
+        TbSysUser user = sysUserRepository.findOne(flowInstance.getStartUserId());
+        flowInstance.setStartUserLoginName(user.getLoginName());
+        flowInstance.setStateShow(FlowInstanceStateEnum.getName(flowInstance.getState()));
 
+        flowInstance.setHandingInstanceNodeNames("无");
+        if (FlowInstanceStateEnum.HAVE_FINISH.getIndex() != flowInstance.getState()) {
+            String handingInstanceNodeIds = flowInstance.getHandingInstanceNodeIds();
+            if (StringUtil.isNotEmpty(handingInstanceNodeIds)) {
+                if (StringUtil.isInteger(handingInstanceNodeIds)) {
+                    TbFlowInstanceNode node = flowInstanceNodeRepository.findOne(Long.valueOf(handingInstanceNodeIds));
+                    flowInstance.setHandingInstanceNodeNames(node.getNodeName());
+                } else {
+                    String[] nodeIdArr = handingInstanceNodeIds.split(",");
+                    if (nodeIdArr != null && nodeIdArr.length > 0) {
+                        List<Long> nodeIdList = new ArrayList<>();
+                        for (String nodeId : nodeIdArr) {
+                            if (StringUtil.isInteger(nodeId)) {
+                                nodeIdList.add(Long.valueOf(nodeId));
+                            }
+                        }
 
+                        List<TbFlowInstanceNode> nodeList = flowInstanceNodeRepository.listByIdList(nodeIdList);
+                        if (nodeList != null && nodeList.size() > 0) {
+                            StringBuilder nodeNameBuilder = new StringBuilder();
+                            for (TbFlowInstanceNode node : nodeList) {
+                                nodeNameBuilder.append(",").append(node.getNodeName());
+                            }
+                            nodeNameBuilder.deleteCharAt(0);
+                            flowInstance.setHandingInstanceNodeNames(nodeNameBuilder.toString());
+                        }
+                    }
+                }
+            }
+        }
 
-        return null;
+        return flowInstance;
+    }
+
+    @Override
+    public PageList<TbFlowInstanceOperateHistory> getOperateInfo(FlowInstanceRequest param) throws Exception {
+        return flowInstanceOperateHistoryRepositoryCustom.list(param.getId(), param.getPage(), param.getRows());
     }
 
     @Override

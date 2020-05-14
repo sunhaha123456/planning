@@ -6,6 +6,7 @@ import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.TbFlowInstance;
+import com.rose.data.entity.TbFlowInstanceOperateHistory;
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.request.FlowTemplateRequest;
@@ -71,6 +72,14 @@ public class FlowInstanceControler {
     @GetMapping(value= "/getFlowInstanceDetail")
     public TbFlowInstance getFlowInstanceDetail(@RequestParam Long id) {
         return flowInstanceService.getFlowInstanceDetail(id);
+    }
+
+    @PostMapping(value= "/getOperateInfo")
+    public PageList<TbFlowInstanceOperateHistory> getOperateInfo(@RequestBody FlowInstanceRequest param) throws Exception {
+        if (param == null || param.getId() == null) {
+            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+        }
+        return flowInstanceService.getOperateInfo(param);
     }
 
     @GetMapping(value= "/getFlowInstanceFlowChart")
