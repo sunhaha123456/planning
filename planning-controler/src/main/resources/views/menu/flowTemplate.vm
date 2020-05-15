@@ -48,6 +48,7 @@
                     checkbox : false,
                     data: []
                 });
+                return result.data;
             } else {
                 alertWarn(result.msg);
             }
@@ -434,7 +435,11 @@
         }
 
         $(function () {
-            templateTreeInit();
+            var noedDataArr = templateTreeInit();
+            if (noedDataArr != null && noedDataArr.length > 0) {
+                var node = $('#templateTree').tree('find', noedDataArr[0].id);
+                $('#templateTree').tree('select', node.target);
+            }
         });
     </script>
 </head>
