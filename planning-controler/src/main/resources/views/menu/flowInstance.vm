@@ -276,9 +276,32 @@
         function flowInstanceChartShow() {
             var rows = $('#flowInstanceManager').datagrid('getSelections');
             if (rows.length > 0) {
+                var result = ajaxSynchGet("user/flowInstance/getFlowInstanceFlowChart", {"id": rows[0].id});
+                if (result.code == '200') {
+                    $("#flowInstanceChartDiv").empty();
 
+                    if (result.data.name != null && result.data.name != '') {
+                        $('#flowInstanceChartDiv').orgchart({
+                            'data': result.data,
+                            'nodeContent': 'content',
+                            'createNode': function (node, nodeData) {
+                                var nodeDom = $(node);
 
+                                if (nodeData.name != null && nodeData.name != '') {
+                                    $('.title', nodeDom).attr('title', nodeData.name);
+                                }
+                                if (nodeData.content != null && nodeData.content != '') {
+                                    $('.content', nodeDom).attr("title", nodeData.content);
+                                }
+                            }
+                        });
+                    }
 
+                    $('#flowInstanceChartWindow').window('open');
+                } else {
+                    alertWarn(result.msg);
+                    return;
+                }
             } else {
                 alertWarn("请先选择记录！");
             }

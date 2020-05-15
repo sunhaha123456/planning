@@ -1,11 +1,14 @@
 package com.rose.data.entity;
 
 import com.rose.common.data.base.BaseDataIdLong;
+import com.rose.data.to.response.FlowChartResponse;
 import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.List;
 
 @ToString(callSuper = true)
 @lombok.Data
@@ -41,4 +44,8 @@ public class TbFlowInstanceNode extends BaseDataIdLong {
     // 流程节点状态：0未到达 1正在进行中 2已完成
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程节点状态'")
     private Integer state;
+
+    // 用于记录流程图的children
+    @Transient
+    private List<FlowChartResponse> children;
 }

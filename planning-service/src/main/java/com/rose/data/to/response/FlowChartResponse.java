@@ -2,7 +2,6 @@ package com.rose.data.to.response;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 //{

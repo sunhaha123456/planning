@@ -5,10 +5,8 @@ import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
-import com.rose.data.entity.TbFlowInstance;
-import com.rose.data.entity.TbFlowInstanceNode;
-import com.rose.data.entity.TbFlowInstanceOperateHistory;
-import com.rose.data.entity.TbSysUser;
+import com.rose.data.entity.*;
+import com.rose.data.enums.FlowInstanceNodeStateEnum;
 import com.rose.data.enums.FlowInstanceStateEnum;
 import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.response.FlowChartResponse;
@@ -19,10 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,6 +32,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     private FlowInstanceNodeRepository flowInstanceNodeRepository;
     @Inject
     private FlowInstanceNodeUserTaskRepository flowInstanceNodeUserTaskRepository;
+    @Inject
+    private FlowInstanceNodeUserTaskRepositoryCustom flowInstanceNodeUserTaskRepositoryCustom;
     @Inject
     private FlowInstanceOperateHistoryRepository flowInstanceOperateHistoryRepository;
     @Inject
@@ -172,8 +170,96 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         if (flowInstance == null) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
+        Map<Integer, List<TbFlowInstanceNode>> map = new HashMap<>();
+        List<TbFlowInstanceNode> nodeListTemp = null;
+        List<TbFlowInstanceNode> instanceNodeList = flowInstanceNodeRepository.listByInstanceId(id);
+        if (instanceNodeList != null && instanceNodeList.size() > 0) {
+            for (TbFlowInstanceNode node : instanceNodeList) {
+                Integer level = node.getNodeLevel();
+                nodeListTemp = map.get(level);
+                if (nodeListTemp == null) {
+                    nodeListTemp = new ArrayList<>();
+                    map.put(level, nodeListTemp);
+                }
+                nodeListTemp.add(node);
+            }
+        }
 
+        Map<Long, List<String>> nodeUserMap = new HashMap<>();
+        List<String> userLoginNameListTemp = null;
+        List<TbFlowInstanceNodeUserTask> userList = flowInstanceNodeUserTaskRepositoryCustom.queryTemplateNodeUserList(id);
+        if (userList != null && userList.size() > 0) {
+            for (TbFlowInstanceNodeUserTask t : userList) {
+                userLoginNameListTemp = nodeUserMap.get(t.getInstanceNodeId());
+                if (userLoginNameListTemp == null) {
+                    userLoginNameListTemp = new ArrayList<>();
+                    nodeUserMap.put(t.getInstanceNodeId(), userLoginNameListTemp);
+                }
+                userLoginNameListTemp.add(t.getLoginName());
+            }
+        }
 
-        return null;
+        FlowChartResponse flowChart = new FlowChartResponse();
+
+        Integer level = null;
+        TbFlowInstanceNode nodeTemp = null;
+        List<FlowChartResponse> children = null;
+        FlowChartResponse flowChartTemp = null;
+        for (Map.Entry<Integer, List<TbFlowInstanceNode>> entry : map.entrySet()) {
+            level = entry.getKey();
+            nodeListTemp = entry.getValue();
+            if (level != null && nodeListTemp != null) {
+                if (level == 0) {
+                    nodeTemp = nodeListTemp.get(0);
+                    flowChart.setName(nodeTemp.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(nodeTemp.getState()) + ")");
+
+                    userLoginNameListTemp = nodeUserMap.get(nodeTemp.getId());
+                    if (userLoginNameListTemp != null) {
+                        flowChart.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                    }
+
+                    flowChart.setChildren(new ArrayList<FlowChartResponse>());
+                } else if (level == 1) {
+                    children = flowChart.getChildren();
+                    for (TbFlowInstanceNode node : nodeListTemp) {
+                        flowChartTemp = new FlowChartResponse();
+                        flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
+
+                        userLoginNameListTemp = nodeUserMap.get(node.getId());
+                        if (userLoginNameListTemp != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                        }
+
+                        flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
+                        children.add(flowChartTemp);
+                        node.setChildren(flowChartTemp.getChildren());
+                    }
+                } else {
+                    List<TbFlowInstanceNode> upperList = map.get(level - 1);
+                    Map<Long, TbFlowInstanceNode> upperMap = upperList.stream().collect(Collectors.toMap(TbFlowInstanceNode::getId, TbFlowInstanceNode -> TbFlowInstanceNode));
+
+                    for (TbFlowInstanceNode node : nodeListTemp) {
+                        flowChartTemp = new FlowChartResponse();
+                        flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
+
+                        userLoginNameListTemp = nodeUserMap.get(node.getId());
+                        if (userLoginNameListTemp != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                        }
+
+                        flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
+                        node.setChildren(flowChartTemp.getChildren());
+
+                        nodeTemp = upperMap.get(node.getPid());
+                        if (nodeTemp == null) {
+                            throw new BusinessException("获取父级node失败！");
+                        }
+                        nodeTemp.getChildren().add(flowChartTemp);
+                    }
+                }
+            }
+        }
+
+        return flowChart;
     }
 }
