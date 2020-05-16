@@ -11,13 +11,6 @@ public interface FlowTemplateService {
 
     List<TbFlowTemplate> getTemplateTree();
 
-    /**
-     * 功能：根据状态获取模板树
-     * @param status 0：正常 1：停用
-     * @return
-     */
-    List<TbFlowTemplate> getTemplateTreeByStatus(Integer status);
-
     TbFlowTemplate getTemplateNodeTree(Long templateId, Long nodePid);
 
     TbFlowTemplate save(TbFlowTemplate param);

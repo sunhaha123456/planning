@@ -446,8 +446,8 @@
 <body>
 <div style="margin-bottom:5px;">
     <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addTemplateShow()">新增模板</a>
-    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="operateTemplateState(1)">停用模板</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="operateTemplateState(0)">启用模板</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="operateTemplateState(1)">停用模板</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)">删除模板</a>
 </div>
 
@@ -538,7 +538,7 @@
     </table>
 </div>
 
-<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
+<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:485px;">
     <div id="flowChartDiv"></div>
 </div>
 </body>

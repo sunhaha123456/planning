@@ -4,7 +4,6 @@ import com.rose.common.data.base.PageList;
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
-import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.TbFlowInstance;
 import com.rose.data.entity.TbFlowInstanceOperateHistory;
 import com.rose.data.entity.TbFlowTemplate;
@@ -33,8 +32,6 @@ public class FlowInstanceControler {
     private FlowTemplateService flowTemplateService;
     @Inject
 	private FlowInstanceService flowInstanceService;
-    @Inject
-    private ValueHolder valueHolder;
 
     @GetMapping(value= "/getTemplateTree")
     public List<TbFlowTemplate> getTemplateTree() {

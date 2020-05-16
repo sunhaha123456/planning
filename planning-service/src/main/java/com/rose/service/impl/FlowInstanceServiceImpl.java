@@ -39,6 +39,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Inject
     private FlowInstanceOperateHistoryRepositoryCustom flowInstanceOperateHistoryRepositoryCustom;
     @Inject
+    private FlowInstanceFileRepository flowInstanceFileRepository;
+    @Inject
     private SysUserRepository sysUserRepository;
     @Inject
     private ValueHolder valueHolder;
@@ -95,6 +97,22 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             flowInstanceRepository.deleteByIdAndState(id, flowInstance.getState());
             flowInstanceNodeRepository.deleteByInstanceId(id);
             flowInstanceNodeUserTaskRepository.deleteByInstanceId(id);
+
+            List<TbFlowInstanceFile> fileList = flowInstanceFileRepository.listByInstanceId(id);
+            flowInstanceFileRepository.deleteByInstanceId(id);
+
+            if (fileList != null && fileList.size() > 0) {
+                for (TbFlowInstanceFile f : fileList) {
+                    if (StringUtil.isNotEmpty(f.getNewFileName())) {
+                        try {
+                            // TODO: 2020/5/16 硬盘删文件代码，待完善
+
+                        } catch (Exception e) {
+                            log.error("管理员：{},删除流程：{}时，删硬盘文件：{}，失败！", user.getLoginName(), flowInstance.getInstanceName(), f.getNewFileName());
+                        }
+                    }
+                }
+            }
 
             operateInfo.append("管理员").append(user.getLoginName()).append("将").append(flowInstance.getInstanceName()).append("删除");
         } else {
@@ -186,16 +204,16 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         }
 
         Map<Long, List<String>> nodeUserMap = new HashMap<>();
-        List<String> userLoginNameListTemp = null;
+        List<String> userNameListTemp = null;
         List<TbFlowInstanceNodeUserTask> userList = flowInstanceNodeUserTaskRepositoryCustom.queryTemplateNodeUserList(id);
         if (userList != null && userList.size() > 0) {
             for (TbFlowInstanceNodeUserTask t : userList) {
-                userLoginNameListTemp = nodeUserMap.get(t.getInstanceNodeId());
-                if (userLoginNameListTemp == null) {
-                    userLoginNameListTemp = new ArrayList<>();
-                    nodeUserMap.put(t.getInstanceNodeId(), userLoginNameListTemp);
+                userNameListTemp = nodeUserMap.get(t.getInstanceNodeId());
+                if (userNameListTemp == null) {
+                    userNameListTemp = new ArrayList<>();
+                    nodeUserMap.put(t.getInstanceNodeId(), userNameListTemp);
                 }
-                userLoginNameListTemp.add(t.getLoginName());
+                userNameListTemp.add(t.getUserName());
             }
         }
 
@@ -213,9 +231,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                     nodeTemp = nodeListTemp.get(0);
                     flowChart.setName(nodeTemp.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(nodeTemp.getState()) + ")");
 
-                    userLoginNameListTemp = nodeUserMap.get(nodeTemp.getId());
-                    if (userLoginNameListTemp != null) {
-                        flowChart.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                    userNameListTemp = nodeUserMap.get(nodeTemp.getId());
+                    if (userNameListTemp != null) {
+                        flowChart.setContent(StringUtil.getListStr(userNameListTemp));
                     }
 
                     flowChart.setChildren(new ArrayList<FlowChartResponse>());
@@ -225,9 +243,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                         flowChartTemp = new FlowChartResponse();
                         flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
 
-                        userLoginNameListTemp = nodeUserMap.get(node.getId());
-                        if (userLoginNameListTemp != null) {
-                            flowChartTemp.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                        userNameListTemp = nodeUserMap.get(node.getId());
+                        if (userNameListTemp != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(userNameListTemp));
                         }
 
                         flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
@@ -242,9 +260,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                         flowChartTemp = new FlowChartResponse();
                         flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
 
-                        userLoginNameListTemp = nodeUserMap.get(node.getId());
-                        if (userLoginNameListTemp != null) {
-                            flowChartTemp.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                        userNameListTemp = nodeUserMap.get(node.getId());
+                        if (userNameListTemp != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(userNameListTemp));
                         }
 
                         flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());

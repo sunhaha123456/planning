@@ -48,17 +48,6 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
     }
 
     @Override
-    public List<TbFlowTemplate> getTemplateTreeByStatus(Integer status) {
-        List<TbFlowTemplate> list = flowTemplateRepository.listByStatus(status);
-        if (list != null && list.size() > 0) {
-            for (TbFlowTemplate t : list) {
-                t.setText(t.getTemplateName());
-            }
-        }
-        return list;
-    }
-
-    @Override
     public TbFlowTemplate getTemplateNodeTree(Long templateId, Long nodePid) {
         TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
         List<TbFlowTemplateNode> templateNodeList = flowTemplateNodeRepository.listByTemplateIdAndPid(templateId, nodePid);
@@ -322,16 +311,16 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         }
 
         Map<Long, List<String>> nodeUserMap = new HashMap<>();
-        List<String> userLoginNameListTemp = null;
+        List<String> userNameListTemp = null;
         List<TbFlowTemplateNodeUserTask> userList = flowTemplateNodeUserTaskRepositoryCustom.queryTemplateNodeUserList(id);
         if (userList != null && userList.size() > 0) {
             for (TbFlowTemplateNodeUserTask t : userList) {
-                userLoginNameListTemp = nodeUserMap.get(t.getTemplateNodeId());
-                if (userLoginNameListTemp == null) {
-                    userLoginNameListTemp = new ArrayList<>();
-                    nodeUserMap.put(t.getTemplateNodeId(), userLoginNameListTemp);
+                userNameListTemp = nodeUserMap.get(t.getTemplateNodeId());
+                if (userNameListTemp == null) {
+                    userNameListTemp = new ArrayList<>();
+                    nodeUserMap.put(t.getTemplateNodeId(), userNameListTemp);
                 }
-                userLoginNameListTemp.add(t.getLoginName());
+                userNameListTemp.add(t.getUserName());
             }
         }
 
@@ -349,9 +338,9 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                     nodeTemp = nodeListTemp.get(0);
                     flowChart.setName(nodeTemp.getNodeName());
 
-                    userLoginNameListTemp = nodeUserMap.get(nodeTemp.getId());
-                    if (userLoginNameListTemp != null) {
-                        flowChart.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                    userNameListTemp = nodeUserMap.get(nodeTemp.getId());
+                    if (userNameListTemp != null) {
+                        flowChart.setContent(StringUtil.getListStr(userNameListTemp));
                     }
 
                     flowChart.setChildren(new ArrayList<FlowChartResponse>());
@@ -361,9 +350,9 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                         flowChartTemp = new FlowChartResponse();
                         flowChartTemp.setName(node.getNodeName());
 
-                        userLoginNameListTemp = nodeUserMap.get(node.getId());
-                        if (userLoginNameListTemp != null) {
-                            flowChartTemp.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                        userNameListTemp = nodeUserMap.get(node.getId());
+                        if (userNameListTemp != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(userNameListTemp));
                         }
 
                         flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
@@ -378,9 +367,9 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                         flowChartTemp = new FlowChartResponse();
                         flowChartTemp.setName(node.getNodeName());
 
-                        userLoginNameListTemp = nodeUserMap.get(node.getId());
-                        if (userLoginNameListTemp != null) {
-                            flowChartTemp.setContent(StringUtil.getListStr(userLoginNameListTemp));
+                        userNameListTemp = nodeUserMap.get(node.getId());
+                        if (userNameListTemp != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(userNameListTemp));
                         }
 
                         flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());

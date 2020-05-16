@@ -384,7 +384,7 @@
     </table>
 </div>
 
-<div id="flowInstanceChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
+<div id="flowInstanceChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:485px;">
     <div id="flowInstanceChartDiv"></div>
 </div>
 </body>
