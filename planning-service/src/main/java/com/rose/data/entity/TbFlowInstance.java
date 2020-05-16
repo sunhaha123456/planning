@@ -17,6 +17,9 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "instance_name", columnDefinition = "VARCHAR(255) COMMENT '流程实例名称'")
     private String instanceName;
 
+    @Column(name = "apply_content", columnDefinition = "VARCHAR(800) COMMENT '发起申请的内容'")
+    private String applyContent;
+
     @Column(name = "template_id", columnDefinition = "BIGINT COMMENT '模板id'")
     private Long templateId;
 
@@ -34,9 +37,6 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "start_time", columnDefinition="datetime COMMENT '流程实例启动时间'")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
-
-    @Column(name = "remark_info", columnDefinition = "VARCHAR(500) COMMENT '启动时用户备注信息'")
-    private String remarkInfo;
 
     //0已启动 1已完成 2用户撤回 3管理员冻结
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程实例状态'")
