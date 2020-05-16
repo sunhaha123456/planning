@@ -120,8 +120,7 @@
                 $('#startApplyContent').val('');
 
 
-
-                $('#startApplyWindow').window('open');
+                $('#startApplyForm').dialog('open');
             } else {
                 alertWarn("请先选择记录！");
             }
@@ -151,14 +150,30 @@
     <div id="flowChartDiv"></div>
 </div>
 
-<div id="startApplyWindow" class="easyui-window" title="发起申请" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:500px;height:320px;">
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标题：<input id="startApplyTitle" type="text" class="textbox" style="width:390px" /></p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;内容：
+<form id="startApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:50,width:500,title:'发起申请',modal:true,closed:true,cache:false,iconCls:'icon-save',
+       onClose:function () {
+            $('#startApplyForm').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    startApplyCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#startApplyForm').dialog('close');
+					}
+				}]">
+    <p>标题：<input id="startApplyTitle" type="text" class="textbox" style="width:390px" /></p>
+    <p>内容：
         <br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<textarea id="startApplyContent" rows="6" cols="50" />
+        <textarea id="startApplyContent" rows="6" cols="50" />
     </p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="上传附件" /></p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="提交" /></p>
-</div>
+    <p><input type="button" value="上传附件" /></p>
+</form>
 </body>
 </html>
