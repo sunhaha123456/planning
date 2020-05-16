@@ -19,7 +19,7 @@ public class FlowInstanceOperateHistoryRepositoryCustomImpl extends BaseReposito
     public PageList<TbFlowInstanceOperateHistory> list(Long instanceId, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sql = new StringBuilder();
         List<Object> paramList = new ArrayList();
-        sql.append(" SELECT a.id, a.create_date createDate, b.login_name operateUserLoginName, a.operate_info operateInfo ");
+        sql.append(" SELECT a.id, a.create_date createDate, b.user_name operateUserUserName, a.operate_info operateInfo ");
         sql.append(" FROM tb_flow_instance_operate_history a left join tb_sys_user b on a.operate_user_id = b.id ");
         sql.append(" WHERE 1 = 1 ");
         if (instanceId != null) {

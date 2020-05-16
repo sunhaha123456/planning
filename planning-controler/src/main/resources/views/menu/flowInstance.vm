@@ -98,8 +98,8 @@
                         width : 100
                     },
                     {
-                        field : 'startUserLoginName',
-                        title : '启动用户登录名',
+                        field : 'startUserName',
+                        title : '启动用户名',
                         width : 100
                     },
                     {
@@ -211,7 +211,7 @@
 
                         $("#detailFlowInstanceName").text(data.instanceName);
                         $("#detailFlowInstanceState").text(data.stateShow);
-                        $("#detailFlowInstanceStartUser").text(data.startUserLoginName);
+                        $("#detailFlowInstanceStartUser").text(data.startUserName);
                         $("#detailFlowInstanceStartDate").text(data.startTime);
                         $("#detailFlowInstanceHandingNode").text(data.handingInstanceNodeNames);
 
@@ -230,13 +230,13 @@
                                     hidden : true
                                 },
                                 {
-                                    field : 'createDate',
-                                    title : '操作时间',
+                                    field : 'operateUserUserName',
+                                    title : '操作用户',
                                     width : 100
                                 },
                                 {
-                                    field : 'operateUserLoginName',
-                                    title : '操作用户',
+                                    field : 'createDate',
+                                    title : '操作时间',
                                     width : 100
                                 },
                                 {

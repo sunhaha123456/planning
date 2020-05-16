@@ -61,9 +61,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             throw new BusinessException("不能对已完成的用户流程操作！");
         }
 
-        StringBuilder operateInfo = new StringBuilder();
-        TbSysUser user = sysUserRepository.findOne(valueHolder.getUserIdHolder());
-
+        Long userId = valueHolder.getUserIdHolder();
+        String operateInfo = null;
         if (type == 0) { // 管理员冻结流程
             if (flowInstance.getState() == FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
                 throw new BusinessException("用户流程状态原先已是冻结！");
@@ -74,7 +73,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 throw new BusinessException(ResponseResultCode.OPERT_ERROR);
             }
 
-            operateInfo.append("管理员").append(user.getLoginName()).append("将").append(flowInstance.getInstanceName()).append("冻结");
+            operateInfo = "以管理员身份冻结流程";
         } else if (type == 1) { // 管理员恢复流程
             if (flowInstance.getState() != FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
                 throw new BusinessException("用户流程状态不是已是冻结！");
@@ -85,7 +84,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 throw new BusinessException(ResponseResultCode.OPERT_ERROR);
             }
 
-            operateInfo.append("管理员").append(user.getLoginName()).append("将").append(flowInstance.getInstanceName()).append("恢复");
+            operateInfo = "以管理员身份恢复流程";
         } else if (type == 2) { // 管理员删除流程
             if (flowInstance.getState() != FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
                 throw new BusinessException("请先冻结用户流程！");
@@ -108,13 +107,13 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                             // TODO: 2020/5/16 硬盘删文件代码，待完善
 
                         } catch (Exception e) {
-                            log.error("管理员：{},删除流程：{}时，删硬盘文件：{}，失败！", user.getLoginName(), flowInstance.getInstanceName(), f.getNewFileName());
+                            log.error("管理员userId：{},删除流程：{}时，删硬盘文件：{}，失败！", userId, flowInstance.getInstanceName(), f.getNewFileName());
                         }
                     }
                 }
             }
 
-            operateInfo.append("管理员").append(user.getLoginName()).append("将").append(flowInstance.getInstanceName()).append("删除");
+            operateInfo = "以管理员身份删除流程";
         } else {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
@@ -126,9 +125,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         history.setInstanceId(id);
         history.setInstanceName(flowInstance.getInstanceName());
         history.setInstanceNodeId(0L);
-        history.setInstanceName("");
-        history.setOperateUserId(valueHolder.getUserIdHolder());
-        history.setOperateInfo(operateInfo.toString());
+        history.setInstanceNodeName("");
+        history.setOperateUserId(userId);
+        history.setOperateInfo(operateInfo);
         flowInstanceOperateHistoryRepository.save(history);
     }
 
@@ -140,7 +139,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         }
 
         TbSysUser user = sysUserRepository.findOne(flowInstance.getStartUserId());
-        flowInstance.setStartUserLoginName(user.getLoginName());
+        flowInstance.setStartUserName(user.getUserName());
         flowInstance.setStateShow(FlowInstanceStateEnum.getName(flowInstance.getState()));
 
         flowInstance.setHandingInstanceNodeNames("无");

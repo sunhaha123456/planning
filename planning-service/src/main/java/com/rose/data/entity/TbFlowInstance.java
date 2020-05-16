@@ -30,7 +30,7 @@ public class TbFlowInstance extends BaseDataIdLong {
     private Long startUserId;
 
     @Transient
-    private String startUserLoginName;
+    private String startUserName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Temporal(TemporalType.TIMESTAMP)
