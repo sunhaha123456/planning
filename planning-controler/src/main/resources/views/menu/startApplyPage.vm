@@ -116,11 +116,24 @@
         function startApply() {
             var rows = $('#manager').datagrid('getSelections');
             if (rows.length > 0) {
-                $('#startApplyTitle').val('');
-                $('#startApplyContent').val('');
-
-
                 $('#startApplyForm').dialog('open');
+            } else {
+                alertWarn("请先选择记录！");
+            }
+        }
+
+        function startApplyCommit() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length > 0) {
+                var id = rows[0].id;
+                var startApplyTitle = $("startApplyTitle").val();
+                var startApplyContent = $("startApplyContent").val();
+                // startApplyFile0 startApplyFile1 startApplyFile2
+                // startApplyFile3 startApplyFile4 startApplyFile5
+
+
+
+                $('#startApplyForm').dialog('close');
             } else {
                 alertWarn("请先选择记录！");
             }
@@ -173,7 +186,15 @@
         <br/>
         <textarea id="startApplyContent" rows="6" cols="50" />
     </p>
-    <p><input type="button" value="上传附件" /></p>
+    <p>
+        <input id="startApplyFile0" type="file"/>
+        <input id="startApplyFile1" type="file"/>
+        <input id="startApplyFile2" type="file"/>
+        <input id="startApplyFile3" type="file"/>
+        <input id="startApplyFile4" type="file"/>
+        <input id="startApplyFile5" type="file"/>
+    </p>
+    <p>注意：最多允许上传6个附件</p>
 </form>
 </body>
 </html>
