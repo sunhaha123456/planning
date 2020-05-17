@@ -81,23 +81,27 @@ function ajaxSynchGet(conectUrl, params) {
     return res;
 }
 /*
-入参格式如下：
-var param = [
-    {key:"myfile", value:"#excelFileUpload"},
-    {key:"param1", value:"你好啊"},
-    {key:"param2", value:"我好啊"}
-];
-并且第一个参数必须是文件，且要带#
-*/
-function ajaxSynchUploadFilePost(conectUrl, params) {
-    var formData = new FormData();
+ 入参格式如下：
+ var fileParams = [
+ {key:"myfile", value:"#excelFileUpload"},
+ ];
+ var otherParams = [
+ {key:"param1", value:"你好啊"},
+ {key:"param2", value:"我好啊"}
+ ];
+ 并且第一个参数必须是文件，且要带#
+ */
+function ajaxSynchUploadFilePost(conectUrl, fileParams, otherParams) {
     var res = {"code": 500, "msg": "数据传输错误！"};
-    if (params != null && params.length > 0) {
-        formData.append(params[0].key, $(params[0].value)[0].files[0]);
-        if (params.length > 1) {
-            for(var i = 1; i < params.length ;i++) {
-                formData.append(params[i].key, params[i].value);
-            }
+    var formData = new FormData();
+    if (fileParams != null && fileParams.length > 0) {
+        for(var x = 0; x < fileParams.length; x++) {
+            formData.append(fileParams[x].key, $(fileParams[x].value)[0].files[0]);
+        }
+    }
+    if (otherParams != null && otherParams.length > 0) {
+        for(var x = 0; x < otherParams.length; x++) {
+            formData.append(otherParams[x].key, otherParams[x].value);
         }
     }
     $.ajax({

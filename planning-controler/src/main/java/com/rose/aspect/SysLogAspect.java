@@ -10,6 +10,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -48,13 +49,11 @@ public class SysLogAspect {
         String method = point.getSignature().getDeclaringTypeName() + "." + point.getSignature().getName();
         if (!noLogList.contains(method)) {
             List param = null;
-            if (!method.contains("uploadFile")) {
-                if (point.getArgs() != null && point.getArgs().length > 0) {
-                    param = new ArrayList(point.getArgs().length);
-                    for (Object p : point.getArgs()) {
-                        if (!(p instanceof HttpServletRequest) && !(p instanceof HttpServletResponse) && !(p instanceof BindingResult)) {
-                            param.add(p);
-                        }
+            if (point.getArgs() != null && point.getArgs().length > 0) {
+                param = new ArrayList(point.getArgs().length);
+                for (Object p : point.getArgs()) {
+                    if ( p != null && !(p instanceof HttpServletRequest) && !(p instanceof HttpServletResponse) && !(p instanceof BindingResult) && !(p instanceof MultipartFile)) {
+                        param.add(p);
                     }
                 }
             }

@@ -125,15 +125,27 @@
         function startApplyCommit() {
             var rows = $('#manager').datagrid('getSelections');
             if (rows.length > 0) {
-                var id = rows[0].id;
-                var startApplyTitle = $("startApplyTitle").val();
-                var startApplyContent = $("startApplyContent").val();
-                // startApplyFile0 startApplyFile1 startApplyFile2
-                // startApplyFile3 startApplyFile4 startApplyFile5
-
-
-
-                $('#startApplyForm').dialog('close');
+                var result = ajaxSynchUploadFilePost("user/startApply/startApply",
+                        [
+                            {key:"startApplyFile0", value:"#startApplyFile0"},
+                            {key:"startApplyFile1", value:"#startApplyFile1"},
+                            {key:"startApplyFile2", value:"#startApplyFile2"},
+                            {key:"startApplyFile3", value:"#startApplyFile3"},
+                            {key:"startApplyFile4", value:"#startApplyFile4"},
+                            {key:"startApplyFile5", value:"#startApplyFile5"}
+                        ],
+                        [
+                            {key:"templateId", value:rows[0].id},
+                            {key:"instanceName", value:$("#startApplyTitle").val()},
+                            {key:"applyContent", value:$("#startApplyContent").val()}
+                        ]
+                );
+                if (result.code == '200') {
+                    $('#startApplyForm').dialog('close');
+                    alertSuccess();
+                } else {
+                    alertWarn(result.msg);
+                }
             } else {
                 alertWarn("请先选择记录！");
             }
