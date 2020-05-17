@@ -1,17 +1,24 @@
 package com.rose.controler;
 
 import com.rose.common.data.base.PageList;
+import com.rose.common.data.response.ResponseResultCode;
+import com.rose.common.exception.BusinessException;
+import com.rose.common.util.FileUtil;
+import com.rose.common.util.StringUtil;
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.to.request.FlowTemplateRequest;
 import com.rose.data.to.response.FlowChartResponse;
+import com.rose.service.FlowInstanceService;
 import com.rose.service.FlowTemplateService;
-import com.rose.service.SelfOfficeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 描述：发起申请 controller
@@ -23,14 +30,20 @@ import java.io.IOException;
 public class StartApplyControler {
 
     @Inject
-	private SelfOfficeService selfOfficeService;
-    @Inject
     private FlowTemplateService flowTemplateService;
+    @Inject
+    private FlowInstanceService flowInstanceService;
+
+    @Value("${file.upload.path}")
+    private String uploadPath;
+
+    @Value("${file.upload.maxSize}")
+    private Long fileMaxSize;
 
     @PostMapping(value= "/searchTemplate")
     public PageList<TbFlowTemplate> searchTemplate(@RequestBody FlowTemplateRequest param) throws Exception {
         param.setStatus(0);
-        return selfOfficeService.searchTemplate(param);
+        return flowTemplateService.searchTemplate(param);
     }
 
     /**
@@ -54,9 +67,14 @@ public class StartApplyControler {
                            @RequestParam(value = "startApplyFile5", required = false) MultipartFile startApplyFile5,
                            @RequestParam(value = "templateId", required = true) Long templateId,
                            @RequestParam(value = "instanceName", required = true) String instanceName,
-                           @RequestParam(value = "applyContent", required = true) String applyContent) {
-        System.out.println(startApplyFile0.getOriginalFilename());
-        System.out.println(111111);
+                           @RequestParam(value = "applyContent", required = true) String applyContent) throws IOException {
+        if (StringUtil.isEmpty(instanceName)) {
+            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+        }
+        List<MultipartFile> fileList = Arrays.asList(startApplyFile0, startApplyFile1, startApplyFile2, startApplyFile3, startApplyFile4, startApplyFile5);
+        FileUtil.fileValidate(fileList, fileMaxSize);
+
+        flowInstanceService.startApply(templateId, instanceName, applyContent, fileList);
     }
 
     @GetMapping(value= "/getTemplateFlowChart")

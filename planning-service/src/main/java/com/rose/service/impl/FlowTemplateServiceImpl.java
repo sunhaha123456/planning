@@ -1,5 +1,6 @@
 package com.rose.service.impl;
 
+import com.rose.common.data.base.PageList;
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
@@ -7,6 +8,7 @@ import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.entity.TbFlowTemplateNode;
 import com.rose.data.entity.TbFlowTemplateNodeUserTask;
 import com.rose.data.entity.TbSysUser;
+import com.rose.data.to.request.FlowTemplateRequest;
 import com.rose.data.to.response.EasyuiTreeResponse;
 import com.rose.data.to.response.FlowChartResponse;
 import com.rose.repository.*;
@@ -25,6 +27,8 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
 
     @Inject
     private FlowTemplateRepository flowTemplateRepository;
+    @Inject
+    private FlowTemplateRepositoryCustom flowTemplateRepositoryCustom;
     @Inject
     private FlowTemplateNodeRepository flowTemplateNodeRepository;
     @Inject
@@ -64,6 +68,11 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         }
         template.setTemplateNodeList(templateNodeList);
         return template;
+    }
+
+    @Override
+    public PageList<TbFlowTemplate> searchTemplate(FlowTemplateRequest param) throws Exception {
+        return flowTemplateRepositoryCustom.list(param.getFlowTemplateName(), param.getStatus(), param.getPage(), param.getRows());
     }
 
     @Transactional(rollbackFor = Exception.class)

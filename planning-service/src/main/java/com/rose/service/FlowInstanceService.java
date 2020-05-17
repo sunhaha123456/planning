@@ -5,6 +5,9 @@ import com.rose.data.entity.TbFlowInstance;
 import com.rose.data.entity.TbFlowInstanceOperateHistory;
 import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.response.FlowChartResponse;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface FlowInstanceService {
 
@@ -17,4 +20,6 @@ public interface FlowInstanceService {
     PageList<TbFlowInstanceOperateHistory> getOperateInfo(FlowInstanceRequest param) throws Exception;
 
     FlowChartResponse getFlowInstanceFlowChart(Long id);
+
+    void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList);
 }

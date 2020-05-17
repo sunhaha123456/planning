@@ -13,10 +13,13 @@ import com.rose.data.to.response.FlowChartResponse;
 import com.rose.repository.*;
 import com.rose.service.FlowInstanceService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,8 +45,12 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     private FlowInstanceFileRepository flowInstanceFileRepository;
     @Inject
     private SysUserRepository sysUserRepository;
+
     @Inject
     private ValueHolder valueHolder;
+
+    @Value("${file.upload.path}")
+    private String uploadPath;
 
     @Override
     public PageList<TbFlowInstance> searchFlowInstance(FlowInstanceRequest param) throws Exception {
@@ -101,13 +108,16 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             flowInstanceFileRepository.deleteByInstanceId(id);
 
             if (fileList != null && fileList.size() > 0) {
-                for (TbFlowInstanceFile f : fileList) {
-                    if (StringUtil.isNotEmpty(f.getNewFileName())) {
+                File file = null;
+                for (TbFlowInstanceFile fileInstance : fileList) {
+                    if (StringUtil.isNotEmpty(fileInstance.getNewFileName())) {
                         try {
-                            // TODO: 2020/5/16 硬盘删文件代码，待完善
-
+                            file = new File(uploadPath + fileInstance.getNewFileName());
+                            if (file.exists()) {
+                                file.delete();
+                            }
                         } catch (Exception e) {
-                            log.error("管理员userId：{},删除流程：{}时，删硬盘文件：{}，失败！", userId, flowInstance.getInstanceName(), f.getNewFileName());
+                            log.error("管理员userId：{},删除流程：{}时，删硬盘文件：{}，失败！", userId, flowInstance.getInstanceName(), fileInstance.getNewFileName());
                         }
                     }
                 }
@@ -278,5 +288,24 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         }
 
         return flowChart;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
