@@ -243,7 +243,17 @@
                 }
             }
         }
+
+        function keyDownInit() {
+            document.onkeydown = function doKeyDown() {
+                if (event.keyCode == 13) {
+                    return false;
+                }
+            }
+        }
+
         $(function () {
+            keyDownInit();
             dataGridInit();
             searchMenu();
         });

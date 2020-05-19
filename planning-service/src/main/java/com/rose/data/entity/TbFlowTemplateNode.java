@@ -49,6 +49,13 @@ public class TbFlowTemplateNode extends BaseDataIdLong {
     @Column(name = "operate_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '执行方式'")
     private Integer operateType;
 
+    // 是否变更了节点下的关联用户 1：已变革了节点下的关联用户 0：未变更节点下的关联用户
+    @Transient
+    private Integer userUplateFlag;
+
+    @Transient
+    private List<Long> userIdList;
+
     @Transient
     private List<EasyuiTreeResponse> userTreeResponse;
 

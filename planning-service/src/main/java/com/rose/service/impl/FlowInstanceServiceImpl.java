@@ -44,6 +44,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Inject
     private FlowInstanceFileRepository flowInstanceFileRepository;
     @Inject
+    private FlowTemplateRepository flowTemplateRepository;
+    @Inject
     private SysUserRepository sysUserRepository;
 
     @Inject
@@ -293,8 +295,13 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList) {
-
-
+        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
+        if (template == null) {
+            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+        }
+        if (template.getStatus() != 0) {
+            throw new BusinessException("流程模板已被停用不能创建申请！");
+        }
 
 
 

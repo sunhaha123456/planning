@@ -143,6 +143,9 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
             if (param.getPid() == null) {
                 throw new BusinessException(ResponseResultCode.PARAM_ERROR);
             }
+            if (param.getUserIdList() == null || param.getUserIdList().size() == 0) {
+                throw new BusinessException("未设置执行用户！");
+            }
 
             List<TbFlowTemplateNode> nodeListByNodeName = flowTemplateNodeRepository.listByTemplateIdAndNodeName(param.getTemplateId(), param.getNodeName());
             if (nodeListByNodeName != null && nodeListByNodeName.size() > 0) {
@@ -175,6 +178,20 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                 res.setTotalCode(parentTotalCode + "," + res.getId());
             }
 
+            List<TbFlowTemplateNodeUserTask> userTaskList = new ArrayList<>();
+            TbFlowTemplateNodeUserTask task = null;
+            for (Long taskUserId : param.getUserIdList()) {
+                task = new TbFlowTemplateNodeUserTask();
+                task.setId(null);
+                task.setCreateDate(now);
+                task.setLastModified(now);
+                task.setUserId(taskUserId);
+                task.setTemplateId(param.getTemplateId());
+                task.setTemplateNodeId(res.getId());
+                userTaskList.add(task);
+            }
+            flowTemplateNodeUserTaskRepository.save(userTaskList);
+
             return res;
         } else { // 修改
             TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(param.getId(), param.getTemplateId());
@@ -192,6 +209,27 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
             node.setInstruction(param.getInstruction());
             node.setOperateType(param.getOperateType());
 
+            if (param.getUserUplateFlag() == 1) {
+                if (param.getUserIdList() == null || param.getUserIdList().size() == 0) {
+                    throw new BusinessException("未设置执行用户！");
+                }
+
+                flowTemplateNodeUserTaskRepository.deleteByTmeplateIdAndNodeId(param.getTemplateId(), param.getId());
+                List<TbFlowTemplateNodeUserTask> userTaskList = new ArrayList<>();
+                TbFlowTemplateNodeUserTask task = null;
+                for (Long taskUserId : param.getUserIdList()) {
+                    task = new TbFlowTemplateNodeUserTask();
+                    task.setId(null);
+                    task.setCreateDate(now);
+                    task.setLastModified(now);
+                    task.setUserId(taskUserId);
+                    task.setTemplateId(param.getTemplateId());
+                    task.setTemplateNodeId(param.getId());
+                    userTaskList.add(task);
+                }
+                flowTemplateNodeUserTaskRepository.save(userTaskList);
+            }
+
             return flowTemplateNodeRepository.save(node);
         }
     }
@@ -201,13 +239,13 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         TbFlowTemplateNode node = flowTemplateNodeRepository.findOne(id);
 
         List<EasyuiTreeResponse> userTreeList = new ArrayList<>();
-        List<TbFlowTemplateNodeUserTask> userList = flowTemplateNodeUserTaskRepositoryCustom.queryNodeUserList(id);
-        if (userList != null && userList.size() > 0) {
+        List<TbFlowTemplateNodeUserTask> userTaskList = flowTemplateNodeUserTaskRepositoryCustom.queryNodeUserList(id);
+        if (userTaskList != null && userTaskList.size() > 0) {
             EasyuiTreeResponse resp = null;
-            for (TbFlowTemplateNodeUserTask user : userList) {
+            for (TbFlowTemplateNodeUserTask task : userTaskList) {
                 resp = new EasyuiTreeResponse();
-                resp.setId(user.getId());
-                resp.setText(user.getLoginName() + "（" + user.getUserName() + "）");
+                resp.setId(task.getUserId());
+                resp.setText(task.getLoginName() + "（" + task.getUserName() + "）");
                 userTreeList.add(resp);
             }
         }
@@ -240,63 +278,63 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void deleteTemplateNodeUser(Long id, Long templateId, Long nodeId) {
-        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
-        if (template.getStatus() != 1) {
-            throw new BusinessException("请先停用模板！");
-        }
-        TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
-        if (node == null) {
-            throw new BusinessException("节点不存在！");
-        }
-        int c = flowTemplateNodeUserTaskRepository.deleteByIdAndTmeplateIdAndNodeId(id, templateId, nodeId);
-        if (c <= 0) {
-            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
-        }
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    @Override
+//    public void deleteTemplateNodeUser(Long id, Long templateId, Long nodeId) {
+//        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
+//        if (template.getStatus() != 1) {
+//            throw new BusinessException("请先停用模板！");
+//        }
+//        TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
+//        if (node == null) {
+//            throw new BusinessException("节点不存在！");
+//        }
+//        int c = flowTemplateNodeUserTaskRepository.deleteByIdAndTmeplateIdAndNodeId(id, templateId, nodeId);
+//        if (c <= 0) {
+//            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+//        }
+//    }
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public TbFlowTemplateNodeUserTask addTemplateNodeUser(TbFlowTemplateNodeUserTask param) {
-        Long templateId = param.getTemplateId();
-        Long nodeId = param.getTemplateNodeId();
-        String loginName = param.getLoginName();
-
-        if (StringUtil.isEmpty(loginName)) {
-            throw new BusinessException("用户登陆名不能为空！");
-        }
-        TbSysUser user = sysUserRepository.findByLoginName(loginName);
-        if (user == null) {
-            throw new BusinessException("查无对应用户！");
-        }
-        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
-        if (template.getStatus() != 1) {
-            throw new BusinessException("请先停用模板！");
-        }
-        TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
-        if (node == null) {
-            throw new BusinessException("节点不存在！");
-        }
-
-        List<TbFlowTemplateNodeUserTask> userTaskList = flowTemplateNodeUserTaskRepository.findByTmeplateIdAndNodeIdAndUserId(templateId, nodeId, user.getId());
-        if (userTaskList != null && userTaskList.size() > 0) {
-            throw new BusinessException("节点下已关联过了该用户！");
-        }
-
-        param.setId(null);
-        Date now = new Date();
-        param.setCreateDate(now);
-        param.setLastModified(now);
-        param.setUserId(user.getId());
-
-        TbFlowTemplateNodeUserTask res = flowTemplateNodeUserTaskRepository.save(param);
-        res.setLoginName(user.getLoginName());
-        res.setUserName(user.getUserName());
-
-        return res;
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    @Override
+//    public TbFlowTemplateNodeUserTask addTemplateNodeUser(TbFlowTemplateNodeUserTask param) {
+//        Long templateId = param.getTemplateId();
+//        Long nodeId = param.getTemplateNodeId();
+//        String loginName = param.getLoginName();
+//
+//        if (StringUtil.isEmpty(loginName)) {
+//            throw new BusinessException("用户登陆名不能为空！");
+//        }
+//        TbSysUser user = sysUserRepository.findByLoginName(loginName);
+//        if (user == null) {
+//            throw new BusinessException("查无对应用户！");
+//        }
+//        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
+//        if (template.getStatus() != 1) {
+//            throw new BusinessException("请先停用模板！");
+//        }
+//        TbFlowTemplateNode node = flowTemplateNodeRepository.findByIdAndTemplateId(nodeId, templateId);
+//        if (node == null) {
+//            throw new BusinessException("节点不存在！");
+//        }
+//
+//        List<TbFlowTemplateNodeUserTask> userTaskList = flowTemplateNodeUserTaskRepository.findByTmeplateIdAndNodeIdAndUserId(templateId, nodeId, user.getId());
+//        if (userTaskList != null && userTaskList.size() > 0) {
+//            throw new BusinessException("节点下已关联过了该用户！");
+//        }
+//
+//        param.setId(null);
+//        Date now = new Date();
+//        param.setCreateDate(now);
+//        param.setLastModified(now);
+//        param.setUserId(user.getId());
+//
+//        TbFlowTemplateNodeUserTask res = flowTemplateNodeUserTaskRepository.save(param);
+//        res.setLoginName(user.getLoginName());
+//        res.setUserName(user.getUserName());
+//
+//        return res;
+//    }
 
     @Override
     public FlowChartResponse getTemplateFlowChart(Long id) {
@@ -412,5 +450,17 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         }
 
         return idList;
+    }
+
+    @Override
+    public TbSysUser getUserInfo(String loginName) {
+        if (StringUtil.isEmpty(loginName)) {
+            throw new BusinessException("用户登陆名不能为空！");
+        }
+        TbSysUser user = sysUserRepository.findByLoginName(loginName);
+        if (user == null) {
+            throw new BusinessException("查无对应用户！");
+        }
+        return user;
     }
 }

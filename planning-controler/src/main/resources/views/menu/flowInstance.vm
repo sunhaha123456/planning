@@ -307,19 +307,25 @@
             }
         }
 
-        function searchTemplateKeyDown() {
-            if (event.keyCode == 13) {
-                searchTemplate();
-            }
-        }
-
-        function searchFlowInstanceKeyDown() {
-            if (event.keyCode == 13) {
-                searchFlowInstance();
+        function keyDownInit() {
+            document.onkeydown = function doKeyDown() {
+                if (event.keyCode == 13) {
+                    var id = document.activeElement.id;
+                    if (id == "templateNameSearch") {
+                        searchTemplate();
+                        return false;
+                    } else if (id == "flowInstanceNameSearch") {
+                        searchFlowInstance();
+                        return false;
+                    } else {
+                        return false;
+                    }
+                }
             }
         }
 
         $(function () {
+            keyDownInit();
             var noedDataArr = templateTreeInit();
             dataGridInit();
 
@@ -333,7 +339,7 @@
 <body>
 <div style="margin-bottom:5px;">
     &nbsp;&nbsp;
-    模板名称：<input type="text" class="textbox" id="templateNameSearch" onkeydown="searchTemplateKeyDown()" style="width:180px" />
+    模板名称：<input type="text" class="textbox" id="templateNameSearch" style="width:180px" />
     <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchTemplate()">查询</a>
 </div>
 
@@ -352,7 +358,7 @@
                     <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstanceChartShow()">流程预览</a>
                 </div>
                 <div>
-                    &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" onkeydown="searchFlowInstanceKeyDown()" style="width:180px" />
+                    &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
                     <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
                 </div>
             </div>

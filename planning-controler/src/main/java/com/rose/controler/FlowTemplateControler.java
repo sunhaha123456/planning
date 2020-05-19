@@ -2,7 +2,7 @@ package com.rose.controler;
 
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.entity.TbFlowTemplateNode;
-import com.rose.data.entity.TbFlowTemplateNodeUserTask;
+import com.rose.data.entity.TbSysUser;
 import com.rose.data.to.response.FlowChartResponse;
 import com.rose.service.FlowTemplateService;
 import lombok.extern.slf4j.Slf4j;
@@ -64,18 +64,23 @@ public class FlowTemplateControler {
         return flowTemplateService.deleteTemplateNodeAndReturnParentNode(nodeId, templateId);
     }
 
-    @PostMapping(value= "/deleteTemplateNodeUser")
-    public void deleteTemplateNodeUser(@RequestParam Long id, @RequestParam Long templateId, @RequestParam Long nodeId) {
-        flowTemplateService.deleteTemplateNodeUser(id, templateId, nodeId);
-    }
+//    @PostMapping(value= "/deleteTemplateNodeUser")
+//    public void deleteTemplateNodeUser(@RequestParam Long id, @RequestParam Long templateId, @RequestParam Long nodeId) {
+//        flowTemplateService.deleteTemplateNodeUser(id, templateId, nodeId);
+//    }
 
-    @PostMapping(value= "/addTemplateNodeUser")
-    public TbFlowTemplateNodeUserTask addTemplateNodeUser(@RequestBody TbFlowTemplateNodeUserTask param) {
-        return flowTemplateService.addTemplateNodeUser(param);
-    }
+//    @PostMapping(value= "/addTemplateNodeUser")
+//    public TbFlowTemplateNodeUserTask addTemplateNodeUser(@RequestBody TbFlowTemplateNodeUserTask param) {
+//        return flowTemplateService.addTemplateNodeUser(param);
+//    }
 
     @GetMapping(value= "/getTemplateFlowChart")
     public FlowChartResponse getTemplateFlowChart(@RequestParam Long id) {
         return flowTemplateService.getTemplateFlowChart(id);
+    }
+
+    @GetMapping(value= "/getUserInfo")
+    public TbSysUser getUserInfo(@RequestParam String loginName) {
+        return flowTemplateService.getUserInfo(loginName);
     }
 }

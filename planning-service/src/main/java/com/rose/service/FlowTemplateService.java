@@ -3,7 +3,7 @@ package com.rose.service;
 import com.rose.common.data.base.PageList;
 import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.entity.TbFlowTemplateNode;
-import com.rose.data.entity.TbFlowTemplateNodeUserTask;
+import com.rose.data.entity.TbSysUser;
 import com.rose.data.to.request.FlowTemplateRequest;
 import com.rose.data.to.response.FlowChartResponse;
 
@@ -27,9 +27,9 @@ public interface FlowTemplateService {
 
     TbFlowTemplateNode deleteTemplateNodeAndReturnParentNode(Long nodeId, Long templateId);
 
-    void deleteTemplateNodeUser(Long id, Long templateId, Long nodeId);
+    //void deleteTemplateNodeUser(Long id, Long templateId, Long nodeId);
 
-    TbFlowTemplateNodeUserTask addTemplateNodeUser(TbFlowTemplateNodeUserTask param);
+    //TbFlowTemplateNodeUserTask addTemplateNodeUser(TbFlowTemplateNodeUserTask param);
 
     FlowChartResponse getTemplateFlowChart(Long id);
 
@@ -40,4 +40,6 @@ public interface FlowTemplateService {
      * @return
      */
     List<Long> getIdList(String templateName, Integer state);
+
+    TbSysUser getUserInfo(String loginName);
 }

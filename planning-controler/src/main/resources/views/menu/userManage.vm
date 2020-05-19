@@ -221,13 +221,22 @@
             }
         }
 
-        function searchUserKeyDown() {
-            if (event.keyCode == 13) {
-                searchUser();
+        function keyDownInit() {
+            document.onkeydown = function doKeyDown() {
+                if (event.keyCode == 13) {
+                    var id = document.activeElement.id;
+                    if (id == "loginNameSearch") {
+                        searchUser();
+                        return false;
+                    } else {
+                        return false;
+                    }
+                }
             }
         }
 
         $(function () {
+            keyDownInit();
             dataGridInit();
             searchUser();
             webPageInit();
@@ -246,7 +255,7 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="opertUserState(2)">注销</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
-            用户登录名：<input type="text" class="textbox" id="loginNameSearch" onkeydown="searchUserKeyDown()" style="width:160px" />
+            用户登录名：<input type="text" class="textbox" id="loginNameSearch" style="width:160px" />
             <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchUser()">查询</a>
         </div>
     </div>

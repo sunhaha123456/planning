@@ -23,9 +23,14 @@
     <script th:src="@{/static/flowChart/js/jquery.orgchart.js}"></script>
     <!-- flow chart end -->
     <script th:inline="javascript">
-        var templateNodeArr = new Array();
+        var msgOk = "模板状态：正常";
+        var msgNo = "模板状态：停用";
 
+        var templateNodeArr = new Array();
         var templateNodeSaveType = -1;
+        var userTreeData = null;
+
+        var chooseUserTreeInitFalg = true;
 
         function templateTreeInit() {
             var result = ajaxSynchGet("user/flowTemplate/getTemplateTree", null);
@@ -61,9 +66,9 @@
 
                 var status = result.data.status;
                 if (status == 0) { // 正常
-                    $("#templateStatus").text("模板状态：正常");
+                    $("#templateStatus").text(msgOk);
                 } else { // 冻结
-                    $("#templateStatus").text("模板状态：停用");
+                    $("#templateStatus").text(msgNo);
                 }
 
                 var nodeList = result.data.templateNodeList;
@@ -164,9 +169,9 @@
                         var result = ajaxSynchPostJson("user/flowTemplate/operateTemplateState?id=" + templateId + "&type=" + type, null);
                         if (result.code == '200') {
                             if (type == 0) {
-                                $("#templateStatus").text("模板状态：正常");
+                                $("#templateStatus").text(msgOk);
                             } else if (type == 1) {
-                                $("#templateStatus").text("模板状态：停用");
+                                $("#templateStatus").text(msgNo);
                             } else {
                                 templateTreeInit();
                             }
@@ -186,6 +191,10 @@
                 alertWarn("请先选中模板！");
                 return;
             }
+            if ($("#templateStatus").text() != msgNo) {
+                alertWarn("请先停用模板！");
+                return;
+            }
 
             templateNodeSaveType = type;
 
@@ -193,8 +202,6 @@
                 $("#nodeNameNodeSave").val("");
                 $("input:radio[name=nodeOperateTypeNodeSave][value=" + 0 + "]").prop("checked",true);
                 $("#nodeInstructionNodeSave").val("");
-                $("#saveTemplateNodeFormToolbar").hide();
-                $("#operateUserTip").show();
             } else if (type == 1) { // 新增子项节点
                 if (!isTreeNodeSelected("templateNodeTree")) {
                     alertWarn("请先选中上级节点！");
@@ -203,8 +210,6 @@
                 $("#nodeNameNodeSave").val("");
                 $("input:radio[name=nodeOperateTypeNodeSave][value=" + 0 + "]").prop("checked",true);
                 $("#nodeInstructionNodeSave").val("");
-                $("#saveTemplateNodeFormToolbar").hide();
-                $("#operateUserTip").show();
             } else if (type == 2) { // 修改
                 if (!isTreeNodeSelected("templateNodeTree")) {
                     alertWarn("请先选中节点！");
@@ -215,13 +220,15 @@
                     $("#nodeNameNodeSave").val(result.data.nodeName);
                     $("input:radio[name=nodeOperateTypeNodeSave][value=" + result.data.operateType + "]").prop("checked",true);
                     $("#nodeInstructionNodeSave").val(result.data.instruction);
-                    $("#saveTemplateNodeFormToolbar").show();
-                    $("#operateUserTip").hide();
+
+                    userTreeData = result.data.userTreeResponse;
                 } else {
                     alertWarn(result.msg);
                     return;
                 }
             }
+            chooseUserTreeInitFalg = true;
+
             $('#saveTemplateNodeForm').dialog('open');
         }
 
@@ -252,13 +259,25 @@
 
             var templateId = getTreeSelectedNode("templateTree").id;
 
+            var userTreeChildIdArr = new Array();
+            if (!chooseUserTreeInitFalg) {
+                var userTreeChild = $('#userTree').tree('getChildren');
+                if (userTreeChild != null && userTreeChild.length > 0) {
+                    for(var x=0; x<userTreeChild.length; x++) {
+                        userTreeChildIdArr[x] = userTreeChild[x].id;
+                    }
+                }
+            }
+
             var result = ajaxSynchPostJson("user/flowTemplate/saveTemplateNode", {
                 "id": id,
                 "nodeName": $("#nodeNameNodeSave").val(),
                 "templateId": templateId,
                 "pid": pid,
                 "operateType": $("input[name='nodeOperateTypeNodeSave']:checked").val(),
-                "instruction": $("#nodeInstructionNodeSave").val()
+                "instruction": $("#nodeInstructionNodeSave").val(),
+                "userUplateFlag": chooseUserTreeInitFalg ? 0 : 1,
+                "userIdList": userTreeChildIdArr
             });
             if (result.code == '200') {
                 templateNodeTreeInit(templateId, result.data.totalCode);
@@ -274,24 +293,25 @@
                 alertWarn("请先选中模板！");
                 return;
             }
-            if (!isTreeNodeSelected("templateNodeTree")) {
-                alertWarn("请先选中节点！");
-                return;
+
+            if (templateNodeSaveType == 0) { // 新增一级节点
+                userTreeData = null;
+            } else if (templateNodeSaveType == 1) { // 新增子项节点
+                userTreeData = null;
+            } else if (templateNodeSaveType == 2) { // 修改
+                if (!isTreeNodeSelected("templateNodeTree")) {
+                    alertWarn("请先选中节点！");
+                    return;
+                }
             }
 
-            var nodeId = getTreeSelectedNode("templateNodeTree").id;
-            var result = ajaxSynchGet("user/flowTemplate/getTemplateNodeDetail", {"id":nodeId});
-            if (result.code == '200') {
-                var userTree =  result.data.userTreeResponse;
-
-                userTreeInit(userTree);
-                $("#userLoginNameAdd").val("");
-
-                $('#chooseUserForm').dialog('open');
-            } else {
-                alertWarn(result.msg);
-                return;
+            if (chooseUserTreeInitFalg) {
+                userTreeInit(userTreeData);
+                chooseUserTreeInitFalg = false;
             }
+            $("#userLoginNameAdd").val("");
+
+            $('#chooseUserForm').dialog('open');
         }
 
         function userTreeInit(userTree) {
@@ -312,10 +332,6 @@
                 alertWarn("请先选中模板！");
                 return;
             }
-            if (!isTreeNodeSelected("templateNodeTree")) {
-                alertWarn("请先选中节点！");
-                return;
-            }
             if (!isTreeNodeSelected("userTree")) {
                 alertWarn("请先选中用户！");
                 return;
@@ -324,19 +340,8 @@
             $.messager.confirm('确定操作', "确定删除吗？", function (flag) {
                 if (flag) {
                     var id = getTreeSelectedNode("userTree").id;
-                    var templateId = getTreeSelectedNode("templateTree").id;
-                    var nodeId = getTreeSelectedNode("templateNodeTree").id;
-                    var param = "?id=" + id + "&templateId=" + templateId + "&nodeId=" + nodeId;
-                    var result = ajaxSynchPostJson("user/flowTemplate/deleteTemplateNodeUser" + param, null);
-                    if (result.code == '200') {
-                        var userTree = $("#userTree");
-                        var node = userTree.tree("find", id);
-                        userTree.tree("remove", node.target);
-                        alertSuccess();
-                    } else {
-                        alertWarn(result.msg);
-                        return;
-                    }
+                    var node = $("#userTree").tree("find", id);
+                    $("#userTree").tree("remove", node.target);
                 }
             });
         }
@@ -346,28 +351,21 @@
                 alertWarn("请先选中模板！");
                 return;
             }
-            if (!isTreeNodeSelected("templateNodeTree")) {
-                alertWarn("请先选中节点！");
-                return;
-            }
-            var templateId = getTreeSelectedNode("templateTree").id;
-            var nodeId = getTreeSelectedNode("templateNodeTree").id;
-            var result = ajaxSynchPostJson("user/flowTemplate/addTemplateNodeUser", {
-                "templateId": templateId,
-                "templateNodeId": nodeId,
-                "loginName": $("#userLoginNameAdd").val()
-            });
+            var result = ajaxSynchGet("user/flowTemplate/getUserInfo", {"loginName": $("#userLoginNameAdd").val()});
             if (result.code == '200') {
-                $('#userTree').tree('append', {
-                    data: {
-                        "id": result.data.id,
-                        "text": result.data.loginName + "（" + result.data.userName + "）"
-                    }
-                });
-                alertSuccess();
+                var node = $("#userTree").tree("find", result.data.id);
+                if (node == null) {
+                    $('#userTree').tree('append', {
+                        data: {
+                            "id": result.data.id,
+                            "text": result.data.loginName + "（" + result.data.userName + "）"
+                        }
+                    });
+                } else {
+                    alertWarn("重复添加！");
+                }
             } else {
                 alertWarn(result.msg);
-                return;
             }
         }
 
@@ -378,6 +376,10 @@
             }
             if (!isTreeNodeSelected("templateNodeTree")) {
                 alertWarn("请先选中节点！");
+                return;
+            }
+            if ($("#templateStatus").text() != msgNo) {
+                alertWarn("请先停用模板！");
                 return;
             }
             $.messager.confirm('确定操作', "确定要删除？", function (flag) {
@@ -434,7 +436,22 @@
             }
         }
 
+        function keyDownInit() {
+            document.onkeydown = function doKeyDown() {
+                if (event.keyCode == 13) {
+                    var id = document.activeElement.id;
+                    if (id == "userLoginNameAdd") {
+                        addUser();
+                        return false;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+
         $(function () {
+            keyDownInit();
             var noedDataArr = templateTreeInit();
             if (noedDataArr != null && noedDataArr.length > 0) {
                 var node = $('#templateTree').tree('find', noedDataArr[0].id);
@@ -514,7 +531,6 @@
     <p>节点名称：<input id="nodeNameNodeSave" class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入节点名',invalidMessage:'节点名长度至少为1位'" type="text" style="width:200px;" />
     <p>节点类型：<input name="nodeOperateTypeNodeSave" type="radio" value="0" checked="checked">抢占</input><input name="nodeOperateTypeNodeSave" type="radio" value="1">会签</input></p>
     <p>节点描述：<textarea id="nodeInstructionNodeSave" rows="2" cols="29" /></p>
-    <p id="operateUserTip">注意：需要在编辑中设置节点执行人</p>
 </form>
 <div id="saveTemplateNodeFormToolbar" style="margin-bottom:5px;">
     <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="chooseUserShow()">设置执行人</a>

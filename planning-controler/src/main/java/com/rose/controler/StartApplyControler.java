@@ -67,7 +67,7 @@ public class StartApplyControler {
                            @RequestParam(value = "startApplyFile5", required = false) MultipartFile startApplyFile5,
                            @RequestParam(value = "templateId", required = true) Long templateId,
                            @RequestParam(value = "instanceName", required = true) String instanceName,
-                           @RequestParam(value = "applyContent", required = true) String applyContent) throws IOException {
+                           @RequestParam(value = "applyContent", required = false) String applyContent) throws IOException {
         if (StringUtil.isEmpty(instanceName)) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }

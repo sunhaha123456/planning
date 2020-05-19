@@ -175,7 +175,17 @@
                 $('#manager').datagrid('loadData', result.data);
             }
         }
+
+        function keyDownInit() {
+            document.onkeydown = function doKeyDown() {
+                if (event.keyCode == 13) {
+                    return false;
+                }
+            }
+        }
+
         $(function () {
+            keyDownInit()
             dataGridInit();
             searchRole();
         });

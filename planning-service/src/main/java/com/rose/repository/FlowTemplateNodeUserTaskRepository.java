@@ -18,8 +18,8 @@ public interface FlowTemplateNodeUserTaskRepository extends CrudRepository<TbFlo
     int deleteByTmeplateIdAndNodeIdList(@Param(value = "templateId") Long templateId, @Param(value = "templateNodeIdList") List<Long> templateNodeIdList);
 
     @Modifying
-    @Query(value = "delete from tb_flow_template_node_user_task where id = :id and template_id = :templateId and template_node_id = :nodeId", nativeQuery = true)
-    int deleteByIdAndTmeplateIdAndNodeId(@Param(value = "id") Long id, @Param(value = "templateId") Long templateId, @Param(value = "nodeId") Long nodeId);
+    @Query(value = "delete from tb_flow_template_node_user_task where template_id = :templateId and template_node_id = :nodeId", nativeQuery = true)
+    int deleteByTmeplateIdAndNodeId(@Param(value = "templateId") Long templateId, @Param(value = "nodeId") Long nodeId);
 
     @Query(value = "select * from tb_flow_template_node_user_task where template_id = :templateId and template_node_id = :nodeId and user_id = :userId order by id asc", nativeQuery = true)
     List<TbFlowTemplateNodeUserTask> findByTmeplateIdAndNodeIdAndUserId(@Param(value = "templateId") Long templateId, @Param(value = "nodeId") Long nodeId, @Param(value = "userId") Long userId);
