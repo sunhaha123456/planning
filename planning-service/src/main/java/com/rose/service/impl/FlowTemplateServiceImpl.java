@@ -101,14 +101,14 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
         if (type != template.getStatus()) {
             switch (type) {
                 case 0: { // 启用
-                    flowTemplateRepository.updateStatus(id, 0, template.getStatus());
-                    break;
-                }
-                case 1: { // 停用
                     long c = flowTemplateNodeRepository.countByTemplateId(id);
                     if (c <= 0) {
                         throw new BusinessException("无节点模板不能启用！");
                     }
+                    flowTemplateRepository.updateStatus(id, 0, template.getStatus());
+                    break;
+                }
+                case 1: { // 停用
                     flowTemplateRepository.updateStatus(id, 1, template.getStatus());
                     break;
                 }

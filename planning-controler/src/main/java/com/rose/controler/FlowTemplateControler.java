@@ -44,6 +44,11 @@ public class FlowTemplateControler {
         return flowTemplateService.save(param);
     }
 
+    /**
+     * 功能：对模板状态操作
+     * @param id
+     * @param type 0启用 1停用 2删除
+     */
     @PostMapping(value= "/operateTemplateState")
     public void operateTemplateState(@RequestParam Long id, @RequestParam Integer type) {
         flowTemplateService.operateTemplateState(id, type);

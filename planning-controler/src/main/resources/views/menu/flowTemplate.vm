@@ -156,9 +156,9 @@
                 var templateId = getTreeSelectedNode("templateTree").id;
 
                 var msg = ""
-                if (type == 0) { // 冻结
+                if (type == 0) { // 启用
                     msg = "确定要启用模板吗？";
-                } else if (type == 1) { // 启用
+                } else if (type == 1) { // 停用
                     msg = "确定要停用模板吗？";
                 } else if (type == 2) { // 删除
                     msg = "确定要删除模板吗？";
