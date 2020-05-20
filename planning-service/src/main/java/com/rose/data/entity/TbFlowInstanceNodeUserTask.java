@@ -36,6 +36,6 @@ public class TbFlowInstanceNodeUserTask extends BaseDataIdLong {
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '状态'")
     private Integer state;
 
-    @Column(name = "remark_info", columnDefinition = "VARCHAR(500) COMMENT '备注信息'")
-    private String remarkInfo;
+    @Column(name = "approval_content", columnDefinition = "VARCHAR(800) COMMENT '审批内容'")
+    private String approvalContent;
 }

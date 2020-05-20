@@ -59,7 +59,7 @@ public class StartApplyControler {
      * @param applyContent
      */
     @PostMapping("/startApply")
-    public void startApply(@RequestParam(value = "startApplyFile0", required = false) MultipartFile startApplyFile0,
+    public synchronized void startApply(@RequestParam(value = "startApplyFile0", required = false) MultipartFile startApplyFile0,
                            @RequestParam(value = "startApplyFile1", required = false) MultipartFile startApplyFile1,
                            @RequestParam(value = "startApplyFile2", required = false) MultipartFile startApplyFile2,
                            @RequestParam(value = "startApplyFile3", required = false) MultipartFile startApplyFile3,
