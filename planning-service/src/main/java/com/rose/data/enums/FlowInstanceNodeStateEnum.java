@@ -11,7 +11,7 @@ public enum FlowInstanceNodeStateEnum {
     // 0未到达 1正在进行中 2已完成
 
     NOT_ARRIVED (0, "未到达"),
-    HAVE_HANDING(2, "进行中"),
+    HAVE_HANDING(1, "进行中"),
     HAVE_FINISH(2, "已完成");
 
     private Integer index;

@@ -46,6 +46,10 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Inject
     private FlowTemplateRepository flowTemplateRepository;
     @Inject
+    private FlowTemplateNodeRepository flowTemplateNodeRepository;
+    @Inject
+    private FlowTemplateNodeUserTaskRepository flowTemplateNodeUserTaskRepository;
+    @Inject
     private SysUserRepository sysUserRepository;
 
     @Inject
@@ -303,16 +307,99 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             throw new BusinessException("流程模板已被停用不能创建申请！");
         }
 
+        Date now = new Date();
+
+        TbFlowInstance flowInstanceParam = new TbFlowInstance();
+        flowInstanceParam.setId(null);
+        flowInstanceParam.setCreateDate(now);
+        flowInstanceParam.setLastModified(now);
+        flowInstanceParam.setInstanceName(instanceName);
+        flowInstanceParam.setApplyContent(applyContent);
+        flowInstanceParam.setTemplateId(templateId);
+        flowInstanceParam.setStartUserId(valueHolder.getUserIdHolder());
+        flowInstanceParam.setStartTime(now);
+        flowInstanceParam.setState(FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+
+        TbFlowInstance flowInstanceRet = flowInstanceRepository.save(flowInstanceParam);
+
+        List<TbFlowTemplateNode> templateNodeList = flowTemplateNodeRepository.listByTemplateId(templateId);
+        if (templateNodeList == null || templateNodeList.size() == 0) {
+            throw new BusinessException("模板无流程节点不能发起申请！");
+        }
+
+        List<TbFlowTemplateNodeUserTask> templateNodeUserTaskList = flowTemplateNodeUserTaskRepository.findByTmeplateId(templateId);
+        if (templateNodeUserTaskList == null || templateNodeUserTaskList.size() == 0) {
+            throw new BusinessException("模板流程节点无执行用户！");
+        }
+
+        // k：nodeLevel，v：nodeList
+        Map<Integer, List<TbFlowTemplateNode>> templateNodeListMap = new HashMap<>();
+        // k：nodeId，v：node
+        //Map<Long, TbFlowTemplateNode> templateNodeMap = new HashMap<>();
+        List<TbFlowTemplateNode> templateNodeListTemp = null;
+        for (TbFlowTemplateNode templateNode : templateNodeList) {
+            templateNodeListTemp = templateNodeListMap.get(templateNode.getNodeLevel());
+            if (templateNodeListTemp == null) {
+                templateNodeListTemp = new ArrayList<>();
+                templateNodeListMap.put(templateNode.getNodeLevel(), templateNodeListTemp);
+            }
+            templateNodeListTemp.add(templateNode);
+            //templateNodeMap.put(templateNode.getId(), templateNode);
+        }
+
+        // k：nodeId，v：nodeUserTaskLike
+        Map<Long, List<TbFlowTemplateNodeUserTask>> templateNodeUserTaskMap = new HashMap<>();
+        List<TbFlowTemplateNodeUserTask> templateNodeUserTaskListTemp = null;
+        for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskList) {
+            templateNodeUserTaskListTemp = templateNodeUserTaskMap.get(t.getTemplateNodeId());
+            if (templateNodeUserTaskListTemp == null) {
+                templateNodeUserTaskListTemp = new ArrayList<>();
+                templateNodeUserTaskMap.put(t.getTemplateNodeId(), templateNodeUserTaskListTemp);
+            }
+            templateNodeUserTaskListTemp.add(t);
+        }
+
+        TbFlowInstanceNode flowInstanceNodeTemp = null;
+        TbFlowTemplateNode flowTemplateNodeTemp = null;
+
+        if (templateNodeListMap.size() == 0) {
+            throw new BusinessException("模板节点无层级！");
+        } else {
+            templateNodeListTemp = templateNodeListMap.get(0);
+            if (templateNodeListTemp == null || templateNodeListTemp.size() != 1) {
+                throw new BusinessException("模板首层节点不是一个！");
+            }
+            flowInstanceNodeTemp = getFlowInstanceNode(now, flowInstanceRet.getId(), flowTemplateNodeTemp.getNodeName(),
+                    0L, 0, flowInstanceRet.getId() + "", flowTemplateNodeTemp.getInstruction(),
+                    flowTemplateNodeTemp.getOperateType(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex());
+            flowInstanceNodeRepository.save(flowInstanceNodeTemp);
 
 
+        }
 
 
+        for (int x = 0; x < templateNodeListMap.size(); x++) {
+            templateNodeListTemp = templateNodeListMap.get(x);
 
+        }
+//
+//        flowInstanceNodeRepository.save(flowInstanceNodeTemp);
+//        TbFlowInstanceNode flowInstanceNode = null;
+    }
 
-
-
-
-
-
+    private TbFlowInstanceNode getFlowInstanceNode(Date nodeDate, Long flowInstanceId, String nodeName, Long pid, Integer nodeLevel, String totalCode, String instruction, Integer operateType, Integer state) {
+        TbFlowInstanceNode flowInstanceNode = new TbFlowInstanceNode();
+        flowInstanceNode.setId(null);
+        flowInstanceNode.setCreateDate(nodeDate);
+        flowInstanceNode.setLastModified(nodeDate);
+        flowInstanceNode.setInstanceId(flowInstanceId);
+        flowInstanceNode.setNodeName(nodeName);
+        flowInstanceNode.setPid(pid);
+        flowInstanceNode.setNodeLevel(nodeLevel);
+        flowInstanceNode.setTotalCode(totalCode);
+        flowInstanceNode.setInstruction(instruction);
+        flowInstanceNode.setOperateType(operateType);
+        flowInstanceNode.setState(state);
+        return flowInstanceNode;
     }
 }

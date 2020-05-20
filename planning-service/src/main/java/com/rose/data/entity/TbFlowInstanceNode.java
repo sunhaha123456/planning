@@ -30,7 +30,7 @@ public class TbFlowInstanceNode extends BaseDataIdLong {
     @Column(name = "node_level", columnDefinition = "INT DEFAULT 0 COMMENT '节点级别'")
     private Integer nodeLevel;
 
-    // totalcode：parentNodeId1,parentNodeId2,parentNodeId3
+    // totalcode：parentNodeId1,parentNodeId2,parentNodeId3  一级节点是本身id
     @Column(name = "total_code", columnDefinition = "VARCHAR(1000) COMMENT '节点编码'")
     private String totalCode;
 

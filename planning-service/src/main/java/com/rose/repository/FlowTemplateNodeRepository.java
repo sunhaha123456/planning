@@ -36,6 +36,9 @@ public interface FlowTemplateNodeRepository extends CrudRepository<TbFlowTemplat
     @Query(value = "select * from tb_flow_template_node where template_id = :templateId order by id asc", nativeQuery = true)
     List<TbFlowTemplateNode> listByTemplateId(@Param(value = "templateId") Long templateId);
 
+    @Query(value = "select count(1) from tb_flow_template_node where template_id = :templateId", nativeQuery = true)
+    long countByTemplateId(@Param(value = "templateId") Long templateId);
+
     @Modifying
     @Query(value = "delete from tb_flow_template_node where id in :idList", nativeQuery = true)
     int deleteByIdList(@Param(value = "idList") List<Long> idList);

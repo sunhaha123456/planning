@@ -23,4 +23,7 @@ public interface FlowTemplateNodeUserTaskRepository extends CrudRepository<TbFlo
 
     @Query(value = "select * from tb_flow_template_node_user_task where template_id = :templateId and template_node_id = :nodeId and user_id = :userId order by id asc", nativeQuery = true)
     List<TbFlowTemplateNodeUserTask> findByTmeplateIdAndNodeIdAndUserId(@Param(value = "templateId") Long templateId, @Param(value = "nodeId") Long nodeId, @Param(value = "userId") Long userId);
+
+    @Query(value = "select * from tb_flow_template_node_user_task where template_id = :templateId order by id asc", nativeQuery = true)
+    List<TbFlowTemplateNodeUserTask> findByTmeplateId(@Param(value = "templateId") Long templateId);
 }
