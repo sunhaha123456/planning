@@ -307,21 +307,6 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             throw new BusinessException("流程模板已被停用不能创建申请！");
         }
 
-        Date now = new Date();
-
-        TbFlowInstance flowInstanceParam = new TbFlowInstance();
-        flowInstanceParam.setId(null);
-        flowInstanceParam.setCreateDate(now);
-        flowInstanceParam.setLastModified(now);
-        flowInstanceParam.setInstanceName(instanceName);
-        flowInstanceParam.setApplyContent(applyContent);
-        flowInstanceParam.setTemplateId(templateId);
-        flowInstanceParam.setStartUserId(valueHolder.getUserIdHolder());
-        flowInstanceParam.setStartTime(now);
-        flowInstanceParam.setState(FlowInstanceStateEnum.HAVE_STARTED.getIndex());
-
-        TbFlowInstance flowInstanceRet = flowInstanceRepository.save(flowInstanceParam);
-
         List<TbFlowTemplateNode> templateNodeList = flowTemplateNodeRepository.listByTemplateId(templateId);
         if (templateNodeList == null || templateNodeList.size() == 0) {
             throw new BusinessException("模板无流程节点不能发起申请！");
@@ -349,6 +334,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             throw new BusinessException("模板首层节点不是一个！");
         }
 
+        int templateNodeLevel = templateNodeListMap.size();
+
         List<TbFlowTemplateNodeUserTask> templateNodeUserTaskList = flowTemplateNodeUserTaskRepository.findByTmeplateId(templateId);
         if (templateNodeUserTaskList == null || templateNodeUserTaskList.size() == 0) {
             throw new BusinessException("模板流程节点无执行用户！");
@@ -366,40 +353,104 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             templateNodeUserTaskListTemp.add(t);
         }
 
-        TbFlowTemplateNode flowTemplateNodeTemp = null;
+        Date now = new Date();
+
+        TbFlowInstance flowInstanceDbParam = getFlowInstance(now, instanceName, applyContent, templateId, valueHolder.getUserIdHolder(),  FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+        TbFlowInstance flowInstanceDbRet = flowInstanceRepository.save(flowInstanceDbParam);
+
+        List<TbFlowInstanceNode> flowInstanceNodeListDbParam = new ArrayList<>();
         TbFlowInstanceNode flowInstanceNodeTemp = null;
-        TbFlowInstanceNode flowInstanceNodeDbTemp = null;
+        Long flowInstanceNodePidTemp = null;
+        Integer flowInstanceNodeStateTemp = null;
+        for (TbFlowTemplateNode n : templateNodeList) {
+            if (n.getNodeLevel() == 0) { // 首层节点
+                flowInstanceNodePidTemp = 0L;
+                flowInstanceNodeStateTemp = templateNodeLevel == 1 ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
+            } else { // 其他节点
+                flowInstanceNodePidTemp = n.getPid();
+                flowInstanceNodeStateTemp = n.getNodeLevel() == templateNodeLevel ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
+            }
+            flowInstanceNodeTemp = getFlowInstanceNode(now, flowInstanceDbRet.getId(), n.getId(), n.getNodeName(), flowInstanceNodePidTemp, n.getNodeLevel(), null, n.getInstruction(), n.getOperateType(), flowInstanceNodeStateTemp);
+            flowInstanceNodeListDbParam.add(flowInstanceNodeTemp);
+        }
+        Iterable<TbFlowInstanceNode> flowInstanceNodeDbRetIterable = flowInstanceNodeRepository.save(flowInstanceNodeListDbParam);
+        Iterator<TbFlowInstanceNode> flowInstanceNodeDbRetIterator = flowInstanceNodeDbRetIterable.iterator();
 
-        Map<Long, TbFlowInstanceNode> flowInstanceNodeDbMap = new HashMap<>();
+        TbFlowInstanceNode flowInstanceNodeDbRet = null;
+        List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListDbParam = new ArrayList<>();
+        TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskDbParam = null;
+        while (flowInstanceNodeDbRetIterator.hasNext()) {
+            flowInstanceNodeDbRet = flowInstanceNodeDbRetIterator.next();
 
-        flowTemplateNodeTemp = templateNodeListTemp.get(0);
-        flowInstanceNodeTemp = getFlowInstanceNode(now, flowInstanceRet.getId(), flowTemplateNodeTemp.getNodeName(),
-                0L, 0, flowInstanceRet.getId() + "", flowTemplateNodeTemp.getInstruction(),
-                flowTemplateNodeTemp.getOperateType(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex());
+            templateNodeUserTaskListTemp = templateNodeUserTaskMap.get(flowInstanceNodeDbRet.getTemplateNodeId());
+            if (templateNodeUserTaskListTemp == null || templateNodeUserTaskListTemp.size() == 0) {
+                throw new BusinessException("模板节点未关联用户！");
+            }
 
-        flowInstanceNodeDbTemp = flowInstanceNodeRepository.save(flowInstanceNodeTemp);
-        flowInstanceNodeDbMap.put(flowInstanceNodeDbTemp.getId(), flowInstanceNodeDbTemp);
-
-        templateNodeUserTaskListTemp = templateNodeUserTaskMap.get(flowTemplateNodeTemp.getId());
-        if (templateNodeUserTaskListTemp == null || templateNodeUserTaskListTemp.size() == 0) {
-            throw new BusinessException("模板首层节点未关联用户！");
+            //flowInstanceNodeUserTaskDbParam = getFlowInstanceNodeUserTask(now, flowInstanceDbRet.getId(), flowInstanceNodeDbRet.getId(), t.getUserId(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex(), null);
         }
 
-        List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListTemp = new ArrayList<>();
-        TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskTemp = null;
-        for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskListTemp) {
-            flowInstanceNodeUserTaskTemp = getFlowInstanceNodeUserTask(now, flowInstanceRet.getId(), flowInstanceNodeDbTemp.getId(), t.getUserId(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex(), null);
-            flowInstanceNodeUserTaskListTemp.add(flowInstanceNodeUserTaskTemp);
-        }
-        flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskListTemp);
+
+
+//        List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListTemp = new ArrayList<>();
+//        TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskTemp = null;
+//        for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskListTemp) {
+//            flowInstanceNodeUserTaskTemp = getFlowInstanceNodeUserTask(now, flowInstanceRet.getId(), flowInstanceNodeDbTemp.getId(), t.getUserId(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex(), null);
+//            flowInstanceNodeUserTaskListTemp.add(flowInstanceNodeUserTaskTemp);
+//        }
+//        flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskListTemp);
+
+
+
+//        TbFlowTemplateNode flowTemplateNodeTemp = null;
+//        TbFlowInstanceNode flowInstanceNodeTemp = null;
+//        TbFlowInstanceNode flowInstanceNodeDbTemp = null;
+//
+//        Map<Long, TbFlowInstanceNode> flowInstanceNodeDbMap = new HashMap<>();
+//
+//        flowTemplateNodeTemp = templateNodeListTemp.get(0);
+//        flowInstanceNodeTemp = getFlowInstanceNode(now, flowInstanceRet.getId(), flowTemplateNodeTemp.getNodeName(),
+//                0L, 0, flowInstanceRet.getId() + "", flowTemplateNodeTemp.getInstruction(),
+//                flowTemplateNodeTemp.getOperateType(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex());
+//
+//        flowInstanceNodeDbTemp = flowInstanceNodeRepository.save(flowInstanceNodeTemp);
+//        flowInstanceNodeDbMap.put(flowInstanceNodeDbTemp.getId(), flowInstanceNodeDbTemp);
+//
+//        templateNodeUserTaskListTemp = templateNodeUserTaskMap.get(flowTemplateNodeTemp.getId());
+//        if (templateNodeUserTaskListTemp == null || templateNodeUserTaskListTemp.size() == 0) {
+//            throw new BusinessException("模板首层节点未关联用户！");
+//        }
+//
+//        List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListTemp = new ArrayList<>();
+//        TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskTemp = null;
+//        for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskListTemp) {
+//            flowInstanceNodeUserTaskTemp = getFlowInstanceNodeUserTask(now, flowInstanceRet.getId(), flowInstanceNodeDbTemp.getId(), t.getUserId(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex(), null);
+//            flowInstanceNodeUserTaskListTemp.add(flowInstanceNodeUserTaskTemp);
+//        }
+//        flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskListTemp);
     }
 
-    private TbFlowInstanceNode getFlowInstanceNode(Date nodeDate, Long flowInstanceId, String nodeName, Long pid, Integer nodeLevel, String totalCode, String instruction, Integer operateType, Integer state) {
+    private TbFlowInstance getFlowInstance(Date instanceDate, String instanceName, String applyContent, Long templateId, Long startUserId, Integer state) {
+        TbFlowInstance flowInstanceParam = new TbFlowInstance();
+        flowInstanceParam.setId(null);
+        flowInstanceParam.setCreateDate(instanceDate);
+        flowInstanceParam.setLastModified(instanceDate);
+        flowInstanceParam.setInstanceName(instanceName);
+        flowInstanceParam.setApplyContent(applyContent);
+        flowInstanceParam.setTemplateId(templateId);
+        flowInstanceParam.setStartUserId(startUserId);
+        flowInstanceParam.setStartTime(instanceDate);
+        flowInstanceParam.setState(state);
+        return flowInstanceParam;
+    }
+
+    private TbFlowInstanceNode getFlowInstanceNode(Date nodeDate, Long flowInstanceId, Long templateNodeId, String nodeName, Long pid, Integer nodeLevel, String totalCode, String instruction, Integer operateType, Integer state) {
         TbFlowInstanceNode flowInstanceNode = new TbFlowInstanceNode();
         flowInstanceNode.setId(null);
         flowInstanceNode.setCreateDate(nodeDate);
         flowInstanceNode.setLastModified(nodeDate);
         flowInstanceNode.setInstanceId(flowInstanceId);
+        flowInstanceNode.setTemplateNodeId(templateNodeId);
         flowInstanceNode.setNodeName(nodeName);
         flowInstanceNode.setPid(pid);
         flowInstanceNode.setNodeLevel(nodeLevel);

@@ -19,6 +19,9 @@ public class TbFlowInstanceNode extends BaseDataIdLong {
     @Column(name = "instance_id", columnDefinition = "BIGINT COMMENT '实例id'")
     private Long instanceId;
 
+    @Column(name = "template_node_id", columnDefinition = "BIGINT COMMENT '模板节点id'")
+    private Long templateNodeId;
+
     @Column(name = "node_name", columnDefinition = "VARCHAR(255) COMMENT '节点名称'")
     private String nodeName;
 
