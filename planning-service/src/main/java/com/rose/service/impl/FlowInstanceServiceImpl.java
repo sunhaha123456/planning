@@ -388,7 +388,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 flowInstanceNodeUserTaskListDbParam.add(flowInstanceNodeUserTaskDbParam);
             }
         }
-        flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskDbParam);
+        flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskListDbParam);
 
         // 处理流程实例节点 pid、totalCode
         TbFlowTemplateNode flowTemplateNodeTemp = null;
