@@ -7,6 +7,7 @@ import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.response.FlowChartResponse;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface FlowInstanceService {
@@ -21,5 +22,5 @@ public interface FlowInstanceService {
 
     FlowChartResponse getFlowInstanceFlowChart(Long id);
 
-    void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList);
+    void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList) throws IOException;
 }

@@ -3,6 +3,8 @@ package com.rose.service.impl;
 import com.rose.common.data.base.PageList;
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
+import com.rose.common.util.FileUtil;
+import com.rose.common.util.IdUtil;
 import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.*;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -299,7 +302,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList) {
+    public void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList) throws IOException {
         TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
         if (template == null) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
@@ -376,15 +379,13 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         }
         Iterable<TbFlowInstanceNode> flowInstanceNodeDbRetIterable = flowInstanceNodeRepository.save(flowInstanceNodeListDbParam);
         Iterator<TbFlowInstanceNode> flowInstanceNodeDbRetIterator = flowInstanceNodeDbRetIterable.iterator();
-
+        Map<Long, TbFlowInstanceNode> flowInstanceNodeDbMap = new HashMap<>(); // k：templateNodeId v：TbFlowInstanceNode
         TbFlowInstanceNode flowInstanceNodeDbRet = null;
         List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListDbParam = new ArrayList<>();
         TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskDbParam = null;
         while (flowInstanceNodeDbRetIterator.hasNext()) {
             flowInstanceNodeDbRet = flowInstanceNodeDbRetIterator.next();
-
-            flowInstanceNodeDbRet.setPid(null);
-            flowInstanceNodeDbRet.setTotalCode(null);
+            flowInstanceNodeDbMap.put(flowInstanceNodeDbRet.getTemplateNodeId(), flowInstanceNodeDbRet);
 
             templateNodeUserTaskListTemp = templateNodeUserTaskMap.get(flowInstanceNodeDbRet.getTemplateNodeId());
             if (templateNodeUserTaskListTemp == null || templateNodeUserTaskListTemp.size() == 0) {
@@ -397,42 +398,66 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         }
         flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskDbParam);
 
-//        List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListTemp = new ArrayList<>();
-//        TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskTemp = null;
-//        for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskListTemp) {
-//            flowInstanceNodeUserTaskTemp = getFlowInstanceNodeUserTask(now, flowInstanceRet.getId(), flowInstanceNodeDbTemp.getId(), t.getUserId(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex(), null);
-//            flowInstanceNodeUserTaskListTemp.add(flowInstanceNodeUserTaskTemp);
-//        }
-//        flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskListTemp);
+        // 处理流程实例节点 pid、totalCode
+        TbFlowTemplateNode flowTemplateNodeTemp = null;
+        TbFlowInstanceNode flowInstanceNodeParentDbRet = null;
+        for (int level = 0; level < templateNodeLevel; level++) {
+            templateNodeListTemp = templateNodeListMap.get(level);
+            if (templateNodeListTemp == null || templateNodeListTemp.size() == 0) {
+                throw new BusinessException("模板信息异常！");
+            }
+            if (level == 0) { // 首层节点
+                flowTemplateNodeTemp = templateNodeListTemp.get(0);
 
+                flowInstanceNodeDbRet = flowInstanceNodeDbMap.get(flowTemplateNodeTemp.getId());
+                if (flowInstanceNodeDbRet == null) {
+                    throw new BusinessException("模板首层节点信息异常！");
+                }
+                flowInstanceNodeDbRet.setTotalCode(flowInstanceNodeDbRet.getId() + "");
+            } else { // 其他节点
+                for (TbFlowTemplateNode n : templateNodeListTemp) {
+                    flowInstanceNodeDbRet = flowInstanceNodeDbMap.get(n.getId());
+                    if (flowInstanceNodeDbRet == null) {
+                        throw new BusinessException("模板节点信息异常！");
+                    }
+                    flowInstanceNodeParentDbRet = flowInstanceNodeDbMap.get(n.getPid());
+                    if (flowInstanceNodeParentDbRet == null) {
+                        throw new BusinessException("模板节点父级节点信息异常！");
+                    }
+                    flowInstanceNodeDbRet.setPid(flowInstanceNodeParentDbRet.getId());
+                    flowInstanceNodeDbRet.setTotalCode(flowInstanceNodeParentDbRet.getTotalCode() + "," + flowInstanceNodeDbRet.getId());
+                }
+            }
+        }
 
+        // 处理流程附件信息
+        if (fileList != null && fileList.size() > 0) {
+            List<TbFlowInstanceFile> flowInstanceFileList = new ArrayList<>();
+            TbFlowInstanceFile flowInstanceFile = null;
+            StringBuilder newFileNameStrBud = null;
+            for (MultipartFile multiFile : fileList) {
+                if (multiFile != null) {
+                    flowInstanceFile = new TbFlowInstanceFile();
+                    flowInstanceFile.setId(null);
+                    flowInstanceFile.setCreateDate(now);
+                    flowInstanceFile.setLastModified(now);
+                    flowInstanceFile.setOldFileName(multiFile.getOriginalFilename());
 
-//        TbFlowTemplateNode flowTemplateNodeTemp = null;
-//        TbFlowInstanceNode flowInstanceNodeTemp = null;
-//        TbFlowInstanceNode flowInstanceNodeDbTemp = null;
-//
-//        Map<Long, TbFlowInstanceNode> flowInstanceNodeDbMap = new HashMap<>();
-//
-//        flowTemplateNodeTemp = templateNodeListTemp.get(0);
-//        flowInstanceNodeTemp = getFlowInstanceNode(now, flowInstanceRet.getId(), flowTemplateNodeTemp.getNodeName(),
-//                0L, 0, flowInstanceRet.getId() + "", flowTemplateNodeTemp.getInstruction(),
-//                flowTemplateNodeTemp.getOperateType(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex());
-//
-//        flowInstanceNodeDbTemp = flowInstanceNodeRepository.save(flowInstanceNodeTemp);
-//        flowInstanceNodeDbMap.put(flowInstanceNodeDbTemp.getId(), flowInstanceNodeDbTemp);
-//
-//        templateNodeUserTaskListTemp = templateNodeUserTaskMap.get(flowTemplateNodeTemp.getId());
-//        if (templateNodeUserTaskListTemp == null || templateNodeUserTaskListTemp.size() == 0) {
-//            throw new BusinessException("模板首层节点未关联用户！");
-//        }
-//
-//        List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListTemp = new ArrayList<>();
-//        TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskTemp = null;
-//        for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskListTemp) {
-//            flowInstanceNodeUserTaskTemp = getFlowInstanceNodeUserTask(now, flowInstanceRet.getId(), flowInstanceNodeDbTemp.getId(), t.getUserId(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex(), null);
-//            flowInstanceNodeUserTaskListTemp.add(flowInstanceNodeUserTaskTemp);
-//        }
-//        flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskListTemp);
+                    newFileNameStrBud = new StringBuilder();
+                    newFileNameStrBud.append(IdUtil.getID()).append(IdUtil.getID()).append(FileUtil.getFileExt(multiFile.getOriginalFilename()));
+                    flowInstanceFile.setNewFileName(newFileNameStrBud.toString());
+
+                    flowInstanceFile.setFileSize(multiFile.getSize());
+                    flowInstanceFileList.add(flowInstanceFile);
+
+                    multiFile.transferTo(new File(uploadPath + flowInstanceFile.getNewFileName()));
+                }
+            }
+
+            if (flowInstanceFileList.size() > 0) {
+                flowInstanceFileRepository.save(flowInstanceFileList);
+            }
+        }
     }
 
     private TbFlowInstance getFlowInstance(Date instanceDate, String instanceName, String applyContent, Long templateId, Long startUserId, Integer state) {

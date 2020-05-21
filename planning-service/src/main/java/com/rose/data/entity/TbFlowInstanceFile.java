@@ -25,4 +25,7 @@ public class TbFlowInstanceFile extends BaseDataIdLong {
 
     @Column(name = "new_file_name", columnDefinition = "VARCHAR(255) COMMENT '文件新名称'")
     private String newFileName;
+
+    @Column(name = "file_size", columnDefinition = "BIGINT COMMENT '文件大小，单位B'")
+    private Long fileSize;
 }
