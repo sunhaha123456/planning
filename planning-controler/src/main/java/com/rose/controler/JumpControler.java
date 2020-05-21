@@ -58,12 +58,30 @@ public class JumpControler {
     }
 
     /**
-     * 功能：跳转我的申请
+     * 功能：跳转我发出的申请
      * @return
      */
-    @GetMapping(value = "/user/menuManage/toMyApplyPage")
-    public String toMyApplyPage() {
-        return "menu/myApplyPage";
+    @GetMapping(value = "/user/menuManage/toSelfSendApplyPage")
+    public String toSelfSendApplyPage() {
+        return "menu/selfSendApplyPage";
+    }
+
+    /**
+     * 功能：跳转我审批的申请
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toSelfApprovalApplyPage")
+    public String toSelfApprovalApplyPage() {
+        return "menu/selfApprovalApplyPage";
+    }
+
+    /**
+     * 功能：跳转发布公告
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toPublishNotice")
+    public String toPublishNotice() {
+        return "menu/publishNotice";
     }
 
     /**
