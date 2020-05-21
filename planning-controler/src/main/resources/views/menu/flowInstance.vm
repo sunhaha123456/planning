@@ -377,7 +377,7 @@
     <div style="clear:both;"></div>
 </div>
 
-<div id="flowInstanceDetailWindow" class="easyui-window" title="流程详情" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
+<div id="flowInstanceDetailWindow" class="easyui-window" title="流程审批详情" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
     <table style="margin-top: 10px; margin-bottom: 10px;">
         <tr>
             <td width="75">&nbsp;&nbsp;&nbsp;&nbsp;流程名称：</td>
