@@ -351,7 +351,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         Date now = new Date();
         Long applyUserId = valueHolder.getUserIdHolder();
 
-        TbFlowInstance flowInstanceDbParam = getFlowInstance(now, instanceName, applyContent, templateId, applyUserId,  FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+        TbFlowInstance flowInstanceDbParam = getFlowInstance(now, instanceName, applyContent, templateId, applyUserId,  FlowInstanceStateEnum.HAVE_STARTED.getIndex(), null);
         TbFlowInstance flowInstanceDbRet = flowInstanceRepository.save(flowInstanceDbParam);
 
         List<TbFlowInstanceNode> flowInstanceNodeListDbParam = new ArrayList<>();
@@ -364,7 +364,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 flowInstanceNodeStateTemp = templateNodeLevel == 1 ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
             } else { // 其他节点
                 flowInstanceNodePidTemp = n.getPid();
-                flowInstanceNodeStateTemp = n.getNodeLevel() == templateNodeLevel ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
+                flowInstanceNodeStateTemp = n.getNodeLevel() == (templateNodeLevel - 1) ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
             }
             flowInstanceNodeTemp = getFlowInstanceNode(now, flowInstanceDbRet.getId(), n.getId(), n.getNodeName(), flowInstanceNodePidTemp, n.getNodeLevel(), null, n.getInstruction(), n.getOperateType(), flowInstanceNodeStateTemp);
             flowInstanceNodeListDbParam.add(flowInstanceNodeTemp);
@@ -393,6 +393,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         // 处理流程实例节点 pid、totalCode
         TbFlowTemplateNode flowTemplateNodeTemp = null;
         TbFlowInstanceNode flowInstanceNodeParentDbRet = null;
+        StringBuilder handingInstanceNodeIdsBud = new StringBuilder();
+        boolean isLastLevelFlag = false; // 是否是最后一层节点 true：是 false：不是
         for (int level = 0; level < templateNodeLevel; level++) {
             templateNodeListTemp = templateNodeListMap.get(level);
             if (templateNodeListTemp == null || templateNodeListTemp.size() == 0) {
@@ -406,7 +408,12 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                     throw new BusinessException("模板首层节点信息异常！");
                 }
                 flowInstanceNodeDbRet.setTotalCode(flowInstanceNodeDbRet.getId() + "");
+
+                if (templateNodeLevel == 1) { // 当流程模板只有一个节点
+                    flowInstanceDbParam.setHandingInstanceNodeIds(flowInstanceNodeDbRet.getId() + "");
+                }
             } else { // 其他节点
+                isLastLevelFlag = level == (templateNodeLevel - 1) ? true : false;
                 for (TbFlowTemplateNode n : templateNodeListTemp) {
                     flowInstanceNodeDbRet = flowInstanceNodeDbMap.get(n.getId());
                     if (flowInstanceNodeDbRet == null) {
@@ -418,6 +425,13 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                     }
                     flowInstanceNodeDbRet.setPid(flowInstanceNodeParentDbRet.getId());
                     flowInstanceNodeDbRet.setTotalCode(flowInstanceNodeParentDbRet.getTotalCode() + "," + flowInstanceNodeDbRet.getId());
+                    if (isLastLevelFlag) { // 当是最后一层节点时
+                        handingInstanceNodeIdsBud.append(",").append(flowInstanceNodeDbRet.getId());
+                    }
+                }
+                if (isLastLevelFlag) {
+                    handingInstanceNodeIdsBud.deleteCharAt(0);
+                    flowInstanceDbParam.setHandingInstanceNodeIds(handingInstanceNodeIdsBud.toString());
                 }
             }
         }
@@ -469,7 +483,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         return history;
     }
 
-    private TbFlowInstance getFlowInstance(Date instanceDate, String instanceName, String applyContent, Long templateId, Long startUserId, Integer state) {
+    private TbFlowInstance getFlowInstance(Date instanceDate, String instanceName, String applyContent, Long templateId, Long startUserId, Integer state, String handingInstanceNodeIds) {
         TbFlowInstance flowInstanceParam = new TbFlowInstance();
         flowInstanceParam.setId(null);
         flowInstanceParam.setCreateDate(instanceDate);
@@ -480,6 +494,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         flowInstanceParam.setStartUserId(startUserId);
         flowInstanceParam.setStartTime(instanceDate);
         flowInstanceParam.setState(state);
+
+        flowInstanceParam.setHandingInstanceNodeIds(handingInstanceNodeIds);
+
         return flowInstanceParam;
     }
 

@@ -200,7 +200,16 @@
             }
         }
 
-        function detailFlowInstance() {
+        function seeApplyContent() {
+            var rows = $('#flowInstanceManager').datagrid('getSelections');
+            if (rows.length > 0) {
+                alert("查看申请内容！");
+            } else {
+                alertWarn("请先选择记录！");
+            }
+        }
+
+        function seeApprovalDetail() {
             var rows = $('#flowInstanceManager').datagrid('getSelections');
             if (rows.length > 0) {
                 var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id});
@@ -354,7 +363,8 @@
                     <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="operateFlowInstance(0)">冻结流程</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(1)">恢复流程</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(2)">删除流程</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="detailFlowInstance()">查看详情</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请内容</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApprovalDetail()">查看审批详情</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstanceChartShow()">流程预览</a>
                 </div>
                 <div>
