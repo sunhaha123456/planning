@@ -15,7 +15,7 @@ public class FlowInstanceNodeUserTaskRepositoryCustomImpl extends BaseRepository
     @Override
     public List<TbFlowInstanceNodeUserTask> queryTemplateNodeUserList(Long instanceId) {
         StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT a.id, a.instance_node_id instanceNodeId, b.login_name loginName, b.user_name userName ");
+        sql.append(" SELECT a.id, a.instance_node_id instanceNodeId, a.state, b.login_name loginName, b.user_name userName ");
         sql.append(" FROM tb_flow_instance_node_user_task a JOIN tb_sys_user b ");
         sql.append(" ON a.user_id = b.id AND a.instance_id = ? order by a.id asc ");
         return queryList(sql.toString(), TbFlowInstanceNodeUserTask.class, new Object[]{instanceId});

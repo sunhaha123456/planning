@@ -213,17 +213,24 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             }
         }
 
-        Map<Long, List<String>> nodeUserMap = new HashMap<>();
-        List<String> userNameListTemp = null;
-        List<TbFlowInstanceNodeUserTask> userList = flowInstanceNodeUserTaskRepositoryCustom.queryTemplateNodeUserList(id);
-        if (userList != null && userList.size() > 0) {
-            for (TbFlowInstanceNodeUserTask t : userList) {
-                userNameListTemp = nodeUserMap.get(t.getInstanceNodeId());
-                if (userNameListTemp == null) {
-                    userNameListTemp = new ArrayList<>();
-                    nodeUserMap.put(t.getInstanceNodeId(), userNameListTemp);
+        Map<Long, List<String>> nodeContentMap = new HashMap<>();
+        List<String> nodeContent = null;
+        StringBuilder nodeContentBud = null;
+        List<TbFlowInstanceNodeUserTask> userTaskList = flowInstanceNodeUserTaskRepositoryCustom.queryTemplateNodeUserList(id);
+        if (userTaskList != null && userTaskList.size() > 0) {
+            for (TbFlowInstanceNodeUserTask t : userTaskList) {
+                nodeContent = nodeContentMap.get(t.getInstanceNodeId());
+                if (nodeContent == null) {
+                    nodeContent = new ArrayList<>();
+                    nodeContentMap.put(t.getInstanceNodeId(), nodeContent);
                 }
-                userNameListTemp.add(t.getUserName());
+                nodeContentBud = new StringBuilder();
+                if (t.getState() == FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex()) {
+                    nodeContentBud.append(t.getUserName()).append("(待操作)");
+                } else {
+                    nodeContentBud.append(t.getUserName());
+                }
+                nodeContent.add(nodeContentBud.toString());
             }
         }
 
@@ -241,9 +248,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                     nodeTemp = nodeListTemp.get(0);
                     flowChart.setName(nodeTemp.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(nodeTemp.getState()) + ")");
 
-                    userNameListTemp = nodeUserMap.get(nodeTemp.getId());
-                    if (userNameListTemp != null) {
-                        flowChart.setContent(StringUtil.getListStr(userNameListTemp));
+                    nodeContent = nodeContentMap.get(nodeTemp.getId());
+                    if (nodeContent != null) {
+                        flowChart.setContent(StringUtil.getListStr(nodeContent));
                     }
 
                     flowChart.setChildren(new ArrayList<FlowChartResponse>());
@@ -253,9 +260,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                         flowChartTemp = new FlowChartResponse();
                         flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
 
-                        userNameListTemp = nodeUserMap.get(node.getId());
-                        if (userNameListTemp != null) {
-                            flowChartTemp.setContent(StringUtil.getListStr(userNameListTemp));
+                        nodeContent = nodeContentMap.get(node.getId());
+                        if (nodeContent != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(nodeContent));
                         }
 
                         flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
@@ -270,9 +277,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                         flowChartTemp = new FlowChartResponse();
                         flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
 
-                        userNameListTemp = nodeUserMap.get(node.getId());
-                        if (userNameListTemp != null) {
-                            flowChartTemp.setContent(StringUtil.getListStr(userNameListTemp));
+                        nodeContent = nodeContentMap.get(node.getId());
+                        if (nodeContent != null) {
+                            flowChartTemp.setContent(StringUtil.getListStr(nodeContent));
                         }
 
                         flowChartTemp.setChildren(new ArrayList<FlowChartResponse>());
