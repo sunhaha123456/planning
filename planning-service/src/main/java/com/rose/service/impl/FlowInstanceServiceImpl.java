@@ -143,7 +143,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     }
 
     @Override
-    public TbFlowInstance getFlowInstanceDetail(Long id) {
+    public TbFlowInstance getFlowInstanceDetail(Long id, Integer attachFileFlag) {
         TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
         if (flowInstance == null) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
@@ -182,6 +182,10 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                     }
                 }
             }
+        }
+
+        if (attachFileFlag == 1) { // 1返回附件信息
+            flowInstance.setAttachFileList(flowInstanceFileRepository.listByInstanceId(id));
         }
 
         return flowInstance;

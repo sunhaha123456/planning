@@ -66,9 +66,15 @@ public class FlowInstanceControler {
         flowInstanceService.operateInstance(id, type);
     }
 
+    /**
+     * 功能：获取流程实例详情
+     * @param id
+     * @param attachFileFlag 0不返回附件信息 1返回附件信息
+     * @return
+     */
     @GetMapping(value= "/getFlowInstanceDetail")
-    public TbFlowInstance getFlowInstanceDetail(@RequestParam Long id) {
-        return flowInstanceService.getFlowInstanceDetail(id);
+    public TbFlowInstance getFlowInstanceDetail(@RequestParam Long id, @RequestParam(required = false, defaultValue = "0") Integer attachFileFlag) {
+        return flowInstanceService.getFlowInstanceDetail(id, attachFileFlag);
     }
 
     @PostMapping(value= "/getOperateInfo")

@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @ToString(callSuper = true)
 @lombok.Data
@@ -55,6 +56,9 @@ public class TbFlowInstance extends BaseDataIdLong {
 
     @Transient
     private String handingInstanceNodeNames;
+
+    @Transient
+    private List<TbFlowInstanceFile> attachFileList;
 
     //@Transient
     //private List<TbFlowInstanceOperateHistory> operateHistory;

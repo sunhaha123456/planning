@@ -16,7 +16,13 @@ public interface FlowInstanceService {
 
     void operateInstance(Long id, Integer type);
 
-    TbFlowInstance getFlowInstanceDetail(Long id);
+    /**
+     * 功能：获取流程实例详情
+     * @param id
+     * @param attachFileFlag 0不返回附件信息 1返回附件信息
+     * @return
+     */
+    TbFlowInstance getFlowInstanceDetail(Long id, Integer attachFileFlag);
 
     PageList<TbFlowInstanceOperateHistory> getOperateInfo(FlowInstanceRequest param) throws Exception;
 

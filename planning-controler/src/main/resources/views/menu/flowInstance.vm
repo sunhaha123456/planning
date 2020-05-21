@@ -212,7 +212,7 @@
         function seeApprovalDetail() {
             var rows = $('#flowInstanceManager').datagrid('getSelections');
             if (rows.length > 0) {
-                var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id});
+                var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
                 if (result.code == '200') {
                     var history = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
                     if (history.code == '200') {
