@@ -7,6 +7,7 @@ import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.*;
 import com.rose.data.enums.FlowInstanceNodeStateEnum;
+import com.rose.data.enums.FlowInstanceNodeUserTaskStateEnum;
 import com.rose.data.enums.FlowInstanceStateEnum;
 import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.response.FlowChartResponse;
@@ -379,18 +380,23 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         TbFlowInstanceNode flowInstanceNodeDbRet = null;
         List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListDbParam = new ArrayList<>();
         TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskDbParam = null;
+        Integer flowInstanceNodeUserTaskStateTemp = null;
         while (flowInstanceNodeDbRetIterator.hasNext()) {
             flowInstanceNodeDbRet = flowInstanceNodeDbRetIterator.next();
+
+            flowInstanceNodeDbRet.setPid(null);
+            flowInstanceNodeDbRet.setTotalCode(null);
 
             templateNodeUserTaskListTemp = templateNodeUserTaskMap.get(flowInstanceNodeDbRet.getTemplateNodeId());
             if (templateNodeUserTaskListTemp == null || templateNodeUserTaskListTemp.size() == 0) {
                 throw new BusinessException("模板节点未关联用户！");
             }
-
-            //flowInstanceNodeUserTaskDbParam = getFlowInstanceNodeUserTask(now, flowInstanceDbRet.getId(), flowInstanceNodeDbRet.getId(), t.getUserId(), FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex(), null);
+            for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskListTemp) {
+                flowInstanceNodeUserTaskDbParam = getFlowInstanceNodeUserTask(now, flowInstanceDbRet.getId(), flowInstanceNodeDbRet.getId(), t.getUserId(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex(), null);
+                flowInstanceNodeUserTaskListDbParam.add(flowInstanceNodeUserTaskDbParam);
+            }
         }
-
-
+        flowInstanceNodeUserTaskRepository.save(flowInstanceNodeUserTaskDbParam);
 
 //        List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListTemp = new ArrayList<>();
 //        TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskTemp = null;
