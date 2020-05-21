@@ -380,7 +380,6 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         TbFlowInstanceNode flowInstanceNodeDbRet = null;
         List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListDbParam = new ArrayList<>();
         TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskDbParam = null;
-        Integer flowInstanceNodeUserTaskStateTemp = null;
         while (flowInstanceNodeDbRetIterator.hasNext()) {
             flowInstanceNodeDbRet = flowInstanceNodeDbRetIterator.next();
 
