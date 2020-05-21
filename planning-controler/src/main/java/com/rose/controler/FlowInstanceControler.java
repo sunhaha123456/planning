@@ -55,7 +55,7 @@ public class FlowInstanceControler {
     }
 
     /**
-     * 功能：对流程就行操作
+     * 功能：对流程进行操作
      * @param id 流程实例id
      * @param type 0：管理员冻结流程 1：管理员恢复流程 2：管理员删除流程
      * @return

@@ -154,7 +154,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         flowInstance.setStateShow(FlowInstanceStateEnum.getName(flowInstance.getState()));
 
         flowInstance.setHandingInstanceNodeNames("无");
-        if (FlowInstanceStateEnum.HAVE_FINISH.getIndex() != flowInstance.getState()) {
+        if (FlowInstanceStateEnum.HAVE_FINISH.getIndex() != flowInstance.getState()) { // 当流程未走完时，获取正在处理的流程节点名
             String handingInstanceNodeIds = flowInstance.getHandingInstanceNodeIds();
             if (StringUtil.isNotEmpty(handingInstanceNodeIds)) {
                 if (StringUtil.isInteger(handingInstanceNodeIds)) {
