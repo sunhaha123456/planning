@@ -138,16 +138,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
 
-        TbFlowInstanceOperateHistory history = new TbFlowInstanceOperateHistory();
-        Date now = new Date();
-        history.setCreateDate(now);
-        history.setLastModified(now);
-        history.setInstanceId(id);
-        history.setInstanceName(flowInstance.getInstanceName());
-        history.setInstanceNodeId(0L);
-        history.setInstanceNodeName("");
-        history.setOperateUserId(userId);
-        history.setOperateInfo(operateInfo);
+        TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), id, flowInstance.getInstanceName(), 0L, "", userId, operateInfo);
         flowInstanceOperateHistoryRepository.save(history);
     }
 
@@ -358,8 +349,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         }
 
         Date now = new Date();
+        Long applyUserId = valueHolder.getUserIdHolder();
 
-        TbFlowInstance flowInstanceDbParam = getFlowInstance(now, instanceName, applyContent, templateId, valueHolder.getUserIdHolder(),  FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+        TbFlowInstance flowInstanceDbParam = getFlowInstance(now, instanceName, applyContent, templateId, applyUserId,  FlowInstanceStateEnum.HAVE_STARTED.getIndex());
         TbFlowInstance flowInstanceDbRet = flowInstanceRepository.save(flowInstanceDbParam);
 
         List<TbFlowInstanceNode> flowInstanceNodeListDbParam = new ArrayList<>();
@@ -441,6 +433,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                     flowInstanceFile.setId(null);
                     flowInstanceFile.setCreateDate(now);
                     flowInstanceFile.setLastModified(now);
+                    flowInstanceFile.setInstanceId(flowInstanceDbRet.getId());
                     flowInstanceFile.setOldFileName(multiFile.getOriginalFilename());
 
                     newFileNameStrBud = new StringBuilder();
@@ -458,6 +451,22 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 flowInstanceFileRepository.save(flowInstanceFileList);
             }
         }
+
+        TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), flowInstanceDbRet.getId(), flowInstanceDbRet.getInstanceName(), 0L, "", applyUserId, "发起申请");
+        flowInstanceOperateHistoryRepository.save(history);
+    }
+
+    private TbFlowInstanceOperateHistory getFlowInstanceOperateHistory(Date historyDate, Long instanceId, String instanceName, Long instanceNodeId, String instanceNodeName, Long operateUserId, String operateInfo) {
+        TbFlowInstanceOperateHistory history = new TbFlowInstanceOperateHistory();
+        history.setCreateDate(historyDate);
+        history.setLastModified(historyDate);
+        history.setInstanceId(instanceId);
+        history.setInstanceName(instanceName);
+        history.setInstanceNodeId(instanceNodeId);
+        history.setInstanceNodeName(instanceNodeName);
+        history.setOperateUserId(operateUserId);
+        history.setOperateInfo(operateInfo);
+        return history;
     }
 
     private TbFlowInstance getFlowInstance(Date instanceDate, String instanceName, String applyContent, Long templateId, Long startUserId, Integer state) {

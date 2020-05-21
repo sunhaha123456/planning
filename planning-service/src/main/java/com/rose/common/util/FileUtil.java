@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FileUtil {
 
-    public static List<String> fileExtList = Arrays.asList(".exe", ".bat", ".sh");
+    public static List<String> fileExtList = Arrays.asList(".exe", ".bat", ".sh", ".js", ".html", ".xml");
 
     /**
      * 功能：获取文件后缀名，比如123.txt，返回 .txt，均以小写返回
