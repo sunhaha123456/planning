@@ -153,6 +153,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         flowInstance.setStartUserName(user.getUserName());
         flowInstance.setStateShow(FlowInstanceStateEnum.getName(flowInstance.getState()));
 
+        // 待删除
+        /*
         flowInstance.setHandingInstanceNodeNames("无");
         if (FlowInstanceStateEnum.HAVE_FINISH.getIndex() != flowInstance.getState()) { // 当流程未走完时，获取正在处理的流程节点名
             String handingInstanceNodeIds = flowInstance.getHandingInstanceNodeIds();
@@ -183,6 +185,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 }
             }
         }
+        */
 
         if (attachFileFlag == 1) { // 1返回附件信息
             flowInstance.setAttachFileList(flowInstanceFileRepository.listByInstanceId(id));

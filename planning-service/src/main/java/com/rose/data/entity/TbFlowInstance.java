@@ -54,8 +54,8 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "handing_instance_node_ids", columnDefinition = "VARCHAR(255) COMMENT '当前正在处理的流程实例节点id'")
     private String handingInstanceNodeIds;
 
-    @Transient
-    private String handingInstanceNodeNames;
+    //@Transient
+    //private String handingInstanceNodeNames;
 
     @Transient
     private List<TbFlowInstanceFile> attachFileList;

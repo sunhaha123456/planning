@@ -209,111 +209,99 @@
             }
         }
 
-        function seeApprovalDetail() {
+        function flowInstancePreviewShow() {
             var rows = $('#flowInstanceManager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
-                if (result.code == '200') {
-                    var history = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
-                    if (history.code == '200') {
-                        var data = result.data;
-
-                        $("#detailFlowInstanceName").text(data.instanceName);
-                        $("#detailFlowInstanceState").text(data.stateShow);
-                        $("#detailFlowInstanceStartUser").text(data.startUserName);
-                        $("#detailFlowInstanceStartDate").text(data.startTime);
-                        $("#detailFlowInstanceHandingNode").text(data.handingInstanceNodeNames);
-
-                        $('#flowInstanceDetailManager').datagrid({
-                            //fit : true,
-                            fitColumns : true,
-                            striped : true,
-                            rownumbers : true,
-                            border : false,
-                            pagination : true,
-                            singleSelect:true,
-                            columns : [[
-                                {
-                                    field : 'id',
-                                    width : 100,
-                                    hidden : true
-                                },
-                                {
-                                    field : 'operateUserUserName',
-                                    title : '操作用户',
-                                    width : 100
-                                },
-                                {
-                                    field : 'createDate',
-                                    title : '操作时间',
-                                    width : 100
-                                },
-                                {
-                                    field : 'operateInfo',
-                                    title : '操作信息',
-                                    width : 300
-                                }
-                            ]]
-                        });
-
-                        var p = $('#flowInstanceDetailManager').datagrid('getPager');
-                        $(p).pagination({
-                            pageNumber : 1,
-                            pageSize : 10,
-                            pageList : [10, 20, 30, 40, 50],
-                            onSelectPage:function(pageNumber, pageSize){
-                                var h = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
-                                if (h.code == '200') {
-                                    $('#flowInstanceDetailManager').datagrid('loadData', h.data);
-                                }
-                            },
-                        });
-                        $('#flowInstanceDetailManager').datagrid('loadData', history.data);
-
-                        $('#flowInstanceDetailWindow').window('open');
-                    } else {
-                        alertWarn(history.msg);
-                    }
-                } else {
-                    alertWarn(result.msg);
-                }
-            } else {
+            if (rows.length <= 0) {
                 alertWarn("请先选择记录！");
+                return;
             }
-        }
+            var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            var history = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
+            if (history.code != '200') {
+                alertWarn(history.msg);
+                return;
+            }
+            var flowChart = ajaxSynchGet("user/flowInstance/getFlowInstanceFlowChart", {"id": rows[0].id});
+            if (flowChart.code != '200') {
+                alertWarn(flowChart.msg);
+                return;
+            }
 
-        function flowInstanceChartShow() {
-            var rows = $('#flowInstanceManager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var result = ajaxSynchGet("user/flowInstance/getFlowInstanceFlowChart", {"id": rows[0].id});
-                if (result.code == '200') {
-                    $("#flowInstanceChartDiv").empty();
+            $("#previewFlowInstanceName").text(result.data.instanceName);
+            $("#previewFlowInstanceState").text(result.data.stateShow);
+            $("#previewFlowInstanceStartUser").text(result.data.startUserName);
+            $("#previewFlowInstanceStartDate").text(result.data.startTime);
 
-                    if (result.data.name != null && result.data.name != '') {
-                        $('#flowInstanceChartDiv').orgchart({
-                            'data': result.data,
-                            'nodeContent': 'content',
-                            'createNode': function (node, nodeData) {
-                                var nodeDom = $(node);
+            $("#previewFlowInstanceChartDiv").empty();
 
-                                if (nodeData.name != null && nodeData.name != '') {
-                                    $('.title', nodeDom).attr('title', nodeData.name);
-                                }
-                                if (nodeData.content != null && nodeData.content != '') {
-                                    $('.content', nodeDom).attr("title", nodeData.content);
-                                }
-                            }
-                        });
+            if (flowChart.data.name != null && flowChart.data.name != '') {
+                $('#previewFlowInstanceChartDiv').orgchart({
+                    'data': flowChart.data,
+                    'nodeContent': 'content',
+                    'createNode': function (node, nodeData) {
+                        var nodeDom = $(node);
+
+                        if (nodeData.name != null && nodeData.name != '') {
+                            $('.title', nodeDom).attr('title', nodeData.name);
+                        }
+                        if (nodeData.content != null && nodeData.content != '') {
+                            $('.content', nodeDom).attr("title", nodeData.content);
+                        }
                     }
-
-                    $('#flowInstanceChartWindow').window('open');
-                } else {
-                    alertWarn(result.msg);
-                    return;
-                }
-            } else {
-                alertWarn("请先选择记录！");
+                });
             }
+
+            $('#previewFlowInstanceManager').datagrid({
+                //fit : true,
+                fitColumns : true,
+                striped : true,
+                rownumbers : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'createDate',
+                        title : '操作时间',
+                        width : 50
+                    },
+                    {
+                        field : 'operateUserUserName',
+                        title : '操作用户',
+                        width : 50
+                    },
+                    {
+                        field : 'operateInfo',
+                        title : '操作信息',
+                        width : 300
+                    }
+                ]]
+            });
+
+            var p = $('#previewFlowInstanceManager').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 10,
+                pageList : [10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    var h = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
+                    if (h.code == '200') {
+                        $('#previewFlowInstanceManager').datagrid('loadData', h.data);
+                    }
+                },
+            });
+            $('#previewFlowInstanceManager').datagrid('loadData', history.data);
+
+            $('#flowInstancePreviewWindow').window('open');
         }
 
         function keyDownInit() {
@@ -364,8 +352,7 @@
                     <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(1)">恢复流程</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(2)">删除流程</a>
                     <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请内容</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApprovalDetail()">查看审批详情</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstanceChartShow()">流程预览</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
                 </div>
                 <div>
                     &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
@@ -377,31 +364,16 @@
     <div style="clear:both;"></div>
 </div>
 
-<div id="flowInstanceDetailWindow" class="easyui-window" title="流程审批详情" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:500px;">
-    <table style="margin-top: 10px; margin-bottom: 10px;">
-        <tr>
-            <td width="75">&nbsp;&nbsp;&nbsp;&nbsp;流程名称：</td>
-            <td width="280"><span id="detailFlowInstanceName"></span></td>
-            <td width="75">&nbsp;&nbsp;&nbsp;&nbsp;流程状态：</td>
-            <td width="220"><span id="detailFlowInstanceState"></span></td>
-        </tr>
-        <tr>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;启动用户：</td>
-            <td><span id="detailFlowInstanceStartUser"></span></td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;启动时间：</td>
-            <td><span id="detailFlowInstanceStartDate"></span></td>
-        </tr>
-        <tr>
-            <td colspan="4">&nbsp;&nbsp;&nbsp;&nbsp;正在处理中的流程节点：<span id="detailFlowInstanceHandingNode"></span></td>
-        </tr>
-    </table>
-    <table id="flowInstanceDetailManager">
-
-    </table>
+<div id="flowInstancePreviewWindow" class="easyui-window" title="流程预览" data-options="iconCls:'icon-save',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:550px;">
+    <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程名称：<span id="previewFlowInstanceName"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程状态：<span id="previewFlowInstanceState"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动用户：<span id="previewFlowInstanceStartUser"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动时间：<span id="previewFlowInstanceStartDate"></span>
+    </p>
+    <div id="previewFlowInstanceChartDiv"></div>
+    <table id="previewFlowInstanceManager"></table>
 </div>
 
-<div id="flowInstanceChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:390px;">
-    <div id="flowInstanceChartDiv"></div>
-</div>
 </body>
 </html>
