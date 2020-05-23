@@ -80,7 +80,7 @@
         }
 
         function searchFlowInstance() {
-            var result = ajaxSynchPostJson("user/selfSendApplyPage/searchFlowInstance", {
+            var result = ajaxSynchPostJson("user/selfSendApply/searchFlowInstance", {
                 "flowInstanceName": $('#flowInstanceNameSearch').val(),
                 "page":1, "rows":10});
             if (result.code == '200') {
@@ -99,7 +99,7 @@
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
                     if (isTreeNodeSelected("templateTree")) {
-                        var result = ajaxSynchPostJson("user/selfSendApplyPage/searchFlowInstance", {
+                        var result = ajaxSynchPostJson("user/selfSendApply/searchFlowInstance", {
                             "flowInstanceName": $('#flowInstanceNameSearch').val(),
                             "page":pageNumber, "rows":pageSize});
                         if (result.code == '200') {
@@ -129,7 +129,7 @@
 
                 $.messager.confirm('确定操作', msg, function (flag) {
                     if (flag) {
-                        var result = ajaxSynchPostJson("user/selfSendApplyPage/operateInstance?id=" + rows[0].id + "&type=" + type, null);
+                        var result = ajaxSynchPostJson("user/selfSendApply/operateInstance?id=" + rows[0].id + "&type=" + type, null);
                         if (result.code == '200') {
                             alertInfo(result.msg);
                             searchFlowInstance();
@@ -149,7 +149,7 @@
                 alertWarn("请先选择记录！");
                 return;
             }
-            var result = ajaxSynchGet("user/selfSendApplyPage/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 1});
+            var result = ajaxSynchGet("user/selfSendApply/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 1});
             if (result.code != '200') {
                 alertWarn(result.msg);
                 return;
@@ -164,7 +164,7 @@
                 var fileHref;
                 for(x = 0; x < result.data.attachFileList.length; x++) {
                     fileInfo = result.data.attachFileList[x];
-                    fileHref = urlHandleContext("user/selfSendApplyPage/exportFileFlowInstance") + "&instanceId=" + rows[0].id + "&fileId=" + fileInfo.id;
+                    fileHref = urlHandleContext("user/selfSendApply/exportFileFlowInstance") + "&instanceId=" + rows[0].id + "&fileId=" + fileInfo.id;
                     attachFileHtml = attachFileHtml + "<li><a href='" + fileHref + "'>" + fileInfo.oldFileName + "</a></li>";
                 }
             }
@@ -180,17 +180,17 @@
                 alertWarn("请先选择记录！");
                 return;
             }
-            var result = ajaxSynchGet("user/selfSendApplyPage/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
+            var result = ajaxSynchGet("user/selfSendApply/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
             if (result.code != '200') {
                 alertWarn(result.msg);
                 return;
             }
-            var history = ajaxSynchPostJson("user/selfSendApplyPage/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
+            var history = ajaxSynchPostJson("user/selfSendApply/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
             if (history.code != '200') {
                 alertWarn(history.msg);
                 return;
             }
-            var flowChart = ajaxSynchGet("user/selfSendApplyPage/getFlowInstanceFlowChart", {"id": rows[0].id});
+            var flowChart = ajaxSynchGet("user/selfSendApply/getFlowInstanceFlowChart", {"id": rows[0].id});
             if (flowChart.code != '200') {
                 alertWarn(flowChart.msg);
                 return;
@@ -258,7 +258,7 @@
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var h = ajaxSynchPostJson("user/selfSendApplyPage/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
+                    var h = ajaxSynchPostJson("user/selfSendApply/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
                     if (h.code == '200') {
                         $('#previewFlowInstanceManager').datagrid('loadData', h.data);
                     }
@@ -307,7 +307,7 @@
 </table>
 
 <form id="seeApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:50,width:500,title:'查看申请',modal:true,closed:true,cache:false,iconCls:'icon-save',
+      data-options="top:50,width:500,title:'查看申请',modal:true,closed:true,cache:false,iconCls:'icon-nav',
        onClose:function () {
             $('#startApplyForm').form('reset');
        }">
@@ -320,7 +320,7 @@
     </ul>
 </form>
 
-<div id="flowInstancePreviewWindow" class="easyui-window" title="流程预览" data-options="iconCls:'icon-save',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:550px;">
+<div id="flowInstancePreviewWindow" class="easyui-window" title="流程预览" data-options="iconCls:'icon-tip',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:550px;">
     <p>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程名称：<span id="previewFlowInstanceName"></span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程状态：<span id="previewFlowInstanceState"></span>

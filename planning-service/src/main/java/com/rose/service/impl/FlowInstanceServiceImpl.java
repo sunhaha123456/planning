@@ -145,41 +145,31 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void operateInstanceByUser(Long id, Integer type) {
+        Long operateUserId = valueHolder.getUserIdHolder();
+
         TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
-        if (flowInstance == null) {
-            throw new BusinessException("流程实例不存在！");
+        if (flowInstance == null || (!flowInstance.getStartUserId().equals(operateUserId))) {
+            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
         if (flowInstance.getState() == FlowInstanceStateEnum.HAVE_FINISH.getIndex()) {
             throw new BusinessException("不能对已完成的用户流程操作！");
         }
 
-        Long userId = valueHolder.getUserIdHolder();
         String operateInfo = null;
         if (type == 0) { // 撤销流程
-            if (flowInstance.getState() == FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
-                throw new BusinessException("用户流程状态原先已是冻结！");
+            if (flowInstance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
+                throw new BusinessException("流程状态不是已启动不能撤回！");
             }
 
-            int c = flowInstanceRepository.updateState(id, FlowInstanceStateEnum.ADMIN_FROZEN.getIndex(), flowInstance.getState());
+            int c = flowInstanceRepository.updateState(id, FlowInstanceStateEnum.USER_WITHDRAW.getIndex(), flowInstance.getState());
             if (c <= 0) {
                 throw new BusinessException(ResponseResultCode.OPERT_ERROR);
             }
 
-            operateInfo = "以管理员身份冻结流程";
-        } else if (type == 1) { // 删除流程 xxx
-            if (flowInstance.getState() != FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
-                throw new BusinessException("用户流程状态不是已是冻结！");
-            }
-
-            int c = flowInstanceRepository.updateState(id, FlowInstanceStateEnum.HAVE_STARTED.getIndex(), FlowInstanceStateEnum.ADMIN_FROZEN.getIndex());
-            if (c <= 0) {
-                throw new BusinessException(ResponseResultCode.OPERT_ERROR);
-            }
-
-            operateInfo = "以管理员身份恢复流程";
-        } else if (type == 2) { // 管理员删除流程
-            if (flowInstance.getState() != FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
-                throw new BusinessException("请先冻结用户流程！");
+            operateInfo = "用户撤回流程";
+        } else if (type == 1) { // 删除流程
+            if (flowInstance.getState() != FlowInstanceStateEnum.USER_WITHDRAW.getIndex()) {
+                throw new BusinessException("流程状态不是已撤回不能删除！");
             }
             int c = flowInstanceRepository.deleteByIdAndState(id, flowInstance.getState());
             if (c <= 0) {
@@ -202,18 +192,18 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                                 file.delete();
                             }
                         } catch (Exception e) {
-                            log.error("管理员userId：{},删除流程：{}时，删硬盘文件：{}，失败！", userId, flowInstance.getInstanceName(), fileInstance.getNewFileName());
+                            log.error("用户删除流程：{}时，删硬盘文件：{}，失败！", flowInstance.getInstanceName(), fileInstance.getNewFileName());
                         }
                     }
                 }
             }
 
-            operateInfo = "以管理员身份删除流程";
+            operateInfo = "用户删除流程";
         } else {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
 
-        TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), id, flowInstance.getInstanceName(), 0L, "", userId, operateInfo);
+        TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), id, flowInstance.getInstanceName(), 0L, "", operateUserId, operateInfo);
         flowInstanceOperateHistoryRepository.save(history);
     }
 

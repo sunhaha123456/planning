@@ -489,7 +489,7 @@
 </div>
 
 <form id="addTemplateForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-save',
+      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#addTemplateForm').form('reset');
        },
@@ -510,7 +510,7 @@
 </form>
 
 <form id="saveTemplateNodeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:100,width:335,title:'节点',modal:true,closed:true,cache:false,iconCls:'icon-save',
+      data-options="top:100,width:335,title:'节点',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        toolbar:'#saveTemplateNodeFormToolbar',
        onClose:function () {
             $('#saveTemplateNodeForm').form('reset');
@@ -537,7 +537,7 @@
 </div>
 
 <div id="chooseUserForm" class="easyui-dialog"
-     data-options="top:120,width:380,height:320,title:'执行人',modal:true,closed:true,cache:false,iconCls:'icon-user-add',toolbar:'#chooseUserFormToolbar'">
+     data-options="top:120,width:380,height:320,title:'执行人',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',toolbar:'#chooseUserFormToolbar'">
     <ul id="userTree"/>
 </div>
 <div id="chooseUserFormToolbar" style="padding:2px 0">
@@ -554,7 +554,7 @@
     </table>
 </div>
 
-<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-save',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:390px;">
+<div id="flowChartWindow" class="easyui-window" title="流程图" data-options="iconCls:'icon-tip',minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:750px;height:390px;">
     <div id="flowChartDiv"></div>
 </div>
 </body>

@@ -17,13 +17,13 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 描述：我发出的申请 controler
+ * 描述：我审批的申请 controler
  * @author sunpeng
  */
 @Slf4j
 @RestController
-@RequestMapping("/user/selfSendApply")
-public class SelfSendApplyControler {
+@RequestMapping("/user/selfApprovalApply")
+public class SelfApprovalApplyControler {
 
     @Inject
     private FlowTemplateService flowTemplateService;

@@ -1,1 +1,335 @@
-我审批的申请
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/static/easyui/themes/easy.common.css}"></link>
+    <style type="text/css">
+        ul li{
+            list-style-type:none;
+        }
+    </style>
+    <script th:inline="javascript">
+        var contextPath = [[@{/}]];
+        var interceptorToken = [[${token}]];
+        var interceptorUserId = [[${userId}]];
+    </script>
+    <script th:src="@{/static/easyui/easy.common.js}"></script>
+    <script th:src="@{/static/easyuiMask.js}"></script>
+    <script th:src="@{/static/myFun.js}"></script>
+    <!-- flow chart start -->
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/jquery.orgchart.css}"></link>
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/font-awesome.min.css}"></link>
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/style.css}"></link>
+    <style type="text/css">
+        .orgchart { background: #fff; }
+        .orgchart .node .title { background-color: #006699; }
+        .orgchart .node .content { border-color: #006699; }
+    </style>
+    <script th:src="@{/static/flowChart/js/jquery.orgchart.js}"></script>
+    <!-- flow chart end -->
+    <script th:inline="javascript">
+        function dataGridInit() {
+            $('#flowInstanceManager').datagrid({
+                fit : true,
+                fitColumns : true,
+                striped : true,
+                rownumbers : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                toolbar : '#flowInstanceManager_tool',
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'instanceName',
+                        title : '流程名称',
+                        width : 100
+                    },
+                    {
+                        field : 'startUserName',
+                        title : '启动用户名',
+                        width : 100
+                    },
+                    {
+                        field : 'startTime',
+                        title : '启动时间',
+                        width : 100
+                    },
+                    {
+                        field : 'state',
+                        title : '流程状态',
+                        width : 100,
+                        formatter: function(value,row,index){
+                            if (value == "0"){
+                                return "已启动";
+                            } else if (value == "1"){
+                                return "已完成";
+                            } else if (value == "2"){
+                                return "用户撤回";
+                            } else {
+                                return "管理员冻结";
+                            }
+                        }
+                    }
+                ]]
+            });
+        }
+
+        function searchFlowInstance() {
+            var result = ajaxSynchPostJson("user/selfApprovalApply/searchFlowInstance", {
+                "flowInstanceName": $('#flowInstanceNameSearch').val(),
+                "page":1, "rows":10});
+            if (result.code == '200') {
+                dataGridPageInit();
+                $('#flowInstanceManager').datagrid('loadData', result.data);
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function dataGridPageInit() {
+            var p = $('#flowInstanceManager').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 10,
+                pageList : [10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    if (isTreeNodeSelected("templateTree")) {
+                        var result = ajaxSynchPostJson("user/selfApprovalApply/searchFlowInstance", {
+                            "flowInstanceName": $('#flowInstanceNameSearch').val(),
+                            "page":pageNumber, "rows":pageSize});
+                        if (result.code == '200') {
+                            $('#flowInstanceManager').datagrid('loadData', result.data);
+                        } else {
+                            alertWarn(result.msg);
+                        }
+                    } else {
+                        dataGridPageInit();
+                        $('#flowInstanceManager').datagrid('loadData', {"total":0, "rows":[]});
+                    }
+                },
+            });
+        }
+
+        function operateFlowInstance(type) {
+            var rows = $('#flowInstanceManager').datagrid('getSelections');
+            if (rows.length > 0) {
+                var msg = ""
+                if (type == 0) {
+                    msg = "确定要撤销流程吗？";
+                } else if (type == 1) {
+                    msg = "确定要删除流程吗？";
+                } else {
+                    return;
+                }
+
+                $.messager.confirm('确定操作', msg, function (flag) {
+                    if (flag) {
+                        var result = ajaxSynchPostJson("user/selfApprovalApply/operateInstance?id=" + rows[0].id + "&type=" + type, null);
+                        if (result.code == '200') {
+                            alertInfo(result.msg);
+                            searchFlowInstance();
+                        } else {
+                            alertWarn(result.msg);
+                        }
+                    }
+                });
+            } else {
+                alertWarn("请先选择记录！");
+            }
+        }
+
+        function seeApplyContent() {
+            var rows = $('#flowInstanceManager').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+            var result = ajaxSynchGet("user/selfApprovalApply/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 1});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+
+            $("#seeApplyTitle").val(result.data.instanceName);
+            $("#seeApplyContent").val(result.data.applyContent);
+
+            var attachFileHtml = "";
+            if (result.data.attachFileList != null && result.data.attachFileList.length > 0) {
+                var fileInfo;
+                var fileHref;
+                for(x = 0; x < result.data.attachFileList.length; x++) {
+                    fileInfo = result.data.attachFileList[x];
+                    fileHref = urlHandleContext("user/selfApprovalApply/exportFileFlowInstance") + "&instanceId=" + rows[0].id + "&fileId=" + fileInfo.id;
+                    attachFileHtml = attachFileHtml + "<li><a href='" + fileHref + "'>" + fileInfo.oldFileName + "</a></li>";
+                }
+            }
+
+            $("#seeAttachFile").html(attachFileHtml);
+
+            $('#seeApplyForm').dialog('open');
+        }
+
+        function flowInstancePreviewShow() {
+            var rows = $('#flowInstanceManager').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+            var result = ajaxSynchGet("user/selfApprovalApply/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            var history = ajaxSynchPostJson("user/selfApprovalApply/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
+            if (history.code != '200') {
+                alertWarn(history.msg);
+                return;
+            }
+            var flowChart = ajaxSynchGet("user/selfApprovalApply/getFlowInstanceFlowChart", {"id": rows[0].id});
+            if (flowChart.code != '200') {
+                alertWarn(flowChart.msg);
+                return;
+            }
+
+            $("#previewFlowInstanceName").text(result.data.instanceName);
+            $("#previewFlowInstanceState").text(result.data.stateShow);
+            $("#previewFlowInstanceStartUser").text(result.data.startUserName);
+            $("#previewFlowInstanceStartDate").text(result.data.startTime);
+
+            $("#previewFlowInstanceChartDiv").empty();
+
+            if (flowChart.data.name != null && flowChart.data.name != '') {
+                $('#previewFlowInstanceChartDiv').orgchart({
+                    'data': flowChart.data,
+                    'nodeContent': 'content',
+                    'createNode': function (node, nodeData) {
+                        var nodeDom = $(node);
+
+                        if (nodeData.name != null && nodeData.name != '') {
+                            $('.title', nodeDom).attr('title', nodeData.name);
+                        }
+                        if (nodeData.content != null && nodeData.content != '') {
+                            $('.content', nodeDom).attr("title", nodeData.content);
+                        }
+                    }
+                });
+            }
+
+            $('#previewFlowInstanceManager').datagrid({
+                //fit : true,
+                fitColumns : true,
+                striped : true,
+                rownumbers : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'createDate',
+                        title : '操作时间',
+                        width : 50
+                    },
+                    {
+                        field : 'operateUserUserName',
+                        title : '操作用户',
+                        width : 50
+                    },
+                    {
+                        field : 'operateInfo',
+                        title : '操作信息',
+                        width : 300
+                    }
+                ]]
+            });
+
+            var p = $('#previewFlowInstanceManager').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 10,
+                pageList : [10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    var h = ajaxSynchPostJson("user/selfApprovalApply/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
+                    if (h.code == '200') {
+                        $('#previewFlowInstanceManager').datagrid('loadData', h.data);
+                    }
+                },
+            });
+            $('#previewFlowInstanceManager').datagrid('loadData', history.data);
+
+            $('#flowInstancePreviewWindow').window('open');
+        }
+
+        function keyDownInit() {
+            document.onkeydown = function doKeyDown() {
+                if (event.keyCode == 13) {
+                    var id = document.activeElement.id;
+                    if (id == "flowInstanceNameSearch") {
+                        searchFlowInstance();
+                        return false;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        $(function () {
+            keyDownInit();
+            dataGridInit();
+            searchFlowInstance();
+        });
+    </script>
+</head>
+<body>
+<table id="flowInstanceManager">
+    <div id="flowInstanceManager_tool">
+        <div>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(0)">撤销流程</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(1)">删除流程</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
+        </div>
+        <div>
+            &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
+            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
+        </div>
+    </div>
+</table>
+
+<form id="seeApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:50,width:500,title:'查看申请',modal:true,closed:true,cache:false,iconCls:'icon-nav',
+       onClose:function () {
+            $('#startApplyForm').form('reset');
+       }">
+    <p>标题：<input id="seeApplyTitle" type="text" class="textbox" style="width:390px" /></p>
+    <p>内容：
+        <br/>
+        <textarea id="seeApplyContent" rows="6" cols="50" />
+    </p>
+    <ul id="seeAttachFile">
+    </ul>
+</form>
+
+<div id="flowInstancePreviewWindow" class="easyui-window" title="流程预览" data-options="iconCls:'icon-tip',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:550px;">
+    <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程名称：<span id="previewFlowInstanceName"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程状态：<span id="previewFlowInstanceState"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动用户：<span id="previewFlowInstanceStartUser"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动时间：<span id="previewFlowInstanceStartDate"></span>
+    </p>
+    <div id="previewFlowInstanceChartDiv"></div>
+    <table id="previewFlowInstanceManager"></table>
+</div>
+
+</body>
+</html>
