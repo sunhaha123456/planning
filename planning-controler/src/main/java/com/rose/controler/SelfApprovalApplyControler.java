@@ -32,25 +32,12 @@ public class SelfApprovalApplyControler {
     @Inject
     private ValueHolder valueHolder;
 
-    @PostMapping(value= "/searchFlowInstance")
-    public PageList<TbFlowInstance> searchFlowInstance(@RequestBody FlowInstanceRequest param) throws Exception {
+    @PostMapping(value= "/searchApprovalApply")
+    public PageList<TbFlowInstance> searchApprovalApply(@RequestBody FlowInstanceRequest param) throws Exception {
         if (param == null) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
-        param.setStartUserId(valueHolder.getUserIdHolder());
-        return flowInstanceService.searchFlowInstance(param);
-    }
-
-    /**
-     * 功能：对流程进行操作
-     * @param id 流程实例id
-     * @param type 0：撤销流程 1：删除流程
-     * @return
-     * @throws Exception
-     */
-    @PostMapping(value= "/operateInstance")
-    public void operateInstance(@RequestParam Long id, @RequestParam Integer type) throws Exception {
-        flowInstanceService.operateInstanceByUser(id, type);
+        return flowInstanceService.searchApprovalApply(param);
     }
 
     /**
@@ -61,7 +48,7 @@ public class SelfApprovalApplyControler {
      */
     @GetMapping(value= "/getFlowInstanceDetail")
     public TbFlowInstance getFlowInstanceDetail(@RequestParam Long id, @RequestParam(required = false, defaultValue = "0") Integer attachFileFlag) {
-        return flowInstanceService.getFlowInstanceDetail(id, attachFileFlag, valueHolder.getUserIdHolder());
+        return flowInstanceService.getFlowInstanceDetail(id, attachFileFlag, null);
     }
 
     @PostMapping(value= "/getOperateInfo")
@@ -69,17 +56,16 @@ public class SelfApprovalApplyControler {
         if (param == null || param.getId() == null) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
-        param.setStartUserId(valueHolder.getUserIdHolder());
         return flowInstanceService.getOperateInfo(param);
     }
 
     @GetMapping(value= "/getFlowInstanceFlowChart")
     public FlowChartResponse getFlowInstanceFlowChart(@RequestParam Long id) {
-        return flowInstanceService.getFlowInstanceFlowChart(id, valueHolder.getUserIdHolder());
+        return flowInstanceService.getFlowInstanceFlowChart(id, null);
     }
 
     @GetMapping(value= "/exportFileFlowInstance")
     public void exportFileFlowInstance(HttpServletResponse resp, @RequestParam Long instanceId, @RequestParam Long fileId) throws Exception {
-        flowInstanceService.exportFileFlowInstance(resp, instanceId, fileId, valueHolder.getUserIdHolder());
+        flowInstanceService.exportFileFlowInstance(resp, instanceId, fileId, null);
     }
 }

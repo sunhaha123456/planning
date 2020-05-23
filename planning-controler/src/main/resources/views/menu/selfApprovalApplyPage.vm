@@ -80,7 +80,7 @@
         }
 
         function searchFlowInstance() {
-            var result = ajaxSynchPostJson("user/selfApprovalApply/searchFlowInstance", {
+            var result = ajaxSynchPostJson("user/selfApprovalApply/searchApprovalApply", {
                 "flowInstanceName": $('#flowInstanceNameSearch').val(),
                 "page":1, "rows":10});
             if (result.code == '200') {
@@ -99,7 +99,7 @@
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
                     if (isTreeNodeSelected("templateTree")) {
-                        var result = ajaxSynchPostJson("user/selfApprovalApply/searchFlowInstance", {
+                        var result = ajaxSynchPostJson("user/selfApprovalApply/searchApprovalApply", {
                             "flowInstanceName": $('#flowInstanceNameSearch').val(),
                             "page":pageNumber, "rows":pageSize});
                         if (result.code == '200') {
@@ -113,34 +113,6 @@
                     }
                 },
             });
-        }
-
-        function operateFlowInstance(type) {
-            var rows = $('#flowInstanceManager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var msg = ""
-                if (type == 0) {
-                    msg = "确定要撤销流程吗？";
-                } else if (type == 1) {
-                    msg = "确定要删除流程吗？";
-                } else {
-                    return;
-                }
-
-                $.messager.confirm('确定操作', msg, function (flag) {
-                    if (flag) {
-                        var result = ajaxSynchPostJson("user/selfApprovalApply/operateInstance?id=" + rows[0].id + "&type=" + type, null);
-                        if (result.code == '200') {
-                            alertInfo(result.msg);
-                            searchFlowInstance();
-                        } else {
-                            alertWarn(result.msg);
-                        }
-                    }
-                });
-            } else {
-                alertWarn("请先选择记录！");
-            }
         }
 
         function seeApplyContent() {
@@ -294,8 +266,6 @@
 <table id="flowInstanceManager">
     <div id="flowInstanceManager_tool">
         <div>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(0)">撤销流程</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(1)">删除流程</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
         </div>

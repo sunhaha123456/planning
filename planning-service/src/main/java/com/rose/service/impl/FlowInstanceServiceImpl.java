@@ -67,6 +67,11 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         return flowInstanceRepositoryCustom.list(param.getTemplateId(), param.getFlowInstanceName(), param.getStartUserId(), param.getPage(), param.getRows());
     }
 
+    @Override
+    public PageList<TbFlowInstance> searchApprovalApply(FlowInstanceRequest param) throws Exception {
+        return flowInstanceRepositoryCustom.listApprovalApply(valueHolder.getUserIdHolder(), param.getFlowInstanceName(), param.getPage(), param.getRows());
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void operateInstanceByAdmin(Long id, Integer type) {

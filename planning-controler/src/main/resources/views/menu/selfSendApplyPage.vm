@@ -50,11 +50,6 @@
                         width : 100
                     },
                     {
-                        field : 'startUserName',
-                        title : '启动用户名',
-                        width : 100
-                    },
-                    {
                         field : 'startTime',
                         title : '启动时间',
                         width : 100
@@ -198,7 +193,6 @@
 
             $("#previewFlowInstanceName").text(result.data.instanceName);
             $("#previewFlowInstanceState").text(result.data.stateShow);
-            $("#previewFlowInstanceStartUser").text(result.data.startUserName);
             $("#previewFlowInstanceStartDate").text(result.data.startTime);
 
             $("#previewFlowInstanceChartDiv").empty();
@@ -324,7 +318,6 @@
     <p>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程名称：<span id="previewFlowInstanceName"></span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程状态：<span id="previewFlowInstanceState"></span>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动用户：<span id="previewFlowInstanceStartUser"></span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动时间：<span id="previewFlowInstanceStartDate"></span>
     </p>
     <div id="previewFlowInstanceChartDiv"></div>

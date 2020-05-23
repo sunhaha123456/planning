@@ -17,4 +17,6 @@ public interface FlowInstanceRepositoryCustom extends BaseRepository {
      * @throws Exception
      */
     PageList<TbFlowInstance> list(Long templateId, String flowInstanceName, Long startUserId, Integer pageNo, Integer pageSize) throws Exception;
+
+    PageList<TbFlowInstance> listApprovalApply(Long approvalUserId, String flowInstanceName, Integer pageNo, Integer pageSize) throws Exception;
 }
