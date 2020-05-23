@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" th:href="@{/static/easyui/themes/easy.common.css}"></link>
+    <style type="text/css">
+        ul li{
+            list-style-type:none;
+        }
+    </style>
     <script th:inline="javascript">
         var contextPath = [[@{/}]];
         var interceptorToken = [[${token}]];
@@ -11,138 +16,73 @@
     <script th:src="@{/static/easyui/easy.common.js}"></script>
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
+    <!-- flow chart start -->
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/jquery.orgchart.css}"></link>
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/font-awesome.min.css}"></link>
+    <link rel="stylesheet" th:href="@{/static/flowChart/css/style.css}"></link>
+    <style type="text/css">
+        .orgchart { background: #fff; }
+        .orgchart .node .title { background-color: #006699; }
+        .orgchart .node .content { border-color: #006699; }
+    </style>
+    <script th:src="@{/static/flowChart/js/jquery.orgchart.js}"></script>
+    <!-- flow chart end -->
     <script th:inline="javascript">
-        function addUserShow() {
-            $('#manager_add').dialog('open');
-            $('#loginNameAdd').focus();
-        }
-
-        function opertUserState(state) {
-            var showMsg = '';
-            if (state == 0) {
-                showMsg = '您确定解冻该用户吗？';
-            } else if (state == 1) {
-                showMsg = '您确定冻结该用户吗？';
-            } else {
-                showMsg = '您确定注销该用户吗？';
-            }
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                $.messager.confirm('确定操作', showMsg, function (flag) {
-                    if (flag) {
-                        var id = rows[0].id;
-                        $('#manager').datagrid('loading');
-                        var result = ajaxSynchGet("user/userManage/opert", {"id": id, "state": state});
-                        $('#manager').datagrid('loaded');
-                        alertInfo(result.msg);
-                        searchUser();
+        function templateTreeInit() {
+            var result = ajaxSynchGet("user/flowInstance/getTemplateTree", null);
+            if (result.code == '200') {
+                $('#templateTree').tree({
+                    lines : true,
+                    multiple : false,
+                    checkbox : false,
+                    data: result.data,
+                    onSelect: function(node) {
+                        searchFlowInstance();
                     }
                 });
+                return result.data;
             } else {
-                alertWarn("请先选择记录！");
+                alertWarn(result.msg);
             }
         }
 
-        function editUserShow() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var id = rows[0].id;
-                var result = ajaxSynchGet("user/userManage/getDetail", {"id":id});
-                if (result.code == '200') {
-                    var loginName = result.data.loginName;
-                    var userName = result.data.userName;
-                    var roleGroupId = result.data.roleGroupId;
-                    $('#loginNameEditUser').val(loginName);
-                    $('#userNameEditUser').val(userName);
-                    $('#authEditUser').combobox('setValue', roleGroupId);
-                    $('#manager_editUser').dialog('open');
-                } else {
-                    alertWarn(result.msg);
+        function searchTemplate() {
+            var templateName = $("#templateNameSearch").val();
+            if (templateName == '') {
+                return;
+            }
+            var result = ajaxSynchPostJson("user/flowInstance/getIdList", {"flowTemplateName": templateName});
+            if (result.code == '200') {
+                var idArr = result.data;
+                if (idArr == null || idArr.length == 0) {
+                    return;
                 }
-            } else {
-                alertWarn("请先选择记录！");
-            }
-        }
+                if (idArr.length == 1) {
+                    if (isTreeNodeSelected("templateTree") && getTreeSelectedNode("templateTree").id != idArr[0]) {
+                        var node = $('#templateTree').tree('find', idArr[0]);
+                        $('#templateTree').tree('select', node.target);
+                    }
+                    return;
+                }
 
-        function editUserPasswordShow() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                $('#manager_editUserPassword').dialog('open');
-            } else {
-                alertWarn("请先选择记录！");
-            }
-        }
-
-        function addUserCommit() {
-            if ($('#manager_add').form('validate')) {
-                var loginNameAdd = $('#loginNameAdd').val();
-                var userNameAdd = $('#userNameAdd').val();
-                var passwordAdd = $('#passwordAdd').val();
-                var authAdd = $('#authAdd').combobox('getValue');
-                if (authAdd == '请选择') {
-                    alertWarn('请选择用户角色！');
-                } else {
-                    var result = ajaxSynchPostJson("user/userManage/save", {"loginName":loginNameAdd, "userName":userNameAdd, "upwd":passwordAdd, "roleGroupId":authAdd})
-                    if (result.code == '200') {
-                        alertSuccess();
-                        $('#manager_add').dialog('close');
-                        searchUser();
-                    } else {
-                        alertWarn(result.msg);
+                var id = idArr[0];
+                if (isTreeNodeSelected("templateTree")) {
+                    var selectId = getTreeSelectedNode("templateTree").id;
+                    var selectIdIndex = idArr.indexOf(selectId);
+                    if (selectIdIndex != -1 && selectIdIndex != (idArr.length - 1)) {
+                        id = idArr[selectIdIndex + 1]
                     }
                 }
-            }
-        }
 
-        function editUserCommit() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var id = rows[0].id;
-                var userName = $('#userNameEditUser').val();
-                var auth = $('#authEditUser').combobox('getValue');
-                var result = ajaxSynchPostJson("user/userManage/save", {"id":id, "userName":userName, "roleGroupId":auth});
-                if (result.code == '200') {
-                    alertSuccess();
-                    $('#manager_editUser').dialog('close');
-                    searchUser();
-                } else {
-                    alertWarn(result.msg);
-                }
-            } else {
-                alertWarn('操作失败！');
-            }
-        }
-
-        function editUserPasswordCommit() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var id = rows[0].id;
-                var userNewPassword = $('#userNewPassword').val();
-                var result = ajaxSynchPostJson("user/userManage/updatePasswodAdmin?id=" + id + "&userNewPassword=" + userNewPassword, null);
-                if (result.code == '200') {
-                    alertSuccess();
-                    $('#manager_editUserPassword').dialog('close');
-                    searchUser();
-                } else {
-                    alertWarn(result.msg);
-                }
-            } else {
-                alertWarn('操作失败！');
-            }
-        }
-
-        function searchUser() {
-            var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":1, "rows":10});
-            if (result.code == '200') {
-                dataGridPageInit();
-                $('#manager').datagrid('loadData', result.data);
+                var node = $('#templateTree').tree('find', id);
+                $('#templateTree').tree('select', node.target);
             } else {
                 alertWarn(result.msg);
             }
         }
 
         function dataGridInit() {
-            $('#manager').datagrid({
+            $('#flowInstanceManager').datagrid({
                 fit : true,
                 fitColumns : true,
                 striped : true,
@@ -150,7 +90,7 @@
                 border : false,
                 pagination : true,
                 singleSelect:true,
-                toolbar : '#manager_tool',
+                toolbar : '#flowInstanceManager_tool',
                 columns : [[
                     {
                         field : 'id',
@@ -158,75 +98,248 @@
                         hidden : true
                     },
                     {
-                        field : 'loginName',
-                        title : '登录用户名',
+                        field : 'instanceName',
+                        title : '流程名称',
                         width : 100
                     },
                     {
-                        field : 'userName',
-                        title : '用户名',
+                        field : 'startUserName',
+                        title : '启动用户名',
                         width : 100
                     },
                     {
-                        field : 'roleGroupName',
-                        title : '所属角色',
+                        field : 'startTime',
+                        title : '启动时间',
                         width : 100
                     },
                     {
-                        field : 'roleGroupId',
-                        width : 100,
-                        hidden : true
-                    },
-                    {
-                        field : 'userState',
-                        title : '状态',
+                        field : 'state',
+                        title : '流程状态',
                         width : 100,
                         formatter: function(value,row,index){
-                            if (value == 0){
-                                return "正常";
+                            if (value == "0"){
+                                return "已启动";
+                            } else if (value == "1"){
+                                return "已完成";
+                            } else if (value == "2"){
+                                return "用户撤回";
                             } else {
-                                return "冻结";
+                                return "管理员冻结";
                             }
                         }
-                    },
-                    {
-                        field : 'createDate',
-                        title : '创建日期',
-                        width : 100
                     }
                 ]]
             });
         }
 
+        function searchFlowInstance() {
+            if (isTreeNodeSelected("templateTree")) {
+                var result = ajaxSynchPostJson("user/flowInstance/searchFlowInstance", {
+                    "templateId": getTreeSelectedNode("templateTree").id,
+                    "flowInstanceName": $('#flowInstanceNameSearch').val(),
+                    "page":1, "rows":10});
+                if (result.code == '200') {
+                    dataGridPageInit();
+                    $('#flowInstanceManager').datagrid('loadData', result.data);
+                } else {
+                    alertWarn(result.msg);
+                }
+            } else {
+                dataGridPageInit();
+                $('#flowInstanceManager').datagrid('loadData', {"total":0, "rows":[]});
+            }
+        }
+
         function dataGridPageInit() {
-            var p = $('#manager').datagrid('getPager');
+            var p = $('#flowInstanceManager').datagrid('getPager');
             $(p).pagination({
                 pageNumber : 1,
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":pageNumber, "rows":pageSize});
-                    if (result.code == '200') {
-                        $('#manager').datagrid('loadData', result.data);
+                    if (isTreeNodeSelected("templateTree")) {
+                        var result = ajaxSynchPostJson("user/flowInstance/searchFlowInstance", {
+                            "templateId": getTreeSelectedNode("templateTree").id,
+                            "flowInstanceName": $('#flowInstanceNameSearch').val(),
+                            "page":pageNumber, "rows":pageSize});
+                        if (result.code == '200') {
+                            $('#flowInstanceManager').datagrid('loadData', result.data);
+                        } else {
+                            alertWarn(result.msg);
+                        }
+                    } else {
+                        dataGridPageInit();
+                        $('#flowInstanceManager').datagrid('loadData', {"total":0, "rows":[]});
                     }
                 },
             });
         }
 
-        function webPageInit() {
-            var result = ajaxSynchGet("user/roleManage/list", {"roleState": 0});
-            if (result.code == '200') {
-                $('#authAdd').combobox('loadData',result.data);
-                $('#authEditUser').combobox('loadData',result.data);
+        function operateFlowInstance(type) {
+            var rows = $('#flowInstanceManager').datagrid('getSelections');
+            if (rows.length > 0) {
+                var msg = ""
+                if (type == 0) {
+                    msg = "确定要冻结用户流程吗？";
+                } else if (type == 1) {
+                    msg = "确定要恢复用户流程吗？";
+                } else if (type == 2) {
+                    msg = "确定要删除用户流程吗？";
+                } else {
+                    return;
+                }
+
+                $.messager.confirm('确定操作', msg, function (flag) {
+                    if (flag) {
+                        var result = ajaxSynchPostJson("user/flowInstance/operateInstance?id=" + rows[0].id + "&type=" + type, null);
+                        if (result.code == '200') {
+                            alertInfo(result.msg);
+                            searchFlowInstance();
+                        } else {
+                            alertWarn(result.msg);
+                        }
+                    }
+                });
+            } else {
+                alertWarn("请先选择记录！");
             }
+        }
+
+        function seeApplyContent() {
+            var rows = $('#flowInstanceManager').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+            var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 1});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+
+            $("#seeApplyTitle").val(result.data.instanceName);
+            $("#seeApplyContent").val(result.data.applyContent);
+
+            var attachFileHtml = "";
+            if (result.data.attachFileList != null && result.data.attachFileList.length > 0) {
+                var fileInfo;
+                var fileHref;
+                for(x = 0; x < result.data.attachFileList.length; x++) {
+                    fileInfo = result.data.attachFileList[x];
+                    fileHref = urlHandleContext("user/flowInstance/exportFileFlowInstance") + "&instanceId=" + rows[0].id + "&fileId=" + fileInfo.id;
+                    attachFileHtml = attachFileHtml + "<li><a href='" + fileHref + "'>" + fileInfo.oldFileName + "</a></li>";
+                }
+            }
+
+            $("#seeAttachFile").html(attachFileHtml);
+
+            $('#seeApplyForm').dialog('open');
+        }
+
+        function flowInstancePreviewShow() {
+            var rows = $('#flowInstanceManager').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+            var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            var history = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
+            if (history.code != '200') {
+                alertWarn(history.msg);
+                return;
+            }
+            var flowChart = ajaxSynchGet("user/flowInstance/getFlowInstanceFlowChart", {"id": rows[0].id});
+            if (flowChart.code != '200') {
+                alertWarn(flowChart.msg);
+                return;
+            }
+
+            $("#previewFlowInstanceName").text(result.data.instanceName);
+            $("#previewFlowInstanceState").text(result.data.stateShow);
+            $("#previewFlowInstanceStartUser").text(result.data.startUserName);
+            $("#previewFlowInstanceStartDate").text(result.data.startTime);
+
+            $("#previewFlowInstanceChartDiv").empty();
+
+            if (flowChart.data.name != null && flowChart.data.name != '') {
+                $('#previewFlowInstanceChartDiv').orgchart({
+                    'data': flowChart.data,
+                    'nodeContent': 'content',
+                    'createNode': function (node, nodeData) {
+                        var nodeDom = $(node);
+
+                        if (nodeData.name != null && nodeData.name != '') {
+                            $('.title', nodeDom).attr('title', nodeData.name);
+                        }
+                        if (nodeData.content != null && nodeData.content != '') {
+                            $('.content', nodeDom).attr("title", nodeData.content);
+                        }
+                    }
+                });
+            }
+
+            $('#previewFlowInstanceManager').datagrid({
+                //fit : true,
+                fitColumns : true,
+                striped : true,
+                rownumbers : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'createDate',
+                        title : '操作时间',
+                        width : 50
+                    },
+                    {
+                        field : 'operateUserUserName',
+                        title : '操作用户',
+                        width : 50
+                    },
+                    {
+                        field : 'operateInfo',
+                        title : '操作信息',
+                        width : 300
+                    }
+                ]]
+            });
+
+            var p = $('#previewFlowInstanceManager').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 10,
+                pageList : [10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    var h = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
+                    if (h.code == '200') {
+                        $('#previewFlowInstanceManager').datagrid('loadData', h.data);
+                    }
+                },
+            });
+            $('#previewFlowInstanceManager').datagrid('loadData', history.data);
+
+            $('#flowInstancePreviewWindow').window('open');
         }
 
         function keyDownInit() {
             document.onkeydown = function doKeyDown() {
                 if (event.keyCode == 13) {
                     var id = document.activeElement.id;
-                    if (id == "loginNameSearch") {
-                        searchUser();
+                    if (id == "templateNameSearch") {
+                        searchTemplate();
+                        return false;
+                    } else if (id == "flowInstanceNameSearch") {
+                        searchFlowInstance();
                         return false;
                     } else {
                         return false;
@@ -237,102 +350,71 @@
 
         $(function () {
             keyDownInit();
+            var noedDataArr = templateTreeInit();
             dataGridInit();
-            searchUser();
-            webPageInit();
+
+            if (noedDataArr != null && noedDataArr.length > 0) {
+                var node = $('#templateTree').tree('find', noedDataArr[0].id);
+                $('#templateTree').tree('select', node.target);
+            }
         });
     </script>
 </head>
 <body>
-<table id="manager">
-    <div id="manager_tool">
-        <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addUserShow()">新增</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editUserShow()">编辑</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editUserPasswordShow()">修改密码</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="opertUserState(1)">冻结</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="opertUserState(0)">启用</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="opertUserState(2)">注销</a>
-        </div>
-        <div style="padding:0 0 0 7px;color:#333;">
-            用户登录名：<input type="text" class="textbox" id="loginNameSearch" style="width:160px" />
-            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchUser()">查询</a>
-        </div>
+<div style="margin-bottom:5px;">
+    &nbsp;&nbsp;
+    模板名称：<input type="text" class="textbox" id="templateNameSearch" style="width:180px" />
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchTemplate()">查询</a>
+</div>
+
+<div>
+    <div style="float:left; width: 25%;">
+        <ul id="templateTree"/>
     </div>
-</table>
+    <div style="float:left; width: 73%; height: 385px;">
+        <table id="flowInstanceManager">
+            <div id="flowInstanceManager_tool">
+                <div>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="operateFlowInstance(0)">冻结流程</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(1)">恢复流程</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(2)">删除流程</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请</a>
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
+                </div>
+                <div>
+                    &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
+                    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
+                </div>
+            </div>
+        </table>
+    </div>
+    <div style="clear:both;"></div>
+</div>
 
-<form id="manager_add" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+<form id="seeApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:50,width:500,title:'查看申请',modal:true,closed:true,cache:false,iconCls:'icon-save',
        onClose:function () {
-            $('#manager_add').form('reset');
-       },
-		buttons:[{
-					text : '提交',
-					iconCls : 'icon-add-green',
-					handler : function () {
-                    addUserCommit();
-					}
-				},{
-					text:'关闭',
-					iconCls : 'icon-redo',
-					handler:function(){
-                    $('#manager_add').dialog('close');
-					}
-				}]">
-    <p>登录名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入登录名',invalidMessage:'登录名长度至少为1位'," type="text" id="loginNameAdd" style="width:200px;" /></p>
-    <p>用户名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入用户名',invalidMessage:'用户名长度至少为1位'," type="text" id="userNameAdd" style="width:200px;" /></p>
-    <p>密&nbsp;&nbsp;&nbsp;码：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入密码',invalidMessage:'密码长度至少为1位'," type="text" id="passwordAdd" style="width:200px;" /></p>
-    <p>角&nbsp;&nbsp;&nbsp;色：
-        <select class="easyui-combobox" id="authAdd" style="width:100px;" data-options="valueField:'id',textField:'roleName'">
-            <option value="请选择" selected="true" />
-        </select>
+            $('#startApplyForm').form('reset');
+       }">
+    <p>标题：<input id="seeApplyTitle" type="text" class="textbox" style="width:390px" /></p>
+    <p>内容：
+        <br/>
+        <textarea id="seeApplyContent" rows="6" cols="50" />
     </p>
+    <ul id="seeAttachFile">
+    </ul>
 </form>
 
-<form id="manager_editUser" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
-       onClose:function () {
-            $('#manager_editUser').form('reset');
-       },
-		buttons:[{
-					text : '提交',
-					iconCls : 'icon-add-green',
-					handler : function () {
-                    editUserCommit();
-					}
-				},{
-					text:'关闭',
-					iconCls : 'icon-redo',
-					handler:function(){
-                    $('#manager_editUser').dialog('close');
-					}
-				}]">
-    <p>登录名：<input class="easyui-validatebox" type="text" id="loginNameEditUser" style="width:200px;" disabled="disabled" /></p>
-    <p>用户名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入用户名',invalidMessage:'用户名长度至少为1位'," type="text" id="userNameEditUser" style="width:200px;" /></p>
-    <p>角&nbsp;&nbsp;&nbsp;色：
-        <select class="easyui-combobox" id="authEditUser" style="width:100px;" data-options="valueField:'id',textField:'roleName'" />
+<div id="flowInstancePreviewWindow" class="easyui-window" title="流程预览" data-options="iconCls:'icon-save',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:550px;">
+    <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程名称：<span id="previewFlowInstanceName"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程状态：<span id="previewFlowInstanceState"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动用户：<span id="previewFlowInstanceStartUser"></span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;启动时间：<span id="previewFlowInstanceStartDate"></span>
     </p>
-</form>
+    <div id="previewFlowInstanceChartDiv"></div>
+    <table id="previewFlowInstanceManager"></table>
+</div>
 
-<form id="manager_editUserPassword" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
-       onClose:function () {
-            $('#manager_editUserPassword').form('reset');
-       },
-		buttons:[{
-					text : '提交',
-					iconCls : 'icon-add-green',
-					handler : function () {
-                    editUserPasswordCommit();
-					}
-				},{
-					text:'关闭',
-					iconCls : 'icon-redo',
-					handler:function(){
-                    $('#manager_editUserPassword').dialog('close');
-					}
-				}]">
-    <p>新密码：<input class="easyui-validatebox" type="text" id="userNewPassword" style="width:200px;" /></p>
-</form>
 </body>
 </html>
