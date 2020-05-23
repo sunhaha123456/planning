@@ -23,15 +23,16 @@ public interface FlowInstanceService {
      * 功能：获取流程实例详情
      * @param id
      * @param attachFileFlag 0不返回附件信息 1返回附件信息
+     * @param startUserId
      * @return
      */
-    TbFlowInstance getFlowInstanceDetail(Long id, Integer attachFileFlag);
+    TbFlowInstance getFlowInstanceDetail(Long id, Integer attachFileFlag, Long startUserId);
 
     PageList<TbFlowInstanceOperateHistory> getOperateInfo(FlowInstanceRequest param) throws Exception;
 
-    FlowChartResponse getFlowInstanceFlowChart(Long id);
+    FlowChartResponse getFlowInstanceFlowChart(Long id, Long startUserId);
 
     void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList) throws IOException;
 
-    void exportFileFlowInstance(HttpServletResponse resp, Long instanceId, Long fileId) throws Exception;
+    void exportFileFlowInstance(HttpServletResponse resp, Long instanceId, Long fileId, Long startUserId) throws Exception;
 }

@@ -75,7 +75,7 @@ public class FlowInstanceControler {
      */
     @GetMapping(value= "/getFlowInstanceDetail")
     public TbFlowInstance getFlowInstanceDetail(@RequestParam Long id, @RequestParam(required = false, defaultValue = "0") Integer attachFileFlag) {
-        return flowInstanceService.getFlowInstanceDetail(id, attachFileFlag);
+        return flowInstanceService.getFlowInstanceDetail(id, attachFileFlag, null);
     }
 
     @PostMapping(value= "/getOperateInfo")
@@ -88,11 +88,11 @@ public class FlowInstanceControler {
 
     @GetMapping(value= "/getFlowInstanceFlowChart")
     public FlowChartResponse getFlowInstanceFlowChart(@RequestParam Long id) {
-        return flowInstanceService.getFlowInstanceFlowChart(id);
+        return flowInstanceService.getFlowInstanceFlowChart(id, null);
     }
 
     @GetMapping(value= "/exportFileFlowInstance")
     public void exportFileFlowInstance(HttpServletResponse resp, @RequestParam Long instanceId, @RequestParam Long fileId) throws Exception {
-        flowInstanceService.exportFileFlowInstance(resp, instanceId, fileId);
+        flowInstanceService.exportFileFlowInstance(resp, instanceId, fileId, null);
     }
 }

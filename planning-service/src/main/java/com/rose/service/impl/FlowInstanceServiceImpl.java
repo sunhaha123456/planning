@@ -155,7 +155,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
         Long userId = valueHolder.getUserIdHolder();
         String operateInfo = null;
-        if (type == 0) { // 管理员冻结流程
+        if (type == 0) { // 撤销流程
             if (flowInstance.getState() == FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
                 throw new BusinessException("用户流程状态原先已是冻结！");
             }
@@ -166,7 +166,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             }
 
             operateInfo = "以管理员身份冻结流程";
-        } else if (type == 1) { // 管理员恢复流程
+        } else if (type == 1) { // 删除流程 xxx
             if (flowInstance.getState() != FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
                 throw new BusinessException("用户流程状态不是已是冻结！");
             }
@@ -218,9 +218,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     }
 
     @Override
-    public TbFlowInstance getFlowInstanceDetail(Long id, Integer attachFileFlag) {
+    public TbFlowInstance getFlowInstanceDetail(Long id, Integer attachFileFlag, Long startUserId) {
         TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
-        if (flowInstance == null) {
+        if (flowInstance == null || (startUserId != null && !startUserId.equals(flowInstance.getStartUserId()))) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
 
@@ -271,13 +271,19 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Override
     public PageList<TbFlowInstanceOperateHistory> getOperateInfo(FlowInstanceRequest param) throws Exception {
+        if (param.getStartUserId() != null) {
+            TbFlowInstance instance = flowInstanceRepository.findOne(param.getId());
+            if (instance == null || !param.getStartUserId().equals(instance.getStartUserId())) {
+                throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+            }
+        }
         return flowInstanceOperateHistoryRepositoryCustom.list(param.getId(), param.getPage(), param.getRows());
     }
 
     @Override
-    public FlowChartResponse getFlowInstanceFlowChart(Long id) {
+    public FlowChartResponse getFlowInstanceFlowChart(Long id, Long startUserId) {
         TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
-        if (flowInstance == null) {
+        if (flowInstance == null || (startUserId != null && !startUserId.equals(flowInstance.getStartUserId()))) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
         Map<Integer, List<TbFlowInstanceNode>> map = new HashMap<>();
@@ -560,7 +566,11 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     }
 
     @Override
-    public void exportFileFlowInstance(HttpServletResponse resp, Long instanceId, Long fileId) throws Exception {
+    public void exportFileFlowInstance(HttpServletResponse resp, Long instanceId, Long fileId, Long startUserId) throws Exception {
+        TbFlowInstance flowInstance = flowInstanceRepository.findOne(instanceId);
+        if (flowInstance == null || (startUserId != null && !startUserId.equals(flowInstance.getStartUserId()))) {
+            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+        }
         TbFlowInstanceFile file = flowInstanceFileRepository.findByIdAndInstanceId(fileId, instanceId);
         if (file == null) {
             throw new BusinessException("文件不存在！");

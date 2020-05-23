@@ -122,8 +122,6 @@
                 if (type == 0) {
                     msg = "确定要撤销流程吗？";
                 } else if (type == 1) {
-                    msg = "确定要恢复流程吗？";
-                } else if (type == 2) {
                     msg = "确定要删除流程吗？";
                 } else {
                     return;
@@ -131,7 +129,7 @@
 
                 $.messager.confirm('确定操作', msg, function (flag) {
                     if (flag) {
-                        var result = ajaxSynchPostJson("user/selfSendApplyPage/operateInstanceByAdmin?id=" + rows[0].id + "&type=" + type, null);
+                        var result = ajaxSynchPostJson("user/selfSendApplyPage/operateInstance?id=" + rows[0].id + "&type=" + type, null);
                         if (result.code == '200') {
                             alertInfo(result.msg);
                             searchFlowInstance();
@@ -151,7 +149,7 @@
                 alertWarn("请先选择记录！");
                 return;
             }
-            var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 1});
+            var result = ajaxSynchGet("user/selfSendApplyPage/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 1});
             if (result.code != '200') {
                 alertWarn(result.msg);
                 return;
@@ -166,7 +164,7 @@
                 var fileHref;
                 for(x = 0; x < result.data.attachFileList.length; x++) {
                     fileInfo = result.data.attachFileList[x];
-                    fileHref = urlHandleContext("user/flowInstance/exportFileFlowInstance") + "&instanceId=" + rows[0].id + "&fileId=" + fileInfo.id;
+                    fileHref = urlHandleContext("user/selfSendApplyPage/exportFileFlowInstance") + "&instanceId=" + rows[0].id + "&fileId=" + fileInfo.id;
                     attachFileHtml = attachFileHtml + "<li><a href='" + fileHref + "'>" + fileInfo.oldFileName + "</a></li>";
                 }
             }
@@ -182,17 +180,17 @@
                 alertWarn("请先选择记录！");
                 return;
             }
-            var result = ajaxSynchGet("user/flowInstance/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
+            var result = ajaxSynchGet("user/selfSendApplyPage/getFlowInstanceDetail", {"id": rows[0].id, "attachFileFlag": 0});
             if (result.code != '200') {
                 alertWarn(result.msg);
                 return;
             }
-            var history = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
+            var history = ajaxSynchPostJson("user/selfSendApplyPage/getOperateInfo", {"id": rows[0].id, "page":1, "rows":10});
             if (history.code != '200') {
                 alertWarn(history.msg);
                 return;
             }
-            var flowChart = ajaxSynchGet("user/flowInstance/getFlowInstanceFlowChart", {"id": rows[0].id});
+            var flowChart = ajaxSynchGet("user/selfSendApplyPage/getFlowInstanceFlowChart", {"id": rows[0].id});
             if (flowChart.code != '200') {
                 alertWarn(flowChart.msg);
                 return;
@@ -260,7 +258,7 @@
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var h = ajaxSynchPostJson("user/flowInstance/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
+                    var h = ajaxSynchPostJson("user/selfSendApplyPage/getOperateInfo", {"id": rows[0].id, "page":pageNumber, "rows":pageSize});
                     if (h.code == '200') {
                         $('#previewFlowInstanceManager').datagrid('loadData', h.data);
                     }
@@ -288,6 +286,7 @@
         $(function () {
             keyDownInit();
             dataGridInit();
+            searchFlowInstance();
         });
     </script>
 </head>
@@ -295,9 +294,8 @@
 <table id="flowInstanceManager">
     <div id="flowInstanceManager_tool">
         <div>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="operateFlowInstance(0)">冻结流程</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(1)">恢复流程</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(2)">删除流程</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(0)">撤销流程</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(1)">删除流程</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
         </div>
