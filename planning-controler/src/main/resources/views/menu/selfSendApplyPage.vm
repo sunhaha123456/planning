@@ -28,59 +28,6 @@
     <script th:src="@{/static/flowChart/js/jquery.orgchart.js}"></script>
     <!-- flow chart end -->
     <script th:inline="javascript">
-        function templateTreeInit() {
-            var result = ajaxSynchGet("user/flowInstance/getTemplateTree", null);
-            if (result.code == '200') {
-                $('#templateTree').tree({
-                    lines : true,
-                    multiple : false,
-                    checkbox : false,
-                    data: result.data,
-                    onSelect: function(node) {
-                        searchFlowInstance();
-                    }
-                });
-                return result.data;
-            } else {
-                alertWarn(result.msg);
-            }
-        }
-
-        function searchTemplate() {
-            var templateName = $("#templateNameSearch").val();
-            if (templateName == '') {
-                return;
-            }
-            var result = ajaxSynchPostJson("user/flowInstance/getIdList", {"flowTemplateName": templateName});
-            if (result.code == '200') {
-                var idArr = result.data;
-                if (idArr == null || idArr.length == 0) {
-                    return;
-                }
-                if (idArr.length == 1) {
-                    if (isTreeNodeSelected("templateTree") && getTreeSelectedNode("templateTree").id != idArr[0]) {
-                        var node = $('#templateTree').tree('find', idArr[0]);
-                        $('#templateTree').tree('select', node.target);
-                    }
-                    return;
-                }
-
-                var id = idArr[0];
-                if (isTreeNodeSelected("templateTree")) {
-                    var selectId = getTreeSelectedNode("templateTree").id;
-                    var selectIdIndex = idArr.indexOf(selectId);
-                    if (selectIdIndex != -1 && selectIdIndex != (idArr.length - 1)) {
-                        id = idArr[selectIdIndex + 1]
-                    }
-                }
-
-                var node = $('#templateTree').tree('find', id);
-                $('#templateTree').tree('select', node.target);
-            } else {
-                alertWarn(result.msg);
-            }
-        }
-
         function dataGridInit() {
             $('#flowInstanceManager').datagrid({
                 fit : true,
@@ -133,20 +80,14 @@
         }
 
         function searchFlowInstance() {
-            if (isTreeNodeSelected("templateTree")) {
-                var result = ajaxSynchPostJson("user/flowInstance/searchFlowInstance", {
-                    "templateId": getTreeSelectedNode("templateTree").id,
-                    "flowInstanceName": $('#flowInstanceNameSearch').val(),
-                    "page":1, "rows":10});
-                if (result.code == '200') {
-                    dataGridPageInit();
-                    $('#flowInstanceManager').datagrid('loadData', result.data);
-                } else {
-                    alertWarn(result.msg);
-                }
-            } else {
+            var result = ajaxSynchPostJson("user/selfSendApplyPage/searchFlowInstance", {
+                "flowInstanceName": $('#flowInstanceNameSearch').val(),
+                "page":1, "rows":10});
+            if (result.code == '200') {
                 dataGridPageInit();
-                $('#flowInstanceManager').datagrid('loadData', {"total":0, "rows":[]});
+                $('#flowInstanceManager').datagrid('loadData', result.data);
+            } else {
+                alertWarn(result.msg);
             }
         }
 
@@ -158,8 +99,7 @@
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
                     if (isTreeNodeSelected("templateTree")) {
-                        var result = ajaxSynchPostJson("user/flowInstance/searchFlowInstance", {
-                            "templateId": getTreeSelectedNode("templateTree").id,
+                        var result = ajaxSynchPostJson("user/selfSendApplyPage/searchFlowInstance", {
                             "flowInstanceName": $('#flowInstanceNameSearch').val(),
                             "page":pageNumber, "rows":pageSize});
                         if (result.code == '200') {
@@ -180,18 +120,18 @@
             if (rows.length > 0) {
                 var msg = ""
                 if (type == 0) {
-                    msg = "确定要冻结用户流程吗？";
+                    msg = "确定要撤销流程吗？";
                 } else if (type == 1) {
-                    msg = "确定要恢复用户流程吗？";
+                    msg = "确定要恢复流程吗？";
                 } else if (type == 2) {
-                    msg = "确定要删除用户流程吗？";
+                    msg = "确定要删除流程吗？";
                 } else {
                     return;
                 }
 
                 $.messager.confirm('确定操作', msg, function (flag) {
                     if (flag) {
-                        var result = ajaxSynchPostJson("user/flowInstance/operateInstance?id=" + rows[0].id + "&type=" + type, null);
+                        var result = ajaxSynchPostJson("user/selfSendApplyPage/operateInstanceByAdmin?id=" + rows[0].id + "&type=" + type, null);
                         if (result.code == '200') {
                             alertInfo(result.msg);
                             searchFlowInstance();
@@ -335,10 +275,7 @@
             document.onkeydown = function doKeyDown() {
                 if (event.keyCode == 13) {
                     var id = document.activeElement.id;
-                    if (id == "templateNameSearch") {
-                        searchTemplate();
-                        return false;
-                    } else if (id == "flowInstanceNameSearch") {
+                    if (id == "flowInstanceNameSearch") {
                         searchFlowInstance();
                         return false;
                     } else {
@@ -350,46 +287,26 @@
 
         $(function () {
             keyDownInit();
-            var noedDataArr = templateTreeInit();
             dataGridInit();
-
-            if (noedDataArr != null && noedDataArr.length > 0) {
-                var node = $('#templateTree').tree('find', noedDataArr[0].id);
-                $('#templateTree').tree('select', node.target);
-            }
         });
     </script>
 </head>
 <body>
-<div style="margin-bottom:5px;">
-    &nbsp;&nbsp;
-    模板名称：<input type="text" class="textbox" id="templateNameSearch" style="width:180px" />
-    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchTemplate()">查询</a>
-</div>
-
-<div>
-    <div style="float:left; width: 25%;">
-        <ul id="templateTree"/>
+<table id="flowInstanceManager">
+    <div id="flowInstanceManager_tool">
+        <div>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="operateFlowInstance(0)">冻结流程</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(1)">恢复流程</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(2)">删除流程</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
+        </div>
+        <div>
+            &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
+            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
+        </div>
     </div>
-    <div style="float:left; width: 73%; height: 385px;">
-        <table id="flowInstanceManager">
-            <div id="flowInstanceManager_tool">
-                <div>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="operateFlowInstance(0)">冻结流程</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(1)">恢复流程</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(2)">删除流程</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请</a>
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
-                </div>
-                <div>
-                    &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
-                    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
-                </div>
-            </div>
-        </table>
-    </div>
-    <div style="clear:both;"></div>
-</div>
+</table>
 
 <form id="seeApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
       data-options="top:50,width:500,title:'查看申请',modal:true,closed:true,cache:false,iconCls:'icon-save',

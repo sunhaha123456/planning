@@ -64,7 +64,7 @@ public class FlowInstanceControler {
      */
     @PostMapping(value= "/operateInstance")
     public void operateInstance(@RequestParam Long id, @RequestParam Integer type) throws Exception {
-        flowInstanceService.operateInstance(id, type);
+        flowInstanceService.operateInstanceByAdmin(id, type);
     }
 
     /**

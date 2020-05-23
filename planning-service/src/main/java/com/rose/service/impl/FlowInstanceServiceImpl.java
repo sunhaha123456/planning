@@ -64,12 +64,87 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Override
     public PageList<TbFlowInstance> searchFlowInstance(FlowInstanceRequest param) throws Exception {
-        return flowInstanceRepositoryCustom.list(param.getTemplateId(), param.getFlowInstanceName(), param.getPage(), param.getRows());
+        return flowInstanceRepositoryCustom.list(param.getTemplateId(), param.getFlowInstanceName(), param.getStartUserId(), param.getPage(), param.getRows());
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void operateInstance(Long id, Integer type) {
+    public void operateInstanceByAdmin(Long id, Integer type) {
+        TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
+        if (flowInstance == null) {
+            throw new BusinessException("流程实例不存在！");
+        }
+        if (flowInstance.getState() == FlowInstanceStateEnum.HAVE_FINISH.getIndex()) {
+            throw new BusinessException("不能对已完成的用户流程操作！");
+        }
+
+        Long userId = valueHolder.getUserIdHolder();
+        String operateInfo = null;
+        if (type == 0) { // 管理员冻结流程
+            if (flowInstance.getState() == FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
+                throw new BusinessException("用户流程状态原先已是冻结！");
+            }
+
+            int c = flowInstanceRepository.updateState(id, FlowInstanceStateEnum.ADMIN_FROZEN.getIndex(), flowInstance.getState());
+            if (c <= 0) {
+                throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+            }
+
+            operateInfo = "以管理员身份冻结流程";
+        } else if (type == 1) { // 管理员恢复流程
+            if (flowInstance.getState() != FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
+                throw new BusinessException("用户流程状态不是已是冻结！");
+            }
+
+            int c = flowInstanceRepository.updateState(id, FlowInstanceStateEnum.HAVE_STARTED.getIndex(), FlowInstanceStateEnum.ADMIN_FROZEN.getIndex());
+            if (c <= 0) {
+                throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+            }
+
+            operateInfo = "以管理员身份恢复流程";
+        } else if (type == 2) { // 管理员删除流程
+            if (flowInstance.getState() != FlowInstanceStateEnum.ADMIN_FROZEN.getIndex()) {
+                throw new BusinessException("请先冻结用户流程！");
+            }
+            int c = flowInstanceRepository.deleteByIdAndState(id, flowInstance.getState());
+            if (c <= 0) {
+                throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+            }
+            flowInstanceRepository.deleteByIdAndState(id, flowInstance.getState());
+            flowInstanceNodeRepository.deleteByInstanceId(id);
+            flowInstanceNodeUserTaskRepository.deleteByInstanceId(id);
+
+            List<TbFlowInstanceFile> fileList = flowInstanceFileRepository.listByInstanceId(id);
+            flowInstanceFileRepository.deleteByInstanceId(id);
+
+            if (fileList != null && fileList.size() > 0) {
+                File file = null;
+                for (TbFlowInstanceFile fileInstance : fileList) {
+                    if (StringUtil.isNotEmpty(fileInstance.getNewFileName())) {
+                        try {
+                            file = new File(uploadPath + fileInstance.getNewFileName());
+                            if (file.exists()) {
+                                file.delete();
+                            }
+                        } catch (Exception e) {
+                            log.error("管理员userId：{},删除流程：{}时，删硬盘文件：{}，失败！", userId, flowInstance.getInstanceName(), fileInstance.getNewFileName());
+                        }
+                    }
+                }
+            }
+
+            operateInfo = "以管理员身份删除流程";
+        } else {
+            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+        }
+
+        TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), id, flowInstance.getInstanceName(), 0L, "", userId, operateInfo);
+        flowInstanceOperateHistoryRepository.save(history);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void operateInstanceByUser(Long id, Integer type) {
         TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
         if (flowInstance == null) {
             throw new BusinessException("流程实例不存在！");
