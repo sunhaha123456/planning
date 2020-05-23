@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,5 +89,10 @@ public class FlowInstanceControler {
     @GetMapping(value= "/getFlowInstanceFlowChart")
     public FlowChartResponse getFlowInstanceFlowChart(@RequestParam Long id) {
         return flowInstanceService.getFlowInstanceFlowChart(id);
+    }
+
+    @GetMapping(value= "/exportFileFlowInstance")
+    public void exportFileFlowInstance(HttpServletResponse resp, @RequestParam Long instanceId, @RequestParam Long fileId) throws Exception {
+        flowInstanceService.exportFileFlowInstance(resp, instanceId, fileId);
     }
 }

@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -482,6 +482,50 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
         TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), flowInstanceDbRet.getId(), flowInstanceDbRet.getInstanceName(), 0L, "", applyUserId, "发起申请");
         flowInstanceOperateHistoryRepository.save(history);
+    }
+
+    @Override
+    public void exportFileFlowInstance(HttpServletResponse resp, Long instanceId, Long fileId) throws Exception {
+        TbFlowInstanceFile file = flowInstanceFileRepository.findByIdAndInstanceId(fileId, instanceId);
+        if (file == null) {
+            throw new BusinessException("文件不存在！");
+        }
+
+        resp.setHeader("content-type", "text/plain");
+        resp.setHeader("content-type", "application/x-msdownload;");
+        resp.setContentType("text/plain; charset=utf-8");
+        resp.setHeader("Content-Disposition", "attachment; filename=" + new String(file.getOldFileName().getBytes(), "iso-8859-1"));
+
+        OutputStream os = null;
+        BufferedInputStream bis = null;
+        try {
+            os = resp.getOutputStream();
+            bis = new BufferedInputStream(new FileInputStream(new File(uploadPath + file.getNewFileName())));
+
+            byte[] buf = new byte[1024];
+            int i = bis.read(buf);
+            while (i != -1) {
+                os.write(buf, 0, i);
+                i = bis.read(buf);
+            }
+        } catch (Exception e) {
+            log.error("下载流程实例附件报错！fileId：{}，fileOldName：{}，错误信息：{}", file.getId(), file.getOldFileName(), e);
+        } finally {
+            try {
+                if (bis != null) {
+                    bis.close();
+                }
+            } catch (Exception e) {
+                log.error("下载流程实例附件，关闭bis时，报错！fileId：{}，fileOldName：{}，错误信息：{}", file.getId(), file.getOldFileName(), e);
+            }
+            try {
+                if (os != null) {
+                    os.close();
+                }
+            } catch (Exception e) {
+                log.error("下载流程实例附件，关闭os时，报错！fileId：{}，fileOldName：{}，错误信息：{}", file.getId(), file.getOldFileName(), e);
+            }
+        }
     }
 
     private TbFlowInstanceOperateHistory getFlowInstanceOperateHistory(Date historyDate, Long instanceId, String instanceName, Long instanceNodeId, String instanceNodeName, Long operateUserId, String operateInfo) {

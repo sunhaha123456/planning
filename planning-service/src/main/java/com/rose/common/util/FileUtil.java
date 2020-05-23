@@ -27,10 +27,10 @@ public class FileUtil {
                         throw new BusinessException("文件上传失败！");
                     }
                     if (file.getSize() == 0) {
-                        throw new BusinessException("文件" + file.getOriginalFilename() + "为空文件不允许上传！");
+                        throw new BusinessException(file.getOriginalFilename() + "是空文件不允许上传！");
                     }
                     if (fileMaxSizeMByte * 1024 * 1024 < file.getSize()) {
-                        throw new BusinessException("文件" + file.getOriginalFilename() + "过大，最大" + fileMaxSizeMByte + "M！");
+                        throw new BusinessException(file.getOriginalFilename() + "过大最大只能" + fileMaxSizeMByte + "M！");
                     }
                 }
             }
