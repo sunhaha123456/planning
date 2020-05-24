@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Slf4j
 @Controller
 public class JumpControler {
+
     /**
      * 功能：跳转用户管理页面
      * @return

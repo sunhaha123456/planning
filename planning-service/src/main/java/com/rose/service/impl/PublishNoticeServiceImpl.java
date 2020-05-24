@@ -4,10 +4,10 @@ import com.rose.common.data.base.PageList;
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
-import com.rose.data.base.PageParam;
 import com.rose.data.constant.SystemConstant;
 import com.rose.data.entity.TbNotice;
 import com.rose.data.entity.TbSystemSetting;
+import com.rose.data.to.request.NoticeSearchRequest;
 import com.rose.repository.NoticeRepository;
 import com.rose.repository.NoticeRepositoryCustom;
 import com.rose.repository.SystemSettingRepository;
@@ -32,8 +32,8 @@ public class PublishNoticeServiceImpl implements PublishNoticeService {
     private SystemSettingRepository systemSettingRepository;
 
     @Override
-    public PageList<TbNotice> searchNotice(PageParam param) throws Exception {
-        return noticeRepositoryCustom.list(param.getPage(), param.getRows());
+    public PageList<TbNotice> searchNotice(NoticeSearchRequest param) throws Exception {
+        return noticeRepositoryCustom.list(param.getStatus(), param.getPage(), param.getRows());
     }
 
     @Override
@@ -60,6 +60,12 @@ public class PublishNoticeServiceImpl implements PublishNoticeService {
             param.setLastModified(now);
         }
         noticeRepository.save(param);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteNotice(Long id) {
+        noticeRepository.delete(id);
     }
 
     @Override

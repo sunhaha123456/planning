@@ -148,6 +148,25 @@
             }
         }
 
+        function deleteNotice() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+            $.messager.confirm('确定操作', "确定删除吗？", function (flag) {
+                if (flag) {
+                    var result = ajaxSynchPostJson("user/publishNotice/deleteNotice?id=" + rows[0].id, null);
+                    if (result.code == '200') {
+                        searchNotice();
+                        alertSuccess();
+                    } else {
+                        alertWarn(result.msg);
+                    }
+                }
+            });
+        }
+
         function showIndexPageShowNoticeFlagDialog() {
             var result = ajaxSynchGet("user/publishNotice/getIndexPageShowNotice", null);
             if (result.code != '200') {
@@ -191,6 +210,7 @@
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addNoticeShow()">发布</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editNoticeShow()">编辑</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteNotice()">删除</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="showIndexPageShowNoticeFlagDialog()">首页是否显示公告</a>
         </div>
     </div>

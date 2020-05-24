@@ -1,9 +1,9 @@
 package com.rose.controler;
 
 import com.rose.common.data.base.PageList;
-import com.rose.data.base.PageParam;
 import com.rose.data.entity.TbNotice;
 import com.rose.data.entity.TbSystemSetting;
+import com.rose.data.to.request.NoticeSearchRequest;
 import com.rose.service.PublishNoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ public class PublishNoticeControler {
     private PublishNoticeService publishNoticeService;
 
     @PostMapping(value= "/searchNotice")
-    public PageList<TbNotice> searchNotice(@RequestBody PageParam param) throws Exception {
+    public PageList<TbNotice> searchNotice(@RequestBody NoticeSearchRequest param) throws Exception {
         return publishNoticeService.searchNotice(param);
     }
 
@@ -35,6 +35,11 @@ public class PublishNoticeControler {
     @PostMapping(value= "/saveNotice")
     public void saveNotice(@RequestBody TbNotice param) {
         publishNoticeService.saveNotice(param);
+    }
+
+    @PostMapping(value= "/deleteNotice")
+    public void deleteNotice(@RequestParam Long id) {
+        publishNoticeService.deleteNotice(id);
     }
 
     @GetMapping(value= "/getIndexPageShowNotice")

@@ -1,1 +1,113 @@
-我的首页
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/static/easyui/themes/easy.common.css}"></link>
+    <script th:inline="javascript">
+        var contextPath = [[@{/}]];
+        var interceptorToken = [[${token}]];
+        var interceptorUserId = [[${userId}]];
+    </script>
+    <script th:src="@{/static/easyui/easy.common.js}"></script>
+    <script th:src="@{/static/easyuiMask.js}"></script>
+    <script th:src="@{/static/myFun.js}"></script>
+    <style type="text/css">
+        a {text-decoration: none}
+    </style>
+    <script th:inline="javascript">
+        function noticeDataGridInit() {
+            $('#manager_notice').datagrid({
+                fit : true,
+                fitColumns : true,
+                striped : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'title',
+                        title : '公司公告',
+                        width : 100,
+                        formatter: function(value,row,index){
+                            return "<a href='#' onclick='showNotice(" + row.id + ")'><font size=2>" + value + "</font></a>";
+                        }
+                    }
+                ]]
+            });
+        }
+
+        function dataGridPageInit() {
+            var p = $('#manager_notice').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 5,
+                pageList : [5, 10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    var result = ajaxSynchPostJson("user/myIndexPage/searchNotice", {"page":pageNumber, "rows":pageSize});
+                    if (result.code == '200') {
+                        $('#manager_notice').datagrid('loadData', result.data);
+                    }
+                },
+            });
+        }
+
+        function searchNotice() {
+            var result = ajaxSynchPostJson("user/myIndexPage/searchNotice", {"page":1, "rows":5});
+            if (result.code == '200') {
+                dataGridPageInit();
+                $('#manager_notice').datagrid('loadData', result.data);
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function showNotice(id) {
+            var result = ajaxSynchGet("user/myIndexPage/getNotice", {"id": id});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            $("#noticeTitle").text(result.data.title);
+            $("#noticeContent").text(result.data.content);
+            $('#noticeShowWindow').window('open');
+        }
+
+        function indexPageNoticeInit() {
+            var result = ajaxSynchGet("user/publishNotice/getIndexPageShowNotice", null);
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            var systemValue = result.data.systemValue;
+            if (systemValue == "true") {
+                noticeDataGridInit();
+                searchNotice();
+            } else {
+                $("#noticeDiv").hide();
+            }
+        }
+
+        $(function () {
+            indexPageNoticeInit();
+        });
+    </script>
+</head>
+<body>
+<div id="noticeDiv" style="height: 183px;">
+    <table id="manager_notice"></table>
+</div>
+<div>
+    <table id="manager_waiting_approval"></table>
+</div>
+
+<div id="noticeShowWindow" class="easyui-window" title="公告" data-options="iconCls:'icon-tip',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:450px;">
+    <p align="center"><font color="black" size="4"><span id="noticeTitle""></span></font></p>
+    <p><textarea id="noticeContent" readonly="readonly" style="width: 99%; height:400px;" /></p>
+</div>
+</body>
+</html>

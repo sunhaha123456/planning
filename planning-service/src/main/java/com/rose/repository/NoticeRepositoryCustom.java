@@ -6,6 +6,6 @@ import com.rose.data.entity.TbNotice;
 
 public interface NoticeRepositoryCustom extends BaseRepository {
 
-    PageList<TbNotice> list(Integer pageNo, Integer pageSize) throws Exception;
+    PageList<TbNotice> list(Integer status, Integer pageNo, Integer pageSize) throws Exception;
 
 }

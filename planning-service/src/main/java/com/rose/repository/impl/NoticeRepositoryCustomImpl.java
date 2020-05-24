@@ -18,11 +18,17 @@ import java.util.List;
 public class NoticeRepositoryCustomImpl extends BaseRepositoryImpl implements NoticeRepositoryCustom {
 
     @Override
-    public PageList<TbNotice> list(Integer pageNo, Integer pageSize) throws Exception {
+    public PageList<TbNotice> list(Integer status, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sql = new StringBuilder();
         List<Object> paramList = new ArrayList();
         sql.append(" SELECT a.id, a.title, a.status, a.sort ");
-        sql.append(" FROM tb_notice a order by a.sort desc ");
+        sql.append(" FROM tb_notice a ");
+        sql.append(" WHERE 1 = 1 ");
+        if (status != null) {
+            sql.append(" and a.status = ? ");
+            paramList.add(status);
+        }
+        sql.append(" order by a.sort desc ");
         return queryPage(sql.toString(), TbNotice.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
     }
 }
