@@ -74,8 +74,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     }
 
     @Override
-    public PageList<TbFlowInstance> searchWaitApproval(PageParam param) throws Exception {
-        return flowInstanceRepositoryCustom.listWaitApproval(valueHolder.getUserIdHolder(), param.getPage(), param.getRows());
+    public PageList<TbFlowInstance> searchWaitingApproval(PageParam param) throws Exception {
+        return flowInstanceRepositoryCustom.listWaitingApproval(valueHolder.getUserIdHolder(), param.getPage(), param.getRows());
     }
 
     @Transactional(rollbackFor = Exception.class)

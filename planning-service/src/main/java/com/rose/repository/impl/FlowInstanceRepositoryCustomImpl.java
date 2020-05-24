@@ -63,7 +63,7 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
     }
 
     @Override
-    public PageList<TbFlowInstance> listWaitApproval(Long waitApprovalUserId, Integer pageNo, Integer pageSize) throws Exception {
+    public PageList<TbFlowInstance> listWaitingApproval(Long waitApprovalUserId, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sql = new StringBuilder();
         List<Object> paramList = new ArrayList();
         sql.append(" SELECT a.id, a.instance_name instanceName, a.start_time startTime, a.state ");

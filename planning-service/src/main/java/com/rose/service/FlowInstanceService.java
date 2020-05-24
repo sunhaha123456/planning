@@ -18,7 +18,7 @@ public interface FlowInstanceService {
 
     PageList<TbFlowInstance> searchApprovalApply(FlowInstanceRequest param) throws Exception;
 
-    PageList<TbFlowInstance> searchWaitApproval(PageParam param) throws Exception;
+    PageList<TbFlowInstance> searchWaitingApproval(PageParam param) throws Exception;
 
     void operateInstanceByAdmin(Long id, Integer type);
 

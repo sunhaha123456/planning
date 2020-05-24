@@ -43,9 +43,9 @@ public class MyIndexPageControler {
         return publishNoticeService.getNotice(id);
     }
 
-    @PostMapping(value= "/searchWaitApproval")
-    public PageList<TbFlowInstance> searchWaitApproval(@RequestBody PageParam param) throws Exception {
-        return flowInstanceService.searchWaitApproval(param);
+    @PostMapping(value= "/searchWaitingApproval")
+    public PageList<TbFlowInstance> searchWaitingApproval(@RequestBody PageParam param) throws Exception {
+        return flowInstanceService.searchWaitingApproval(param);
     }
 
 

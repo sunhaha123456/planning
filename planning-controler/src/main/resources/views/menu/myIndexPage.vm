@@ -41,7 +41,7 @@
             });
         }
 
-        function dataGridPageInit() {
+        function noticeDataGridPageInit() {
             var p = $('#manager_notice').datagrid('getPager');
             $(p).pagination({
                 pageNumber : 1,
@@ -59,7 +59,7 @@
         function searchNotice() {
             var result = ajaxSynchPostJson("user/myIndexPage/searchNotice", {"page":1, "rows":5});
             if (result.code == '200') {
-                dataGridPageInit();
+                noticeDataGridPageInit();
                 $('#manager_notice').datagrid('loadData', result.data);
             } else {
                 alertWarn(result.msg);
@@ -92,8 +92,58 @@
             }
         }
 
+        function waitingApprovalDataGridInit() {
+            $('#manager_waiting_approval').datagrid({
+                fit : true,
+                fitColumns : true,
+                striped : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'instanceName',
+                        title : '待我审批',
+                        width : 100
+                    }
+                ]]
+            });
+        }
+
+        function waitingApprovalnoticeDataGridPageInit() {
+            var p = $('#manager_waiting_approval').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 5,
+                pageList : [5, 10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    var result = ajaxSynchPostJson("user/myIndexPage/searchWaitingApproval", {"page":pageNumber, "rows":pageSize});
+                    if (result.code == '200') {
+                        $('#manager_notice').datagrid('loadData', result.data);
+                    }
+                },
+            });
+        }
+
+        function searchWaitingApproval() {
+            var result = ajaxSynchPostJson("user/myIndexPage/searchWaitingApproval", {"page":1, "rows":5});
+            if (result.code == '200') {
+                noticeDataGridPageInit();
+                $('#manager_waiting_approval').datagrid('loadData', result.data);
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
         $(function () {
             indexPageNoticeInit();
+            waitingApprovalDataGridInit();
+            searchWaitingApproval();
         });
     </script>
 </head>
