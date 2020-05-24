@@ -18,7 +18,7 @@ import java.util.List;
 public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl implements FlowInstanceRepositoryCustom {
 
     @Override
-    public PageList<TbFlowInstance> list(Long templateId, String flowInstanceName, Long startUserId, Integer pageNo, Integer pageSize) throws Exception {
+    public PageList<TbFlowInstance> list(Long templateId, String flowInstanceName, Integer state, Long startUserId, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sql = new StringBuilder();
         List<Object> paramList = new ArrayList();
         sql.append(" SELECT a.id, a.instance_name instanceName, b.user_name startUserName, a.start_time startTime, a.state ");
@@ -28,6 +28,10 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
             sql.append(" and a.template_id = ? ");
             paramList.add(templateId);
         }
+        if (state != null) {
+            sql.append(" and a.state = ? ");
+            paramList.add(state);
+        }
         if (startUserId != null) {
             sql.append(" and a.start_user_id = ? ");
             paramList.add(startUserId);
@@ -36,6 +40,7 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
             sql.append(" and instr(a.instance_name, ?) > 0 ");
             paramList.add(flowInstanceName);
         }
+        sql.append(" order by a.id desc ");
         return queryPage(sql.toString(), TbFlowInstance.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
     }
 
@@ -53,7 +58,19 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
             sql.append(" and instr(a.instance_name, ?) > 0 ");
             paramList.add(flowInstanceName);
         }
-        sql.append(" group by a.id ");
+        sql.append(" group by a.id order by a.id desc ");
+        return queryPage(sql.toString(), TbFlowInstance.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
+    }
+
+    @Override
+    public PageList<TbFlowInstance> listWaitApproval(Long waitApprovalUserId, Integer pageNo, Integer pageSize) throws Exception {
+        StringBuilder sql = new StringBuilder();
+        List<Object> paramList = new ArrayList();
+        sql.append(" SELECT a.id, a.instance_name instanceName, a.start_time startTime, a.state ");
+        sql.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+        sql.append(" and b.user_id = ? ");
+        paramList.add(waitApprovalUserId);
+        sql.append(" group by a.id order by a.id desc ");
         return queryPage(sql.toString(), TbFlowInstance.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
     }
 }

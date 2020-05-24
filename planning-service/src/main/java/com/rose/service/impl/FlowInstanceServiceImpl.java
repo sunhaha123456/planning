@@ -7,6 +7,7 @@ import com.rose.common.util.FileUtil;
 import com.rose.common.util.IdUtil;
 import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
+import com.rose.data.base.PageParam;
 import com.rose.data.entity.*;
 import com.rose.data.enums.FlowInstanceNodeStateEnum;
 import com.rose.data.enums.FlowInstanceNodeUserTaskStateEnum;
@@ -64,12 +65,17 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Override
     public PageList<TbFlowInstance> searchFlowInstance(FlowInstanceRequest param) throws Exception {
-        return flowInstanceRepositoryCustom.list(param.getTemplateId(), param.getFlowInstanceName(), param.getStartUserId(), param.getPage(), param.getRows());
+        return flowInstanceRepositoryCustom.list(param.getTemplateId(), param.getFlowInstanceName(), param.getFlowInstanceState(), param.getStartUserId(), param.getPage(), param.getRows());
     }
 
     @Override
     public PageList<TbFlowInstance> searchApprovalApply(FlowInstanceRequest param) throws Exception {
         return flowInstanceRepositoryCustom.listApprovalApply(valueHolder.getUserIdHolder(), param.getFlowInstanceName(), param.getPage(), param.getRows());
+    }
+
+    @Override
+    public PageList<TbFlowInstance> searchWaitApproval(PageParam param) throws Exception {
+        return flowInstanceRepositoryCustom.listWaitApproval(valueHolder.getUserIdHolder(), param.getPage(), param.getRows());
     }
 
     @Transactional(rollbackFor = Exception.class)

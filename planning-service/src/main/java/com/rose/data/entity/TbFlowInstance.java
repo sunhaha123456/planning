@@ -39,7 +39,7 @@ public class TbFlowInstance extends BaseDataIdLong {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
 
-    //0已启动 1已完成 2用户撤回 3管理员冻结
+    //0已启动 1已完成 2用户撤回 3管理员冻结 4被审批者驳回
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程实例状态'")
     private Integer state;
 

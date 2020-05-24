@@ -47,17 +47,17 @@
                     {
                         field : 'instanceName',
                         title : '流程名称',
-                        width : 100
+                        width : 300
                     },
                     {
                         field : 'startTime',
                         title : '启动时间',
-                        width : 100
+                        width : 80
                     },
                     {
                         field : 'state',
                         title : '流程状态',
-                        width : 100,
+                        width : 50,
                         formatter: function(value,row,index){
                             if (value == "0"){
                                 return "已启动";
@@ -77,6 +77,7 @@
         function searchFlowInstance() {
             var result = ajaxSynchPostJson("user/selfSendApply/searchFlowInstance", {
                 "flowInstanceName": $('#flowInstanceNameSearch').val(),
+                "flowInstanceState": $('#flowInstanceStateSearch').combobox('getValue'),
                 "page":1, "rows":10});
             if (result.code == '200') {
                 dataGridPageInit();
@@ -294,7 +295,16 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
         </div>
         <div>
-            &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />
+            &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />&nbsp;&nbsp;
+            流程状态：
+            <select class="easyui-combobox" id="flowInstanceStateSearch" style="width:100px;">
+                <option value="" selected="true">请选择</option>
+                <option value="0">审批中</option>
+                <option value="1">已完成</option>
+                <option value="4">被驳回</option>
+                <option value="2">已撤回</option>
+                <option value="3">被冻结</option>
+            </select>&nbsp;&nbsp;
             <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchFlowInstance()">查询</a>
         </div>
     </div>
