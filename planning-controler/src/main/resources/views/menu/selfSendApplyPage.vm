@@ -314,7 +314,7 @@
     </ul>
 </form>
 
-<div id="flowInstancePreviewWindow" class="easyui-window" title="流程预览" data-options="iconCls:'icon-tip',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:550px;">
+<div id="flowInstancePreviewWindow" class="easyui-window" title="流程预览" data-options="iconCls:'icon-tip',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:450px;">
     <p>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程名称：<span id="previewFlowInstanceName"></span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;流程状态：<span id="previewFlowInstanceState"></span>

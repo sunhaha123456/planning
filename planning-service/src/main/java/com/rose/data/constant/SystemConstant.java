@@ -13,4 +13,7 @@ public interface SystemConstant {
     // 系统前后端交互中 token、userId key名
     String SYSTEM_TOKEN_NAME = "token";
     String SYSTEM_USER_ID = "userId";
+
+    // tb_system_setting 表 key
+    String INDEX_PAGE_NOTICE_SHOW_KEY = "indexPageNoticeShowFlag";
 }

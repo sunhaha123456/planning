@@ -1,1 +1,280 @@
-发布公告
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/static/easyui/themes/easy.common.css}"></link>
+    <script th:inline="javascript">
+        var contextPath = [[@{/}]];
+        var interceptorToken = [[${token}]];
+        var interceptorUserId = [[${userId}]];
+    </script>
+    <script th:src="@{/static/easyui/easy.common.js}"></script>
+    <script th:src="@{/static/easyuiMask.js}"></script>
+    <script th:src="@{/static/myFun.js}"></script>
+    <script th:inline="javascript">
+        function searchNotice() {
+            var result = ajaxSynchPostJson("user/publishNotice/searchNotice", {"page":1, "rows":10});
+            if (result.code == '200') {
+                dataGridPageInit();
+                $('#manager').datagrid('loadData', result.data);
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function dataGridInit() {
+            $('#manager').datagrid({
+                fit : true,
+                fitColumns : true,
+                striped : true,
+                rownumbers : true,
+                border : false,
+                pagination : true,
+                singleSelect:true,
+                toolbar : '#manager_tool',
+                columns : [[
+                    {
+                        field : 'id',
+                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'title',
+                        title : '标题',
+                        width : 300
+                    },
+                    {
+                        field : 'sort',
+                        title : '排序',
+                        width : 60
+                    },
+                    {
+                        field : 'status',
+                        title : '状态',
+                        width : 60,
+                        formatter: function(value,row,index){
+                            if (value == 0){
+                                return "下架";
+                            } else {
+                                return "上架";
+                            }
+                        }
+                    }
+                ]]
+            });
+        }
+
+        function dataGridPageInit() {
+            var p = $('#manager').datagrid('getPager');
+            $(p).pagination({
+                pageNumber : 1,
+                pageSize : 10,
+                pageList : [10, 20, 30, 40, 50],
+                onSelectPage:function(pageNumber, pageSize){
+                    var result = ajaxSynchPostJson("user/publishNotice/searchNotice", {"page":pageNumber, "rows":pageSize});
+                    if (result.code == '200') {
+                        $('#manager').datagrid('loadData', result.data);
+                    }
+                },
+            });
+        }
+
+        function addNoticeShow() {
+            $('#addNoticeForm').dialog('open');
+        }
+
+        function addNoticeFormCommit() {
+            var title = $("#addNoticeTitle").val();
+            var content = $("#addNoticeContent").val();
+            var status = $("input[name='addNoticeStatus']:checked").val();
+            var sort = $("#addNoticeSort").val();
+            var result = ajaxSynchPostJson("user/publishNotice/saveNotice", {
+                "title": title,
+                "content": content,
+                "status": status,
+                "sort": sort
+            });
+            if (result.code == '200') {
+                $('#addNoticeForm').dialog('close');
+                searchNotice();
+                alertSuccess();
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function editNoticeShow() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+            var result = ajaxSynchGet("user/publishNotice/getNotice", {"id": rows[0].id});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            $("#editNoticeTitle").val(result.data.title);
+            $("input:radio[name=editNoticeStatus][value=" + result.data.status + "]").prop("checked",true);
+            $("#editNoticeSort").val(result.data.sort);
+            $("#editNoticeContent").val(result.data.content);
+            $('#editNoticeForm').dialog('open');
+        }
+
+        function editNoticeFormCommit() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+            var id = rows[0].id;
+            var title = $("#editNoticeTitle").val();
+            var content = $("#editNoticeContent").val();
+            var status = $("input[name='editNoticeStatus']:checked").val();
+            var sort = $("#editNoticeSort").val();
+            var result = ajaxSynchPostJson("user/publishNotice/saveNotice", {
+                "id": id,
+                "title": title,
+                "content": content,
+                "status": status,
+                "sort": sort
+            });
+            if (result.code == '200') {
+                $('#editNoticeForm').dialog('close');
+                searchNotice();
+                alertSuccess();
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        function showIndexPageShowNoticeFlagDialog() {
+            var result = ajaxSynchGet("user/publishNotice/getIndexPageShowNotice", null);
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            var systemValue = result.data.systemValue;
+            if (systemValue == "true") {
+                $("input:radio[name=indexPageShowNoticeFlag][value=" + 1 + "]").prop("checked",true);
+            } else {
+                $("input:radio[name=indexPageShowNoticeFlag][value=" + 0 + "]").prop("checked",true);
+            }
+            $('#manager_indexPageShowNotice').dialog('open');
+        }
+
+        function indexPageShowNoticeCommit() {
+            var indexPageShowNotice = $("input[name='indexPageShowNoticeFlag']:checked").val();
+            if (indexPageShowNotice == 0) {
+                indexPageShowNotice = "false";
+            } else {
+                indexPageShowNotice = "true";
+            }
+            var result = ajaxSynchPostJson("user/publishNotice/updateIndexPageShowNotice?indexPageShowNotice=" + indexPageShowNotice, null);
+            if (result.code == '200') {
+                $('#manager_indexPageShowNotice').dialog('close');
+                alertSuccess();
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        $(function () {
+            dataGridInit();
+            searchNotice();
+        });
+    </script>
+</head>
+<body>
+<table id="manager">
+    <div id="manager_tool">
+        <div style="margin-bottom:5px;">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addNoticeShow()">发布</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editNoticeShow()">编辑</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="showIndexPageShowNoticeFlagDialog()">首页是否显示公告</a>
+        </div>
+    </div>
+</table>
+
+<form id="addNoticeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="width:900,title:'发布公告',modal:true,closed:true,cache:false,iconCls:'icon-add',
+       onClose:function () {
+            $('#addNoticeForm').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    addNoticeFormCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#addNoticeForm').dialog('close');
+					}
+				}]">
+    <p>标题：<input id="addNoticeTitle" type="text" class="textbox" style="width:800px" /></p>
+    <p>
+        状态：<input name="addNoticeStatus" type="radio" value="0" checked="checked">下架</input><input name="addNoticeStatus" type="radio" value="1">上架</input>
+        &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        排序：<input id="addNoticeSort" type="text" class="textbox" value="0" style="width:200px" />
+    </p>
+    <p>内容：
+        <br/>
+        <textarea id="addNoticeContent" style="width: 830px; height: 200px;" />
+    </p>
+</form>
+
+<form id="editNoticeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="width:900,title:'编辑公告',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
+       onClose:function () {
+            $('#editNoticeForm').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    editNoticeFormCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#editNoticeForm').dialog('close');
+					}
+				}]">
+    <p>标题：<input id="editNoticeTitle" type="text" class="textbox" style="width:800px" /></p>
+    <p>
+        状态：<input name="editNoticeStatus" type="radio" value="0" checked="checked">下架</input><input name="editNoticeStatus" type="radio" value="1">上架</input>
+        &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        排序：<input id="editNoticeSort" type="text" class="textbox" value="0" style="width:200px" />
+    </p>
+    <p>内容：
+        <br/>
+        <textarea id="editNoticeContent" style="width: 830px; height: 200px;" />
+    </p>
+</form>
+
+<form id="manager_indexPageShowNotice" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:150,width:320,title:'首页公告',modal:true,closed:true,cache:false,iconCls:'icon-ok',
+       onClose:function () {
+            $('#manager_indexPageShowNotice').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    indexPageShowNoticeCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#manager_indexPageShowNotice').dialog('close');
+					}
+				}]">
+    <p>首页是否显示公告：&nbsp;&nbsp;<input name="indexPageShowNoticeFlag" type="radio" value="0">不显示</input><input name="indexPageShowNoticeFlag" type="radio" value="1">显示</input></p>
+</form>
+</body>
+</html>
