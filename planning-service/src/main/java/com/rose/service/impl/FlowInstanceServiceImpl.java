@@ -465,6 +465,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         TbFlowInstanceNode flowInstanceNodeDbRet = null;
         List<TbFlowInstanceNodeUserTask> flowInstanceNodeUserTaskListDbParam = new ArrayList<>();
         TbFlowInstanceNodeUserTask flowInstanceNodeUserTaskDbParam = null;
+        Integer taskStateTemp = null;
         while (flowInstanceNodeDbRetIterator.hasNext()) {
             flowInstanceNodeDbRet = flowInstanceNodeDbRetIterator.next();
             flowInstanceNodeDbMap.put(flowInstanceNodeDbRet.getTemplateNodeId(), flowInstanceNodeDbRet);
@@ -473,8 +474,13 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             if (templateNodeUserTaskListTemp == null || templateNodeUserTaskListTemp.size() == 0) {
                 throw new BusinessException("模板节点未关联用户！");
             }
+
+            taskStateTemp = FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex();
+            if (templateNodeLevel > 1 && (flowInstanceNodeDbRet.getNodeLevel() != (templateNodeLevel - 1))) {
+                taskStateTemp = FlowInstanceNodeUserTaskStateEnum.NOT_ARRIVED.getIndex();
+            }
             for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskListTemp) {
-                flowInstanceNodeUserTaskDbParam = getFlowInstanceNodeUserTask(now, flowInstanceDbRet.getId(), flowInstanceNodeDbRet.getId(), t.getUserId(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex(), null);
+                flowInstanceNodeUserTaskDbParam = getFlowInstanceNodeUserTask(now, flowInstanceDbRet.getId(), flowInstanceNodeDbRet.getId(), t.getUserId(), taskStateTemp, null);
                 flowInstanceNodeUserTaskListDbParam.add(flowInstanceNodeUserTaskDbParam);
             }
         }

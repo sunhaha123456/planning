@@ -11,10 +11,12 @@ public enum FlowInstanceNodeUserTaskStateEnum {
     // 0待操作（需要操作，但未操作）
     // 1已操作（需要操作，且已操作）
     // 2已被抢占（抢占模式下，需要操作，但被别人抢到操作了）
+    // 3未到达（需要操作，但未到达）
 
     WAITINT_OPERATE(0, "待操作"),
     HAVE_OPERATE(1, "已操作"),
-    HAVE_CAPTURE(2, "已被抢占");
+    HAVE_CAPTURE(2, "已被抢占"),
+    NOT_ARRIVED(3, "未到达");
 
     private Integer index;
     private String name;

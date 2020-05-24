@@ -33,6 +33,7 @@ public class TbFlowInstanceNodeUserTask extends BaseDataIdLong {
     // 0待操作（需要操作，但未操作）
     // 1已操作（需要操作，且已操作）
     // 2已被抢占（抢占模式下，需要操作，但被别人抢到操作了）
+    // 3未到达（需要操作，但未到达）
     @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '状态'")
     private Integer state;
 
