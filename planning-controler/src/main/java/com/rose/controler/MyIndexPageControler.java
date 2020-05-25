@@ -8,6 +8,7 @@ import com.rose.data.entity.TbFlowInstance;
 import com.rose.data.entity.TbFlowInstanceOperateHistory;
 import com.rose.data.entity.TbNotice;
 import com.rose.data.entity.TbSystemSetting;
+import com.rose.data.to.request.ApprovalApplyRequest;
 import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.request.NoticeSearchRequest;
 import com.rose.data.to.response.FlowChartResponse;
@@ -81,5 +82,10 @@ public class MyIndexPageControler {
     @GetMapping(value= "/exportFileFlowInstance")
     public void exportFileFlowInstance(HttpServletResponse resp, @RequestParam Long instanceId, @RequestParam Long fileId) throws Exception {
         flowInstanceService.exportFileFlowInstance(resp, instanceId, fileId, null);
+    }
+
+    @PostMapping(value= "/approvalApply")
+    public void approvalApply(@RequestBody ApprovalApplyRequest param) {
+        flowInstanceService.approvalApply(param);
     }
 }

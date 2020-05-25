@@ -4,6 +4,7 @@ import com.rose.common.data.base.PageList;
 import com.rose.data.base.PageParam;
 import com.rose.data.entity.TbFlowInstance;
 import com.rose.data.entity.TbFlowInstanceOperateHistory;
+import com.rose.data.to.request.ApprovalApplyRequest;
 import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.response.FlowChartResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,4 +41,6 @@ public interface FlowInstanceService {
     void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList) throws IOException;
 
     void exportFileFlowInstance(HttpServletResponse resp, Long instanceId, Long fileId, Long startUserId) throws Exception;
+
+    void approvalApply(ApprovalApplyRequest param);
 }

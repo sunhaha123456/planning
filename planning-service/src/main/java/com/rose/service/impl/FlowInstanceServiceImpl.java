@@ -12,6 +12,7 @@ import com.rose.data.entity.*;
 import com.rose.data.enums.FlowInstanceNodeStateEnum;
 import com.rose.data.enums.FlowInstanceNodeUserTaskStateEnum;
 import com.rose.data.enums.FlowInstanceStateEnum;
+import com.rose.data.to.request.ApprovalApplyRequest;
 import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.data.to.response.FlowChartResponse;
 import com.rose.repository.*;
@@ -618,6 +619,24 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 log.error("下载流程实例附件，关闭os时，报错！fileId：{}，fileOldName：{}，错误信息：{}", file.getId(), file.getOldFileName(), e);
             }
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void approvalApply(ApprovalApplyRequest param) {
+        Long id = param.getId();
+        Integer approvalApplyOperateType = param.getApprovalApplyOperateType();
+        String approvalApplyContent = param.getApprovalApplyContent();
+        if (id == null || !Arrays.asList(0, 1).contains(approvalApplyOperateType) || StringUtil.isEmpty(approvalApplyContent)) {
+            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+        }
+
+
+
+
+
+
+
     }
 
     private TbFlowInstanceOperateHistory getFlowInstanceOperateHistory(Date historyDate, Long instanceId, String instanceName, Long instanceNodeId, String instanceNodeName, Long operateUserId, String operateInfo) {

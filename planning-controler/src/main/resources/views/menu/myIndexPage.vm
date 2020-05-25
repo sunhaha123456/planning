@@ -286,6 +286,30 @@
             $('#flowInstancePreviewWindow').window('open');
         }
 
+        function approvalApplyShow() {
+            $('#approvalApplyForm').dialog('open');
+        }
+
+        function approvalApplyCommit() {
+            var rows = $('#manager_waiting_approval').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+            var result = ajaxSynchPostJson("user/myIndexPage/approvalApply", {
+                "id": rows[0].id,
+                "approvalApplyOperateType": $("input[name='approvalApplyOperateType']:checked").val(),
+                "approvalApplyContent": $("#approvalApplyContent").val()
+            });
+            if (result.code == '200') {
+                $('#approvalApplyForm').dialog('close');
+                searchWaitingApproval();
+                alertSuccess();
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
         $(function () {
             indexPageNoticeInit();
             indexPageWaitingApprovalInit();
@@ -302,6 +326,7 @@
             <div>
                 <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()"><font size="2">查看申请</font></a>
                 <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()"><font size="2">流程预览</font></a>
+                <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="approvalApplyShow()"><font size="2">进行审批</font></a>
             </div>
         </div>
     </table>
@@ -322,8 +347,7 @@
         <br/>
         <textarea id="seeApplyContent" style="width:715px; height: 220px;" />
     </p>
-    <ul id="seeAttachFile">
-    </ul>
+    <ul id="seeAttachFile"></ul>
 </form>
 
 <div id="flowInstancePreviewWindow" class="easyui-window" title="流程预览" data-options="iconCls:'icon-tip',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:450px;">
@@ -336,5 +360,34 @@
     <div id="previewFlowInstanceChartDiv"></div>
     <table id="previewFlowInstanceManager"></table>
 </div>
+
+<form id="approvalApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:60,width:720,title:'进行审批',modal:true,closed:true,cache:false,iconCls:'icon-ok',
+       onClose:function () {
+            $('#approvalApplyForm').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    approvalApplyCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#approvalApplyForm').dialog('close');
+					}
+				}]">
+    <p>
+        <input name="approvalApplyOperateType" type="radio" value="1" checked="checked">同意</input>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input name="approvalApplyOperateType" type="radio" value="0">拒绝</input>
+    </p>
+    <p>审批意见：
+        <br/>
+        <textarea id="approvalApplyContent" style="width:650px; height: 220px;" />
+    </p>
+</form>
 </body>
 </html>
