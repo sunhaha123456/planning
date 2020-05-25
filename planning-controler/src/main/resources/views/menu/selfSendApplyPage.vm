@@ -311,14 +311,14 @@
 </table>
 
 <form id="seeApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:50,width:500,title:'查看申请',modal:true,closed:true,cache:false,iconCls:'icon-nav',
+      data-options="top:60,width:785,title:'查看申请',modal:true,closed:true,cache:false,iconCls:'icon-nav',
        onClose:function () {
             $('#startApplyForm').form('reset');
        }">
-    <p>标题：<input id="seeApplyTitle" type="text" class="textbox" style="width:390px" /></p>
+    <p>标题：<input id="seeApplyTitle" type="text" class="textbox" style="width:675px" /></p>
     <p>内容：
         <br/>
-        <textarea id="seeApplyContent" rows="6" cols="50" />
+        <textarea id="seeApplyContent" style="width:715px; height: 220px;" />
     </p>
     <ul id="seeAttachFile">
     </ul>

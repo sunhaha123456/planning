@@ -185,7 +185,7 @@
 </div>
 
 <form id="startApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:50,width:500,title:'发起申请',modal:true,closed:true,cache:false,iconCls:'icon-add',
+      data-options="top:60,width:785,title:'发起申请',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#startApplyForm').form('reset');
        },
@@ -202,10 +202,10 @@
                     $('#startApplyForm').dialog('close');
 					}
 				}]">
-    <p>标题：<input id="startApplyTitle" type="text" class="textbox" style="width:390px" /></p>
+    <p>标题：<input id="startApplyTitle" type="text" class="textbox" style="width:675px" /></p>
     <p>内容：
         <br/>
-        <textarea id="startApplyContent" rows="6" cols="50" />
+        <textarea id="startApplyContent" style="width:715px; height: 220px;" />
     </p>
     <p>
         <input id="startApplyFile0" type="file"/>
