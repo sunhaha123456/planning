@@ -31,7 +31,7 @@
                     },
                     {
                         field : 'title',
-                        title : '公司公告',
+                        title : '<font size=3>公司公告</font>',
                         width : 100,
                         formatter: function(value,row,index){
                             return "<a href='#' onclick='showNotice(" + row.id + ")'><font size=2>" + value + "</font></a>";
@@ -108,8 +108,11 @@
                     },
                     {
                         field : 'instanceName',
-                        title : '待我审批',
-                        width : 100
+                        title : '<font size=3>待我审批</font>',
+                        width : 100,
+                        formatter: function(value,row,index){
+                            return "<font size=2>" + value + "</font>";
+                        }
                     }
                 ]]
             });
@@ -151,7 +154,7 @@
 <div id="noticeDiv" style="height: 183px;">
     <table id="manager_notice"></table>
 </div>
-<div>
+<div style="height: 350px;">
     <table id="manager_waiting_approval"></table>
 </div>
 

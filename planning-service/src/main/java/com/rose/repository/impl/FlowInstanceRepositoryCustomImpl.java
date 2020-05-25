@@ -46,31 +46,69 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
 
     @Override
     public PageList<TbFlowInstance> listApprovalApply(Long approvalUserId, String flowInstanceName, Integer pageNo, Integer pageSize) throws Exception {
-        StringBuilder sql = new StringBuilder();
-        List<Object> paramList = new ArrayList();
-        sql.append(" SELECT a.id, a.instance_name instanceName, c.user_name startUserName, a.start_time startTime, a.state ");
-        sql.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex());
-        sql.append(" and b.user_id = ? ");
-        paramList.add(approvalUserId);
-        sql.append(" left join tb_sys_user c on a.start_user_id = c.id ");
-        sql.append(" WHERE 1 = 1 ");
+        StringBuilder sqlCount = new StringBuilder();
+        List<Object> paramListCount = new ArrayList();
+        sqlCount.append(" SELECT count(distinct a.id) ");
+        sqlCount.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex());
+        sqlCount.append(" and b.user_id = ? ");
+        paramListCount.add(approvalUserId);
+        sqlCount.append(" left join tb_sys_user c on a.start_user_id = c.id ");
+        sqlCount.append(" WHERE 1 = 1 ");
         if (StringUtil.isNotEmpty(flowInstanceName)) {
-            sql.append(" and instr(a.instance_name, ?) > 0 ");
-            paramList.add(flowInstanceName);
+            sqlCount.append(" and instr(a.instance_name, ?) > 0 ");
+            paramListCount.add(flowInstanceName);
         }
-        sql.append(" group by a.id order by a.id desc ");
-        return queryPage(sql.toString(), TbFlowInstance.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
+        Long c = getCount(sqlCount.toString(), paramListCount.toArray());
+        if (c <= 0) {
+            return new PageList(0, new ArrayList<>());
+        }
+
+        StringBuilder sqlSelect = new StringBuilder();
+        List<Object> paramListSelect = new ArrayList();
+        sqlSelect.append(" SELECT a.id, a.instance_name instanceName, c.user_name startUserName, a.start_time startTime, a.state ");
+        sqlSelect.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex());
+        sqlSelect.append(" and b.user_id = ? ");
+        paramListSelect.add(approvalUserId);
+        sqlSelect.append(" left join tb_sys_user c on a.start_user_id = c.id ");
+        sqlSelect.append(" WHERE 1 = 1 ");
+        if (StringUtil.isNotEmpty(flowInstanceName)) {
+            sqlSelect.append(" and instr(a.instance_name, ?) > 0 ");
+            paramListSelect.add(flowInstanceName);
+        }
+        sqlSelect.append(" group by a.id order by a.id desc ");
+
+        PageUtil page = new PageUtil(pageNo, pageSize);
+        sqlSelect.append(" limit ").append(page.getStart()).append(",").append(page.getPageSize());
+        List<TbFlowInstance> list = queryList(sqlSelect.toString(), TbFlowInstance.class, paramListSelect.toArray());
+
+        return new PageList(c, list != null ? list : new ArrayList());
     }
 
     @Override
     public PageList<TbFlowInstance> listWaitingApproval(Long waitApprovalUserId, Integer pageNo, Integer pageSize) throws Exception {
-        StringBuilder sql = new StringBuilder();
-        List<Object> paramList = new ArrayList();
-        sql.append(" SELECT a.id, a.instance_name instanceName, a.start_time startTime, a.state ");
-        sql.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
-        sql.append(" and b.user_id = ? ");
-        paramList.add(waitApprovalUserId);
-        sql.append(" group by a.id order by a.id desc ");
-        return queryPage(sql.toString(), TbFlowInstance.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
+        StringBuilder sqlCount = new StringBuilder();
+        List<Object> paramListCount = new ArrayList();
+        sqlCount.append(" SELECT count(distinct a.id) ");
+        sqlCount.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+        sqlCount.append(" and b.user_id = ? ");
+        paramListCount.add(waitApprovalUserId);
+        Long c = getCount(sqlCount.toString(), paramListCount.toArray());
+        if (c <= 0) {
+            return new PageList(0, new ArrayList<>());
+        }
+
+        StringBuilder sqlSelect = new StringBuilder();
+        List<Object> paramListSelect = new ArrayList();
+        sqlSelect.append(" SELECT a.id, a.instance_name instanceName, a.start_time startTime, a.state ");
+        sqlSelect.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+        sqlSelect.append(" and b.user_id = ? ");
+        paramListSelect.add(waitApprovalUserId);
+        sqlSelect.append(" group by a.id order by a.id desc ");
+
+        PageUtil page = new PageUtil(pageNo, pageSize);
+        sqlSelect.append(" limit ").append(page.getStart()).append(",").append(page.getPageSize());
+        List<TbFlowInstance> list = queryList(sqlSelect.toString(), TbFlowInstance.class, paramListSelect.toArray());
+
+        return new PageList(c, list != null ? list : new ArrayList());
     }
 }
