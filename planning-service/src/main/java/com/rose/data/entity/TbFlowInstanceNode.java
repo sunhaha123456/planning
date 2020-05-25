@@ -51,4 +51,7 @@ public class TbFlowInstanceNode extends BaseDataIdLong {
     // 用于记录流程图的children
     @Transient
     private List<FlowChartResponse> children;
+
+    @Transient
+    private List<TbFlowInstanceNodeUserTask> userTaskList;
 }

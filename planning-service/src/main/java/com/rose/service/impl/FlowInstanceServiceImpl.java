@@ -624,19 +624,58 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void approvalApply(ApprovalApplyRequest param) {
-        Long id = param.getId();
+        Long instanceId = param.getId();
         Integer approvalApplyOperateType = param.getApprovalApplyOperateType();
         String approvalApplyContent = param.getApprovalApplyContent();
-        if (id == null || !Arrays.asList(0, 1).contains(approvalApplyOperateType) || StringUtil.isEmpty(approvalApplyContent)) {
+        if (instanceId == null || !Arrays.asList(0, 1).contains(approvalApplyOperateType) || StringUtil.isEmpty(approvalApplyContent)) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+        }
+        TbFlowInstance instance = flowInstanceRepository.findOne(instanceId);
+        if (instance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
+            throw new BusinessException("不能对已审核的申请再次审核！");
+        }
+        String handingInstanceNodeIds = instance.getHandingInstanceNodeIds();
+        if (StringUtil.isEmpty(handingInstanceNodeIds)) {
+            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+        }
+        String[] handingInstanceNodeIdArr= handingInstanceNodeIds.split(",");
+        if (handingInstanceNodeIdArr == null || handingInstanceNodeIdArr.length == 0) {
+            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+        }
+        List<Long> handingInstanceNodeIdList = new ArrayList<>();
+        for (String nodeId : handingInstanceNodeIdArr) {
+            handingInstanceNodeIdList.add(Long.valueOf(nodeId));
+        }
+        List<TbFlowInstanceNode> handingInstanceNodeList = flowInstanceNodeRepository.listByIdList(handingInstanceNodeIdList);
+        if (handingInstanceNodeList == null || handingInstanceNodeList.size() != handingInstanceNodeIdList.size()) {
+            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+        }
+        List<TbFlowInstanceNodeUserTask> userTaskList = flowInstanceNodeUserTaskRepository.listByInstanceIdAndNodeIdList(instanceId, handingInstanceNodeIdList);
+        if (userTaskList == null || userTaskList.size() == 0) {
+            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+        }
+        Map<Long, List<TbFlowInstanceNodeUserTask>> nodeTaskMap = new HashMap<>();  // k：nodeId    v：taskList
+        List<TbFlowInstanceNodeUserTask> nodeTaskListTemp = null;
+        for (TbFlowInstanceNodeUserTask t : userTaskList) {
+            nodeTaskListTemp = nodeTaskMap.get(t.getInstanceNodeId());
+            if (nodeTaskListTemp == null) {
+                nodeTaskListTemp = new ArrayList<>();
+                nodeTaskMap.put(t.getInstanceNodeId(), nodeTaskListTemp);
+            }
+            nodeTaskListTemp.add(t);
+        }
+        for (TbFlowInstanceNode n : handingInstanceNodeList) {
+            nodeTaskListTemp = nodeTaskMap.get(n.getId());
+            if (nodeTaskListTemp == null || nodeTaskListTemp.size() == 0) {
+                throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+            }
+
+
         }
 
 
 
-
-
-
-
+        int instanceLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
     }
 
     private TbFlowInstanceOperateHistory getFlowInstanceOperateHistory(Date historyDate, Long instanceId, String instanceName, Long instanceNodeId, String instanceNodeName, Long operateUserId, String operateInfo) {

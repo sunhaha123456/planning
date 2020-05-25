@@ -85,7 +85,7 @@ public class MyIndexPageControler {
     }
 
     @PostMapping(value= "/approvalApply")
-    public void approvalApply(@RequestBody ApprovalApplyRequest param) {
+    public synchronized void approvalApply(@RequestBody ApprovalApplyRequest param) {
         flowInstanceService.approvalApply(param);
     }
 }
