@@ -630,6 +630,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         if (instanceId == null || !Arrays.asList(0, 1).contains(approvalApplyOperateType) || StringUtil.isEmpty(approvalApplyContent)) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
+        Long userId = valueHolder.getUserIdHolder();
         TbFlowInstance instance = flowInstanceRepository.findOne(instanceId);
         if (instance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
             throw new BusinessException("不能对已审核的申请再次审核！");
@@ -669,8 +670,11 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             if (nodeTaskListTemp == null || nodeTaskListTemp.size() == 0) {
                 throw new BusinessException(ResponseResultCode.OPERT_ERROR);
             }
+            for (TbFlowInstanceNodeUserTask t : nodeTaskListTemp) {
+                if (t.getState() == FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex()) {
 
-
+                }
+            }
         }
 
 
