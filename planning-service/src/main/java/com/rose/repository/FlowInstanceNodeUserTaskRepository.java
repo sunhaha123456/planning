@@ -22,4 +22,8 @@ public interface FlowInstanceNodeUserTaskRepository extends CrudRepository<TbFlo
     @Modifying
     @Query(value = "update tb_flow_instance_node_user_task set approval_type = :approvalType, approval_content = :approvalContent, state = :newState where id = :id and state = :oldState", nativeQuery = true)
     int updateUserTask(@Param(value = "id") Long id, @Param(value = "approvalType") Integer approvalType, @Param(value = "approvalContent") String approvalContent, @Param(value = "newState") Integer newState, @Param(value = "oldState") Integer oldState);
+
+    @Modifying
+    @Query(value = "update tb_flow_instance_node_user_task set state = :newState where id in :idList and state = :oldState", nativeQuery = true)
+    int updateUserTaskStateByIdList(@Param(value = "idList") List<Long> idList, @Param(value = "newState") Integer newState, @Param(value = "oldState") Integer oldState);
 }

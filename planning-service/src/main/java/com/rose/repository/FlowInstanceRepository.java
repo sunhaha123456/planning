@@ -25,6 +25,10 @@ public interface FlowInstanceRepository extends CrudRepository<TbFlowInstance, L
     int deleteByIdAndState(@Param(value = "id") Long id, @Param(value = "state") Integer state);
 
     @Modifying
-    @Query(value = "update tb_flow_instance set handing_instance_node_ids = :handingInstanceNodeIds where id = :id and state = :oldState", nativeQuery = true)
-    int updateHandingInstanceNodeIds(@Param(value = "id") Long id, @Param(value = "handingInstanceNodeIds") String handingInstanceNodeIds, @Param(value = "oldState") Integer oldState);
+    @Query(value = "update tb_flow_instance set handing_instance_node_ids = :newHandingInstanceNodeIds, state = :newState where id = :id and handing_instance_node_ids = :oldHandingInstanceNodeIds and state = :oldState", nativeQuery = true)
+    int updateHandingInstanceNodeIdsAndState(@Param(value = "id") Long id, @Param(value = "newHandingInstanceNodeIds") String newHandingInstanceNodeIds, @Param(value = "newState") Integer newState, @Param(value = "oldHandingInstanceNodeIds") String oldHandingInstanceNodeIds, @Param(value = "oldState") Integer oldState);
+
+    @Modifying
+    @Query(value = "update tb_flow_instance set handing_instance_node_ids = :newHandingInstanceNodeIds where id = :id and handing_instance_node_ids = :oldHandingInstanceNodeIds and state = :oldState", nativeQuery = true)
+    int updateHandingInstanceNodeIds(@Param(value = "id") Long id, @Param(value = "newHandingInstanceNodeIds") String newHandingInstanceNodeIds, @Param(value = "oldHandingInstanceNodeIds") String oldHandingInstanceNodeIds, @Param(value = "oldState") Integer oldState);
 }
