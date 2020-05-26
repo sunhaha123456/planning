@@ -23,4 +23,8 @@ public interface FlowInstanceRepository extends CrudRepository<TbFlowInstance, L
     @Modifying
     @Query(value = "delete from tb_flow_instance where id = :id and state = :state", nativeQuery = true)
     int deleteByIdAndState(@Param(value = "id") Long id, @Param(value = "state") Integer state);
+
+    @Modifying
+    @Query(value = "update tb_flow_instance set handing_instance_node_ids = :handingInstanceNodeIds where id = :id and state = :oldState", nativeQuery = true)
+    int updateHandingInstanceNodeIds(@Param(value = "id") Long id, @Param(value = "handingInstanceNodeIds") String handingInstanceNodeIds, @Param(value = "oldState") Integer oldState);
 }

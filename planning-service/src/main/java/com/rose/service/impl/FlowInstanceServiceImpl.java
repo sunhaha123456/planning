@@ -487,7 +487,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 taskStateTemp = FlowInstanceNodeUserTaskStateEnum.NOT_ARRIVED.getIndex();
             }
             for (TbFlowTemplateNodeUserTask t : templateNodeUserTaskListTemp) {
-                flowInstanceNodeUserTaskDbParam = getFlowInstanceNodeUserTask(now, flowInstanceDbRet.getId(), flowInstanceNodeDbRet.getId(), t.getUserId(), taskStateTemp, null);
+                flowInstanceNodeUserTaskDbParam = getFlowInstanceNodeUserTask(now, flowInstanceDbRet.getId(), flowInstanceNodeDbRet.getId(), t.getUserId(), taskStateTemp, 0, null);
                 flowInstanceNodeUserTaskListDbParam.add(flowInstanceNodeUserTaskDbParam);
             }
         }
@@ -631,56 +631,151 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         if (instanceId == null || !Arrays.asList(0, 1).contains(approvalApplyOperateType) || StringUtil.isEmpty(approvalApplyContent)) {
             throw new BusinessException("请填写审批意见！");
         }
-        Long userId = valueHolder.getUserIdHolder();
         TbFlowInstance instance = flowInstanceRepository.findOne(instanceId);
         if (instance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
-            throw new BusinessException("不能对已审核的申请再次审核！");
+            throw new BusinessException("不能对已审核过的申请再次审核！");
         }
-        String handingInstanceNodeIds = instance.getHandingInstanceNodeIds();
-        if (StringUtil.isEmpty(handingInstanceNodeIds)) {
-            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+        TbFlowInstanceNodeUserTask userTask = flowInstanceNodeUserTaskRepository.findOne(userTaskId);
+        if (userTask == null || userTask.getState() != FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex() || !userTask.getUserId().equals(valueHolder.getUserIdHolder())) {
+            throw new BusinessException("不能对已审核过的申请再次审核！");
         }
-        String[] handingInstanceNodeIdArr= handingInstanceNodeIds.split(",");
-        if (handingInstanceNodeIdArr == null || handingInstanceNodeIdArr.length == 0) {
-            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+        if (!instanceId.equals(userTask.getInstanceId()) || StringUtil.isEmpty(instance.getHandingInstanceNodeIds()) || !instance.getHandingInstanceNodeIds().contains(userTask.getInstanceNodeId() + "")) {
+            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
         }
-        List<Long> handingInstanceNodeIdList = new ArrayList<>();
-        for (String nodeId : handingInstanceNodeIdArr) {
-            handingInstanceNodeIdList.add(Long.valueOf(nodeId));
-        }
-        List<TbFlowInstanceNode> handingInstanceNodeList = flowInstanceNodeRepository.listByIdList(handingInstanceNodeIdList);
-        if (handingInstanceNodeList == null || handingInstanceNodeList.size() != handingInstanceNodeIdList.size()) {
-            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
-        }
-        List<TbFlowInstanceNodeUserTask> userTaskList = flowInstanceNodeUserTaskRepository.listByInstanceIdAndNodeIdList(instanceId, handingInstanceNodeIdList);
-        if (userTaskList == null || userTaskList.size() == 0) {
-            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
-        }
-        Map<Long, List<TbFlowInstanceNodeUserTask>> nodeTaskMap = new HashMap<>();  // k：nodeId    v：taskList
-        List<TbFlowInstanceNodeUserTask> nodeTaskListTemp = null;
-        for (TbFlowInstanceNodeUserTask t : userTaskList) {
-            nodeTaskListTemp = nodeTaskMap.get(t.getInstanceNodeId());
-            if (nodeTaskListTemp == null) {
-                nodeTaskListTemp = new ArrayList<>();
-                nodeTaskMap.put(t.getInstanceNodeId(), nodeTaskListTemp);
-            }
-            nodeTaskListTemp.add(t);
-        }
-        for (TbFlowInstanceNode n : handingInstanceNodeList) {
-            nodeTaskListTemp = nodeTaskMap.get(n.getId());
-            if (nodeTaskListTemp == null || nodeTaskListTemp.size() == 0) {
-                throw new BusinessException(ResponseResultCode.OPERT_ERROR);
-            }
-            for (TbFlowInstanceNodeUserTask t : nodeTaskListTemp) {
-                if (t.getState() == FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex()) {
 
+        TbFlowInstanceNode handingTaskNode = flowInstanceNodeRepository.findOne(userTask.getInstanceNodeId());
+        if (handingTaskNode == null) {
+            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+        }
+        List<TbFlowInstanceNodeUserTask> handingTaskNodeWaitingOperateTaskList = new ArrayList<>();
+        List<TbFlowInstanceNodeUserTask> handingTaskNodeTaskList = flowInstanceNodeUserTaskRepository.listByInstanceIdAndNodeId(instanceId, userTask.getInstanceNodeId());
+        boolean handingTaskHavingFlag = false;
+        for (TbFlowInstanceNodeUserTask t : handingTaskNodeTaskList) {
+            if (t.getId().equals(userTaskId)) {
+                handingTaskHavingFlag = true;
+            } else {
+                if (t.getState() == FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex()) {
+                    handingTaskNodeWaitingOperateTaskList.add(t);
                 }
             }
         }
+        if (!handingTaskHavingFlag) {
+            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+        }
+
+        List<Long> handingInstanceNodeIdList = new ArrayList<>();
+        String[] handingInstanceNodeIdArr = instance.getHandingInstanceNodeIds().split(",");
+        for (String nid : handingInstanceNodeIdArr) {
+            handingInstanceNodeIdList.add(Long.valueOf(nid));
+        }
+
+        boolean isThisLevelHavingWaitingUserTask = false;   // 本层节点是否还有其他待操作的用户任务 false没有 true有
+        if (handingInstanceNodeIdList.size() == 1) {
+            if (handingTaskNode.getOperateType() == 1 && handingTaskNodeWaitingOperateTaskList.size() > 0) { // 当是会签模式且有其他待操作用户时
+                isThisLevelHavingWaitingUserTask = true;
+            }
+        } else if (handingInstanceNodeIdList.size() > 1) {
+            isThisLevelHavingWaitingUserTask = true;
+        } else {
+            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+        }
+
+        int instanceNodeCurrentLevel = handingTaskNode.getNodeLevel();
+        int instanceNodeMaxLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
+
+        int c = flowInstanceNodeUserTaskRepository.updateUserTask(userTaskId, approvalApplyOperateType, approvalApplyContent, FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex(), userTask.getState());
+        if (c <= 0) {
+            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+        }
+        if (isThisLevelHavingWaitingUserTask) { // 当本层还有其他待操作用户任务
+//            if (handingTaskNode.getOperateType() == 0) { // 当是抢占模式
+//                handingTaskNodeWaitingOperateTaskList
+//            } else { // 当是会签模式
+//
+//            }
+        } else { // 当本层已无其他待操作用户任务
+            if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 当是首层节点时
+                c = flowInstanceRepository.updateHandingInstanceNodeIds(instanceId, null, instance.getState());
+                if (c <= 0) {
+                    throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                }
+            } else { // 当不是首层节点时
+                instanceNodeCurrentLevel - 1)
+            }
+        }
+
+//
+//        if (handingInstanceNodeIdList.size() == 1 && (handingTaskNodeWaitingOperateTaskList.size() == 0 || handingTaskNode.si)) { // 本层已无其他用户任务时
+//
+//        }
+//
+//        if (handingInstanceNodeIdList.size() == 1) { // 当只有一个待操作节点时
+//            if (handingTaskNodeWaitingOperateTaskList.size() == 0) { // 已经再没有待操作节点时
+//
+//            } else { // 还有其他待操作节点时
+//
+//            }
+//        } else if (handingInstanceNodeIdList.size() > 1) { // 当由多个待操作节点时
+//
+//        } else {
+//            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+//        }
 
 
 
-        int instanceLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
+        //boolean isThisLevelUserTaskFinish = false;
+        if (handingTaskNode.getOperateType() == 0) { // 当是抢占模式
+
+        } else { // 当是会签模式
+
+        }
+
+        int c = flowInstanceNodeUserTaskRepository.updateUserTask(userTaskId, approvalApplyOperateType, approvalApplyContent, FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex(), userTask.getState());
+        if (c <= 0) {
+            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+        }
+
+//        String handingInstanceNodeIds = instance.getHandingInstanceNodeIds();
+//        if (StringUtil.isEmpty(handingInstanceNodeIds)) {
+//            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+//        }
+//        String[] handingInstanceNodeIdArr= handingInstanceNodeIds.split(",");
+//        if (handingInstanceNodeIdArr == null || handingInstanceNodeIdArr.length == 0) {
+//            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+//        }
+//        List<Long> handingInstanceNodeIdList = new ArrayList<>();
+//        for (String nodeId : handingInstanceNodeIdArr) {
+//            handingInstanceNodeIdList.add(Long.valueOf(nodeId));
+//        }
+//        List<TbFlowInstanceNode> handingInstanceNodeList = flowInstanceNodeRepository.listByIdList(handingInstanceNodeIdList);
+//        if (handingInstanceNodeList == null || handingInstanceNodeList.size() != handingInstanceNodeIdList.size()) {
+//            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+//        }
+//        List<TbFlowInstanceNodeUserTask> userTaskList = flowInstanceNodeUserTaskRepository.listByInstanceIdAndNodeIdList(instanceId, handingInstanceNodeIdList);
+//        if (userTaskList == null || userTaskList.size() == 0) {
+//            throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+//        }
+//        Map<Long, List<TbFlowInstanceNodeUserTask>> nodeTaskMap = new HashMap<>();  // k：nodeId    v：taskList
+//        List<TbFlowInstanceNodeUserTask> nodeTaskListTemp = null;
+//        for (TbFlowInstanceNodeUserTask t : userTaskList) {
+//            nodeTaskListTemp = nodeTaskMap.get(t.getInstanceNodeId());
+//            if (nodeTaskListTemp == null) {
+//                nodeTaskListTemp = new ArrayList<>();
+//                nodeTaskMap.put(t.getInstanceNodeId(), nodeTaskListTemp);
+//            }
+//            nodeTaskListTemp.add(t);
+//        }
+//        for (TbFlowInstanceNode n : handingInstanceNodeList) {
+//            nodeTaskListTemp = nodeTaskMap.get(n.getId());
+//            if (nodeTaskListTemp == null || nodeTaskListTemp.size() == 0) {
+//                throw new BusinessException(ResponseResultCode.OPERT_ERROR);
+//            }
+//            for (TbFlowInstanceNodeUserTask t : nodeTaskListTemp) {
+//                if (t.getState() == FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex()) {
+//
+//                }
+//            }
+//        }
     }
 
     private TbFlowInstanceOperateHistory getFlowInstanceOperateHistory(Date historyDate, Long instanceId, String instanceName, Long instanceNodeId, String instanceNodeName, Long operateUserId, String operateInfo) {
@@ -730,7 +825,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         return flowInstanceNode;
     }
 
-    private TbFlowInstanceNodeUserTask getFlowInstanceNodeUserTask(Date nodeUserTaskDate, Long flowInstanceId, Long instanceNodeId, Long userId, Integer state, String approvalContent) {
+    private TbFlowInstanceNodeUserTask getFlowInstanceNodeUserTask(Date nodeUserTaskDate, Long flowInstanceId, Long instanceNodeId, Long userId, Integer state, Integer approvalType, String approvalContent) {
         TbFlowInstanceNodeUserTask userTask = new TbFlowInstanceNodeUserTask();
         userTask.setId(null);
         userTask.setCreateDate(nodeUserTaskDate);
@@ -739,6 +834,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         userTask.setInstanceNodeId(instanceNodeId);
         userTask.setUserId(userId);
         userTask.setState(state);
+        userTask.setApprovalType(approvalType);
         userTask.setApprovalContent(approvalContent);
         return userTask;
     }
