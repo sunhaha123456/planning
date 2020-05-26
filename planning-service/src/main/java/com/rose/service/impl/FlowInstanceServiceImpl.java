@@ -745,9 +745,47 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 }
             } else {
                 if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 当只有一个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 是首层节点
-
+                    if (handingTaskNodeWaitingOperateTaskIdList.size() == 0) { // 当前正在处理节点下没有其他待处理用户任务
+                        c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.HAVE_FINISH.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+                        if (c <= 0) {
+                            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                        }
+                    }
                 } else { // 当只有一个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 不是首层节点
+                    if (handingTaskNodeWaitingOperateTaskIdList.size() == 0) { // 当前正在处理节点下没有其他待处理用户任务
+                        nodeListTemp = flowInstanceNodeRepository.listByInstanceIdAndLevel(instanceId, handingTaskNode.getNodeLevel() - 1);
+                        if (nodeListTemp == null || nodeListTemp.size() == 0) {
+                            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                        }
 
+                        List<Long> upLevelNodeIdList = new ArrayList<>();
+                        StringBuilder upLevelNodeIdBuilder = new StringBuilder();
+                        for (TbFlowInstanceNode n : nodeListTemp) {
+                            upLevelNodeIdBuilder.append(n.getId()).append(",");
+                            upLevelNodeIdList.add(n.getId());
+                        }
+                        upLevelNodeIdBuilder.deleteCharAt(upLevelNodeIdBuilder.length() - 1);
+
+                        c = flowInstanceRepository.updateHandingInstanceNodeIds(instanceId, upLevelNodeIdBuilder.toString(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+                        if (c <= 0) {
+                            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                        }
+
+                        nodeUserTaskListTemp = flowInstanceNodeUserTaskRepository.listByInstanceIdAndNodeIdList(instanceId, upLevelNodeIdList);
+                        if (nodeUserTaskListTemp == null || nodeUserTaskListTemp.size() == 0) {
+                            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                        }
+
+                        List<Long> upLevelNodeUserTaskIdList = new ArrayList<>();
+                        for (TbFlowInstanceNodeUserTask t : nodeUserTaskListTemp) {
+                            upLevelNodeUserTaskIdList.add(t.getId());
+                        }
+
+                        c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(upLevelNodeUserTaskIdList, FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.NOT_ARRIVED.getIndex());
+                        if (c != upLevelNodeUserTaskIdList.size()) {
+                            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                        }
+                    }
                 }
             }
         } else if (handingInstanceNodeIdList.size() > 1) {
