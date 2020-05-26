@@ -625,10 +625,11 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Override
     public void approvalApply(ApprovalApplyRequest param) {
         Long instanceId = param.getId();
+        Long userTaskId = param.getUserTaskId();
         Integer approvalApplyOperateType = param.getApprovalApplyOperateType();
         String approvalApplyContent = param.getApprovalApplyContent();
         if (instanceId == null || !Arrays.asList(0, 1).contains(approvalApplyOperateType) || StringUtil.isEmpty(approvalApplyContent)) {
-            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+            throw new BusinessException("请填写审批意见！");
         }
         Long userId = valueHolder.getUserIdHolder();
         TbFlowInstance instance = flowInstanceRepository.findOne(instanceId);

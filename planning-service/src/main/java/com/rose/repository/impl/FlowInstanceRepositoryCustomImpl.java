@@ -88,10 +88,11 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
     public PageList<TbFlowInstance> listWaitingApproval(Long waitApprovalUserId, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sqlCount = new StringBuilder();
         List<Object> paramListCount = new ArrayList();
-        sqlCount.append(" SELECT count(distinct a.id) ");
+        sqlCount.append(" SELECT count(distinct a.id, c.id) ");
         sqlCount.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
         sqlCount.append(" and b.user_id = ? ");
         paramListCount.add(waitApprovalUserId);
+        sqlCount.append(" join tb_flow_instance_node c on b.instance_node_id = c.id ");
         Long c = getCount(sqlCount.toString(), paramListCount.toArray());
         if (c <= 0) {
             return new PageList(0, new ArrayList<>());
@@ -99,11 +100,12 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
 
         StringBuilder sqlSelect = new StringBuilder();
         List<Object> paramListSelect = new ArrayList();
-        sqlSelect.append(" SELECT a.id, a.instance_name instanceName, a.start_time startTime, a.state ");
+        sqlSelect.append(" SELECT a.id, a.instance_name instanceName, c.node_name nodeName, c.id userTaskId, a.start_time startTime, a.state ");
         sqlSelect.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
         sqlSelect.append(" and b.user_id = ? ");
         paramListSelect.add(waitApprovalUserId);
-        sqlSelect.append(" group by a.id order by a.id desc ");
+        sqlSelect.append(" join tb_flow_instance_node c on b.instance_node_id = c.id ");
+        sqlSelect.append(" group by a.id, c.id order by a.id desc ");
 
         PageUtil page = new PageUtil(pageNo, pageSize);
         sqlSelect.append(" limit ").append(page.getStart()).append(",").append(page.getPageSize());

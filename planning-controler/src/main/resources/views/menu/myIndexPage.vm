@@ -24,6 +24,9 @@
     <!-- flow chart end -->
     <style type="text/css">
         a {text-decoration: none}
+        .datagrid-header-row {
+            text-align: center
+        }
     </style>
     <script th:inline="javascript">
         function noticeDataGridInit() {
@@ -115,13 +118,24 @@
                 columns : [[
                     {
                         field : 'id',
-                        width : 100,
+                        hidden : true
+                    },
+                    {
+                        field : 'userTaskId',
                         hidden : true
                     },
                     {
                         field : 'instanceName',
-                        title : '<font size=3>待我审批</font>',
-                        width : 100,
+                        title : "<font size=3>待审批请求</font>",
+                        width : 300,
+                        formatter: function(value,row,index){
+                            return "<font size=2>" + value + "</font>";
+                        }
+                    },
+                    {
+                        field : 'nodeName',
+                        title : "<font size=3>待审批请求对应节点</font>",
+                        width : 80,
                         formatter: function(value,row,index){
                             return "<font size=2>" + value + "</font>";
                         }
@@ -298,6 +312,7 @@
             }
             var result = ajaxSynchPostJson("user/myIndexPage/approvalApply", {
                 "id": rows[0].id,
+                "userTaskId": rows[0].userTaskId,
                 "approvalApplyOperateType": $("input[name='approvalApplyOperateType']:checked").val(),
                 "approvalApplyContent": $("#approvalApplyContent").val()
             });

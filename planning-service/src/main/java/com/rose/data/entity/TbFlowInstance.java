@@ -18,6 +18,12 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Column(name = "instance_name", columnDefinition = "VARCHAR(255) COMMENT '流程实例名称'")
     private String instanceName;
 
+    @Transient
+    private String nodeName;
+
+    @Transient
+    private Long userTaskId;
+
     @Column(name = "apply_content", columnDefinition = "VARCHAR(800) COMMENT '发起申请的内容'")
     private String applyContent;
 
