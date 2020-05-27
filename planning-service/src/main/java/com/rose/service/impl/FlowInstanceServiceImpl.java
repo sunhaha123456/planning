@@ -679,81 +679,32 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             handingInstanceNodeIdsExcludeCurrentNodeId.deleteCharAt(handingInstanceNodeIdsExcludeCurrentNodeId.length() - 1);
         }
 
-        int instanceNodeCurrentLevel = handingTaskNode.getNodeLevel();
-        int instanceNodeMaxLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
+        if (approvalApplyOperateType == 0) { // 同意申请
+            int instanceNodeCurrentLevel = handingTaskNode.getNodeLevel();
+            int instanceNodeMaxLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
 
-        int c = flowInstanceNodeUserTaskRepository.updateUserTask(userTaskId, approvalApplyOperateType, approvalApplyContent, FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
-        if (c <= 0) {
-            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-        }
+            List<TbFlowInstanceNode> nodeListTemp = null;
+            List<TbFlowInstanceNodeUserTask> nodeUserTaskListTemp = null;
 
-        List<TbFlowInstanceNode> nodeListTemp = null;
-        List<TbFlowInstanceNodeUserTask> nodeUserTaskListTemp = null;
+            int c = flowInstanceNodeUserTaskRepository.updateUserTask(userTaskId, approvalApplyOperateType, approvalApplyContent, FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+            if (c <= 0) {
+                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+            }
 
-        if (handingInstanceNodeIdList.size() == 1) {
-            if (handingTaskNode.getOperateType() == 0) {
-                if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 1、当只有一个正在处理的节点，且当前处理节点是抢占模式，且当前处理节点 level 是首层节点
-                    c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.HAVE_FINISH.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
-                    if (c <= 0) {
-                        throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-                    }
-                    if (handingTaskNodeWaitingOperateTaskIdList.size() > 0) { // 当前正在处理节点下还有其他待处理用户任务
-                        c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(handingTaskNodeWaitingOperateTaskIdList, FlowInstanceNodeUserTaskStateEnum.HAVE_CAPTURE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
-                        if (c != handingTaskNodeWaitingOperateTaskIdList.size()) {
-                            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-                        }
-                    }
-                } else { // 2、当只有一个正在处理的节点，且当前处理节点是抢占模式，且当前处理节点 level 不是首层节点
-                    nodeListTemp = flowInstanceNodeRepository.listByInstanceIdAndLevel(instanceId, handingTaskNode.getNodeLevel() - 1);
-                    if (nodeListTemp == null || nodeListTemp.size() == 0) {
-                        throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-                    }
-
-                    List<Long> upLevelNodeIdList = new ArrayList<>();
-                    StringBuilder upLevelNodeIdBuilder = new StringBuilder();
-                    for (TbFlowInstanceNode n : nodeListTemp) {
-                        upLevelNodeIdBuilder.append(n.getId()).append(",");
-                        upLevelNodeIdList.add(n.getId());
-                    }
-                    upLevelNodeIdBuilder.deleteCharAt(upLevelNodeIdBuilder.length() - 1);
-
-                    c = flowInstanceRepository.updateHandingInstanceNodeIds(instanceId, upLevelNodeIdBuilder.toString(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
-                    if (c <= 0) {
-                        throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-                    }
-
-                    if (handingTaskNodeWaitingOperateTaskIdList.size() > 0) { // 当前正在处理节点下还有其他待处理用户任务
-                        c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(handingTaskNodeWaitingOperateTaskIdList, FlowInstanceNodeUserTaskStateEnum.HAVE_CAPTURE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
-                        if (c != handingTaskNodeWaitingOperateTaskIdList.size()) {
-                            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-                        }
-                    }
-
-                    nodeUserTaskListTemp = flowInstanceNodeUserTaskRepository.listByInstanceIdAndNodeIdList(instanceId, upLevelNodeIdList);
-                    if (nodeUserTaskListTemp == null || nodeUserTaskListTemp.size() == 0) {
-                        throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-                    }
-
-                    List<Long> upLevelNodeUserTaskIdList = new ArrayList<>();
-                    for (TbFlowInstanceNodeUserTask t : nodeUserTaskListTemp) {
-                        upLevelNodeUserTaskIdList.add(t.getId());
-                    }
-
-                    c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(upLevelNodeUserTaskIdList, FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.NOT_ARRIVED.getIndex());
-                    if (c != upLevelNodeUserTaskIdList.size()) {
-                        throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-                    }
-                }
-            } else {
-                if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 3、当只有一个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 是首层节点
-                    if (handingTaskNodeWaitingOperateTaskIdList.size() == 0) { // 当前正在处理节点下没有其他待处理用户任务
+            if (handingInstanceNodeIdList.size() == 1) {
+                if (handingTaskNode.getOperateType() == 0) {
+                    if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 1、当只有一个正在处理的节点，且当前处理节点是抢占模式，且当前处理节点 level 是首层节点
                         c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.HAVE_FINISH.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
                         if (c <= 0) {
                             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
                         }
-                    }
-                } else { // 4、当只有一个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 不是首层节点
-                    if (handingTaskNodeWaitingOperateTaskIdList.size() == 0) { // 当前正在处理节点下没有其他待处理用户任务
+                        if (handingTaskNodeWaitingOperateTaskIdList.size() > 0) { // 当前正在处理节点下还有其他待处理用户任务
+                            c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(handingTaskNodeWaitingOperateTaskIdList, FlowInstanceNodeUserTaskStateEnum.HAVE_CAPTURE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+                            if (c != handingTaskNodeWaitingOperateTaskIdList.size()) {
+                                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                            }
+                        }
+                    } else { // 2、当只有一个正在处理的节点，且当前处理节点是抢占模式，且当前处理节点 level 不是首层节点
                         nodeListTemp = flowInstanceNodeRepository.listByInstanceIdAndLevel(instanceId, handingTaskNode.getNodeLevel() - 1);
                         if (nodeListTemp == null || nodeListTemp.size() == 0) {
                             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
@@ -772,6 +723,13 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
                         }
 
+                        if (handingTaskNodeWaitingOperateTaskIdList.size() > 0) { // 当前正在处理节点下还有其他待处理用户任务
+                            c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(handingTaskNodeWaitingOperateTaskIdList, FlowInstanceNodeUserTaskStateEnum.HAVE_CAPTURE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+                            if (c != handingTaskNodeWaitingOperateTaskIdList.size()) {
+                                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                            }
+                        }
+
                         nodeUserTaskListTemp = flowInstanceNodeUserTaskRepository.listByInstanceIdAndNodeIdList(instanceId, upLevelNodeIdList);
                         if (nodeUserTaskListTemp == null || nodeUserTaskListTemp.size() == 0) {
                             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
@@ -787,25 +745,74 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
                         }
                     }
-                }
-            }
-        } else if (handingInstanceNodeIdList.size() > 1) {
-            if (handingTaskNode.getOperateType() == 0) { // 5、当有多个正在处理的节点，且当前处理节点是抢占模式
-                if (handingTaskNodeWaitingOperateTaskIdList.size() > 0) { // 当前正在处理节点下还有其他待处理用户任务
-                    c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(handingTaskNodeWaitingOperateTaskIdList, FlowInstanceNodeUserTaskStateEnum.HAVE_CAPTURE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
-                    if (c != handingTaskNodeWaitingOperateTaskIdList.size()) {
-                        throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                } else {
+                    if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 3、当只有一个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 是首层节点
+                        if (handingTaskNodeWaitingOperateTaskIdList.size() == 0) { // 当前正在处理节点下没有其他待处理用户任务
+                            c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.HAVE_FINISH.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+                            if (c <= 0) {
+                                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                            }
+                        }
+                    } else { // 4、当只有一个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 不是首层节点
+                        if (handingTaskNodeWaitingOperateTaskIdList.size() == 0) { // 当前正在处理节点下没有其他待处理用户任务
+                            nodeListTemp = flowInstanceNodeRepository.listByInstanceIdAndLevel(instanceId, handingTaskNode.getNodeLevel() - 1);
+                            if (nodeListTemp == null || nodeListTemp.size() == 0) {
+                                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                            }
+
+                            List<Long> upLevelNodeIdList = new ArrayList<>();
+                            StringBuilder upLevelNodeIdBuilder = new StringBuilder();
+                            for (TbFlowInstanceNode n : nodeListTemp) {
+                                upLevelNodeIdBuilder.append(n.getId()).append(",");
+                                upLevelNodeIdList.add(n.getId());
+                            }
+                            upLevelNodeIdBuilder.deleteCharAt(upLevelNodeIdBuilder.length() - 1);
+
+                            c = flowInstanceRepository.updateHandingInstanceNodeIds(instanceId, upLevelNodeIdBuilder.toString(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+                            if (c <= 0) {
+                                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                            }
+
+                            nodeUserTaskListTemp = flowInstanceNodeUserTaskRepository.listByInstanceIdAndNodeIdList(instanceId, upLevelNodeIdList);
+                            if (nodeUserTaskListTemp == null || nodeUserTaskListTemp.size() == 0) {
+                                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                            }
+
+                            List<Long> upLevelNodeUserTaskIdList = new ArrayList<>();
+                            for (TbFlowInstanceNodeUserTask t : nodeUserTaskListTemp) {
+                                upLevelNodeUserTaskIdList.add(t.getId());
+                            }
+
+                            c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(upLevelNodeUserTaskIdList, FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.NOT_ARRIVED.getIndex());
+                            if (c != upLevelNodeUserTaskIdList.size()) {
+                                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                            }
+                        }
                     }
                 }
-            } else { // 当有多个正在处理的节点，且当前处理节点是会签模式
+            } else if (handingInstanceNodeIdList.size() > 1) {
+                if (handingTaskNode.getOperateType() == 0) { // 5、当有多个正在处理的节点，且当前处理节点是抢占模式
+                    if (handingTaskNodeWaitingOperateTaskIdList.size() > 0) { // 当前正在处理节点下还有其他待处理用户任务
+                        c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(handingTaskNodeWaitingOperateTaskIdList, FlowInstanceNodeUserTaskStateEnum.HAVE_CAPTURE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+                        if (c != handingTaskNodeWaitingOperateTaskIdList.size()) {
+                            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                        }
+                    }
+                } else { // 当有多个正在处理的节点，且当前处理节点是会签模式
 
+                }
+            } else {
+                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
             }
-        } else {
-            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+        } else { // 拒绝申请
+            int c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.USER_REJECT.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+            if (c <= 0) {
+                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+            }
         }
 
         StringBuilder operateInfo = new StringBuilder();
-        operateInfo.append(approvalApplyOperateType == 0 ? "同意申请，审批意见：" : "拒绝申请，审批意见：").append(approvalApplyContent);
+        operateInfo.append(approvalApplyOperateType == 0 ? "审批详情：同意。" : "审批详情：拒绝。").append(approvalApplyContent);
         TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), instanceId, instance.getInstanceName(), handingTaskNode.getId(), handingTaskNode.getNodeName(), operateUserId, operateInfo.toString());
 
         flowInstanceOperateHistoryRepository.save(history);

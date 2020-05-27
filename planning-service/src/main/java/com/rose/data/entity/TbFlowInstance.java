@@ -57,6 +57,7 @@ public class TbFlowInstance extends BaseDataIdLong {
     //      当前正在处理的节点，可能有一个，也可能有多个
     //      比如，流转三个节点 a、b、c，则值为 aId,bId,cId
     //            而a 已处理完成后，则值变为 bId,cId
+    //      当该流程被驳回后，此处会被置空
     @Column(name = "handing_instance_node_ids", columnDefinition = "VARCHAR(255) COMMENT '当前正在处理的流程实例节点id'")
     private String handingInstanceNodeIds;
 
