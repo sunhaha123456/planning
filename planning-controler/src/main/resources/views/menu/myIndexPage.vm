@@ -321,6 +321,10 @@
                 searchWaitingApproval();
                 alertSuccess();
             } else {
+                if (result.code == '500'){
+                    $('#approvalApplyForm').dialog('close');
+                    searchWaitingApproval();
+                }
                 alertWarn(result.msg);
             }
         }

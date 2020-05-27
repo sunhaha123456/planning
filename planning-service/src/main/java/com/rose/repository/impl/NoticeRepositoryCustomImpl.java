@@ -28,7 +28,7 @@ public class NoticeRepositoryCustomImpl extends BaseRepositoryImpl implements No
             sql.append(" and a.status = ? ");
             paramList.add(status);
         }
-        sql.append(" order by a.sort desc ");
+        sql.append(" order by a.sort desc, a.create_date desc ");
         return queryPage(sql.toString(), TbNotice.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
     }
 }

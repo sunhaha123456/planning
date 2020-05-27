@@ -44,11 +44,6 @@
                         width : 300
                     },
                     {
-                        field : 'sort',
-                        title : '排序',
-                        width : 60
-                    },
-                    {
                         field : 'status',
                         title : '状态',
                         width : 60,
@@ -59,6 +54,11 @@
                                 return "上架";
                             }
                         }
+                    },
+                    {
+                        field : 'sort',
+                        title : '排序',
+                        width : 60
                     }
                 ]]
             });
@@ -88,6 +88,14 @@
             var content = $("#addNoticeContent").val();
             var status = $("input[name='addNoticeStatus']:checked").val();
             var sort = $("#addNoticeSort").val();
+            if (title == '') {
+                alertWarn("请填写标题！");
+                return;
+            }
+            if (content == '') {
+                alertWarn("请填写内容！");
+                return;
+            }
             var result = ajaxSynchPostJson("user/publishNotice/saveNotice", {
                 "title": title,
                 "content": content,
