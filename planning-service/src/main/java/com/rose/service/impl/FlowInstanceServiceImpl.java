@@ -789,23 +789,15 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 }
             }
         } else if (handingInstanceNodeIdList.size() > 1) {
-            if (handingTaskNode.getOperateType() == 0) {
-                if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 5、当有多个正在处理的节点，且当前处理节点是抢占模式，且当前处理节点 level 是首层节点
-
-
-
-
-
-
-                } else { // 6、当有多个正在处理的节点，且当前处理节点是抢占模式，且当前处理节点 level 不是首层节点
-
+            if (handingTaskNode.getOperateType() == 0) { // 5、当有多个正在处理的节点，且当前处理节点是抢占模式
+                if (handingTaskNodeWaitingOperateTaskIdList.size() > 0) { // 当前正在处理节点下还有其他待处理用户任务
+                    c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(handingTaskNodeWaitingOperateTaskIdList, FlowInstanceNodeUserTaskStateEnum.HAVE_CAPTURE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+                    if (c != handingTaskNodeWaitingOperateTaskIdList.size()) {
+                        throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                    }
                 }
-            } else {
-                if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 7、当有多个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 是首层节点
+            } else { // 当有多个正在处理的节点，且当前处理节点是会签模式
 
-                } else { // 8、当有多个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 不是首层节点
-
-                }
             }
         } else {
             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
