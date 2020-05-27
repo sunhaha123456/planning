@@ -11,6 +11,12 @@
     <script th:src="@{/static/easyui/easy.common.js}"></script>
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
+    <style type="text/css">
+        #noticePreviewContent {
+            border: none;
+        }
+    </style>
+
     <script th:inline="javascript">
         function searchNotice() {
             var result = ajaxSynchPostJson("user/publishNotice/searchNotice", {"page":1, "rows":10});
@@ -175,6 +181,25 @@
             });
         }
 
+        function peviewNotice() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length <= 0) {
+                alertWarn("请先选择记录！");
+                return;
+            }
+
+            var result = ajaxSynchGet("user/publishNotice/getNotice", {"id": rows[0].id});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            $("#noticePreviewTitle").text(result.data.title);
+            $("#noticePreviewContent").text(result.data.content);
+            $('#noticePreviewWindow').window('open');
+
+            $('#noticePreviewContent').height($('#noticePreviewWindow').height() - 95);
+        }
+
         $(function () {
             dataGridInit();
             searchNotice();
@@ -187,13 +212,14 @@
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addNoticeShow()">发布</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editNoticeShow()">编辑</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="peviewNotice()">预览</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteNotice()">删除</a>
         </div>
     </div>
 </table>
 
-<form id="addNoticeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="width:900,title:'发布公告',modal:true,closed:true,cache:false,iconCls:'icon-add',
+<form id="addNoticeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
+      data-options="title:'发布公告',maximized:true,modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#addNoticeForm').form('reset');
        },
@@ -210,20 +236,20 @@
                     $('#addNoticeForm').dialog('close');
 					}
 				}]">
-    <p>标题：<input id="addNoticeTitle" type="text" class="textbox" style="width:800px" /></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;标题：<input id="addNoticeTitle" type="text" class="textbox" style="width:85%" /></p>
     <p>
-        状态：<input name="addNoticeStatus" type="radio" value="0" checked="checked">下架</input><input name="addNoticeStatus" type="radio" value="1">上架</input>
+        &nbsp;&nbsp;&nbsp;&nbsp;状态：<input name="addNoticeStatus" type="radio" value="0" checked="checked">下架</input><input name="addNoticeStatus" type="radio" value="1">上架</input>
         &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         排序：<input id="addNoticeSort" type="text" class="textbox" value="0" style="width:200px" />
     </p>
-    <p>内容：
-        <br/>
-        <textarea id="addNoticeContent" style="width: 830px; height: 200px;" />
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;内容：</p>
+    <p align="center">
+        <textarea id="addNoticeContent" style="width: 99%; height: 280px;" />
     </p>
 </form>
 
-<form id="editNoticeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="width:900,title:'编辑公告',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
+<form id="editNoticeForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
+      data-options="title:'编辑公告',maximized:true,modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#editNoticeForm').form('reset');
        },
@@ -240,16 +266,21 @@
                     $('#editNoticeForm').dialog('close');
 					}
 				}]">
-    <p>标题：<input id="editNoticeTitle" type="text" class="textbox" style="width:800px" /></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;标题：<input id="editNoticeTitle" type="text" class="textbox" style="width:85%" /></p>
     <p>
-        状态：<input name="editNoticeStatus" type="radio" value="0" checked="checked">下架</input><input name="editNoticeStatus" type="radio" value="1">上架</input>
+        &nbsp;&nbsp;&nbsp;&nbsp;状态：<input name="editNoticeStatus" type="radio" value="0" checked="checked">下架</input><input name="editNoticeStatus" type="radio" value="1">上架</input>
         &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         排序：<input id="editNoticeSort" type="text" class="textbox" value="0" style="width:200px" />
     </p>
-    <p>内容：
-        <br/>
-        <textarea id="editNoticeContent" style="width: 830px; height: 200px;" />
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;内容：</p>
+    <p align="center">
+        <textarea id="editNoticeContent" style="width: 99%; height: 280px;" />
     </p>
 </form>
+
+<div id="noticePreviewWindow" class="easyui-window" title="公告" data-options="iconCls:'icon-tip',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:450px;">
+    <p align="center"><font color="black" size="4"><span id="noticePreviewTitle""></span></font></p>
+    <p align="center"><textarea id="noticePreviewContent" readonly="readonly" style="width: 99%;" /></p>
+</div>
 </body>
 </html>
