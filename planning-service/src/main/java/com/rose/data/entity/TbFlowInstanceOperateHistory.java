@@ -33,6 +33,6 @@ public class TbFlowInstanceOperateHistory extends BaseDataIdLong {
     @Transient
     private String operateUserUserName;
 
-    @Column(name = "operate_info", columnDefinition = "VARCHAR(500) COMMENT '流程实例操作info'")
+    @Column(name = "operate_info", columnDefinition = "VARCHAR(600) COMMENT '流程实例操作info'")
     private String operateInfo;
 }

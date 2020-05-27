@@ -113,7 +113,7 @@ CREATE TABLE `tb_flow_instance_operate_history` (
   `instance_name` varchar(255) DEFAULT NULL COMMENT '流程名称',
   `instance_node_id` bigint(20) DEFAULT NULL COMMENT '流程实例节点id',
   `instance_node_name` varchar(255) DEFAULT NULL COMMENT '流程节点名称',
-  `operate_info` varchar(500) DEFAULT NULL COMMENT '流程实例操作info',
+  `operate_info` varchar(600) DEFAULT NULL COMMENT '流程实例操作info',
   `operate_user_id` bigint(20) DEFAULT NULL COMMENT '操作用户id',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

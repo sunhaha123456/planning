@@ -635,8 +635,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         if (instance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
             throw new BusinessException("不能对已审核过的申请再次审核！");
         }
+        Long operateUserId = valueHolder.getUserIdHolder();
         TbFlowInstanceNodeUserTask userTask = flowInstanceNodeUserTaskRepository.findOne(userTaskId);
-        if (userTask == null || userTask.getState() != FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex() || !userTask.getUserId().equals(valueHolder.getUserIdHolder())) {
+        if (userTask == null || userTask.getState() != FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex() || !userTask.getUserId().equals(operateUserId)) {
             throw new BusinessException("不能对已审核过的申请再次审核！");
         }
         if (!instanceId.equals(userTask.getInstanceId()) || StringUtil.isEmpty(instance.getHandingInstanceNodeIds()) || !instance.getHandingInstanceNodeIds().contains(userTask.getInstanceNodeId() + "")) {
@@ -802,6 +803,12 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         } else {
             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
         }
+
+        StringBuilder operateInfo = new StringBuilder();
+        operateInfo.append(approvalApplyOperateType == 0 ? "同意申请，审批意见：" : "拒绝申请，审批意见：").append(approvalApplyContent);
+        TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), instanceId, instance.getInstanceName(), handingTaskNode.getId(), handingTaskNode.getNodeName(), operateUserId, operateInfo.toString());
+
+        flowInstanceOperateHistoryRepository.save(history);
     }
 
     private TbFlowInstanceOperateHistory getFlowInstanceOperateHistory(Date historyDate, Long instanceId, String instanceName, Long instanceNodeId, String instanceNodeName, Long operateUserId, String operateInfo) {

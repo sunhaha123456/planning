@@ -46,11 +46,11 @@
 </head>
 <body>
 <div style="margin-bottom:5px;">
-    <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="showIndexPageShowNoticeFlagDialog()"><font size="2">首页是否显示公告</font></a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="showIndexPageShowNoticeFlagDialog()"><font size="2">设置首页是否显示公告</font></a>
 </div>
 
 <form id="manager_indexPageShowNotice" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'首页公告',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
+      data-options="top:150,width:320,title:'首页是否显示公告',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#manager_indexPageShowNotice').form('reset');
        },
@@ -67,7 +67,10 @@
                     $('#manager_indexPageShowNotice').dialog('close');
 					}
 				}]">
-    <p>首页是否显示公告：&nbsp;&nbsp;<input name="indexPageShowNoticeFlag" type="radio" value="0">不显示</input><input name="indexPageShowNoticeFlag" type="radio" value="1">显示</input></p>
+    <p align="center">
+        <input name="indexPageShowNoticeFlag" type="radio" value="1">显示</input>
+        <input name="indexPageShowNoticeFlag" type="radio" value="0">不显示</input>
+    </p>
 </form>
 </body>
 </html>

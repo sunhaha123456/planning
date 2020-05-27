@@ -80,6 +80,8 @@
                         alertSuccess();
                         $('#manager_edit').dialog('close');
                         searchRole();
+                    } else {
+                        alertWarn(result.msg);
                     }
                 }
             }
