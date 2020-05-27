@@ -2,7 +2,6 @@ package com.rose.controler;
 
 import com.rose.common.data.base.PageList;
 import com.rose.data.entity.TbNotice;
-import com.rose.data.entity.TbSystemSetting;
 import com.rose.data.to.request.NoticeSearchRequest;
 import com.rose.service.PublishNoticeService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,15 +39,5 @@ public class PublishNoticeControler {
     @PostMapping(value= "/deleteNotice")
     public void deleteNotice(@RequestParam Long id) {
         publishNoticeService.deleteNotice(id);
-    }
-
-    @GetMapping(value= "/getIndexPageShowNotice")
-    public TbSystemSetting getIndexPageShowNotice() {
-        return publishNoticeService.getIndexPageShowNotice();
-    }
-
-    @PostMapping(value= "/updateIndexPageShowNotice")
-    public void updateIndexPageShowNotice(@RequestParam String indexPageShowNotice) {
-        publishNoticeService.updateIndexPageShowNotice(indexPageShowNotice);
     }
 }

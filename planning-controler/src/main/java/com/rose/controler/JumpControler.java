@@ -102,4 +102,13 @@ public class JumpControler {
     public String toFlowInstance() {
         return "menu/flowInstance";
     }
+
+    /**
+     * 功能：跳转系统设置
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toSystemSetting")
+    public String toSystemSetting() {
+        return "menu/systemSetting";
+    }
 }

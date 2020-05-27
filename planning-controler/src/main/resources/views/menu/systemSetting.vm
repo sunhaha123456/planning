@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/static/easyui/themes/easy.common.css}"></link>
+    <script th:inline="javascript">
+        var contextPath = [[@{/}]];
+        var interceptorToken = [[${token}]];
+        var interceptorUserId = [[${userId}]];
+    </script>
+    <script th:src="@{/static/easyui/easy.common.js}"></script>
+    <script th:src="@{/static/easyuiMask.js}"></script>
+    <script th:src="@{/static/myFun.js}"></script>
+    <script th:inline="javascript">
+        function showIndexPageShowNoticeFlagDialog() {
+            var result = ajaxSynchGet("user/systemSetting/getIndexPageShowNotice", null);
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+            var systemValue = result.data.systemValue;
+            if (systemValue == "true") {
+                $("input:radio[name=indexPageShowNoticeFlag][value=" + 1 + "]").prop("checked",true);
+            } else {
+                $("input:radio[name=indexPageShowNoticeFlag][value=" + 0 + "]").prop("checked",true);
+            }
+            $('#manager_indexPageShowNotice').dialog('open');
+        }
+
+        function indexPageShowNoticeCommit() {
+            var indexPageShowNotice = $("input[name='indexPageShowNoticeFlag']:checked").val();
+            if (indexPageShowNotice == 0) {
+                indexPageShowNotice = "false";
+            } else {
+                indexPageShowNotice = "true";
+            }
+            var result = ajaxSynchPostJson("user/systemSetting/updateIndexPageShowNotice?indexPageShowNotice=" + indexPageShowNotice, null);
+            if (result.code == '200') {
+                $('#manager_indexPageShowNotice').dialog('close');
+                alertSuccess();
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+    </script>
+</head>
+<body>
+<div style="margin-bottom:5px;">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="showIndexPageShowNoticeFlagDialog()"><font size="2">首页是否显示公告</font></a>
+</div>
+
+<form id="manager_indexPageShowNotice" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:150,width:320,title:'首页公告',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
+       onClose:function () {
+            $('#manager_indexPageShowNotice').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    indexPageShowNoticeCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#manager_indexPageShowNotice').dialog('close');
+					}
+				}]">
+    <p>首页是否显示公告：&nbsp;&nbsp;<input name="indexPageShowNoticeFlag" type="radio" value="0">不显示</input><input name="indexPageShowNoticeFlag" type="radio" value="1">显示</input></p>
+</form>
+</body>
+</html>

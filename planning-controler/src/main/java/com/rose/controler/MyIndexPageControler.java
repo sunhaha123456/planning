@@ -14,6 +14,7 @@ import com.rose.data.to.request.NoticeSearchRequest;
 import com.rose.data.to.response.FlowChartResponse;
 import com.rose.service.FlowInstanceService;
 import com.rose.service.PublishNoticeService;
+import com.rose.service.SystemSettingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,13 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 public class MyIndexPageControler {
 
     @Inject
+    private FlowInstanceService flowInstanceService;
+    @Inject
     private PublishNoticeService publishNoticeService;
     @Inject
-    private FlowInstanceService flowInstanceService;
+    private SystemSettingService systemSettingService;
 
     @GetMapping(value= "/getIndexPageShowNotice")
     public TbSystemSetting getIndexPageShowNotice() {
-        return publishNoticeService.getIndexPageShowNotice();
+        return systemSettingService.getIndexPageShowNotice();
     }
 
     @PostMapping(value= "/searchNotice")

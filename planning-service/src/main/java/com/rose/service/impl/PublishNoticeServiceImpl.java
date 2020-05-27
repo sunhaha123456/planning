@@ -4,9 +4,7 @@ import com.rose.common.data.base.PageList;
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
-import com.rose.data.constant.SystemConstant;
 import com.rose.data.entity.TbNotice;
-import com.rose.data.entity.TbSystemSetting;
 import com.rose.data.to.request.NoticeSearchRequest;
 import com.rose.repository.NoticeRepository;
 import com.rose.repository.NoticeRepositoryCustom;
@@ -66,19 +64,5 @@ public class PublishNoticeServiceImpl implements PublishNoticeService {
     @Override
     public void deleteNotice(Long id) {
         noticeRepository.delete(id);
-    }
-
-    @Override
-    public TbSystemSetting getIndexPageShowNotice() {
-        return systemSettingRepository.findBySystemKey(SystemConstant.INDEX_PAGE_NOTICE_SHOW_KEY);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void updateIndexPageShowNotice(String indexPageShowNotice) {
-        if (!Arrays.asList("true", "false").contains(indexPageShowNotice)) {
-            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
-        }
-        systemSettingRepository.updateBySystemKey(SystemConstant.INDEX_PAGE_NOTICE_SHOW_KEY, indexPageShowNotice);
     }
 }

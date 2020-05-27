@@ -92,7 +92,7 @@
         }
 
         function indexPageNoticeInit() {
-            var result = ajaxSynchGet("user/publishNotice/getIndexPageShowNotice", null);
+            var result = ajaxSynchGet("user/myIndexPage/getIndexPageShowNotice", null);
             if (result.code != '200') {
                 alertWarn(result.msg);
                 return;
