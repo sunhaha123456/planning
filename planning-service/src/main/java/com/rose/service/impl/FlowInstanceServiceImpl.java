@@ -631,6 +631,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         if (instanceId == null || !Arrays.asList(0, 1).contains(approvalApplyOperateType) || StringUtil.isEmpty(approvalApplyContent)) {
             throw new BusinessException("请填写审批意见！");
         }
+        if (approvalApplyContent.length() > 280) {
+            throw new BusinessException("审批意见过长最多只能260字符！");
+        }
         TbFlowInstance instance = flowInstanceRepository.findOne(instanceId);
         if (instance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
             throw new BusinessException("不能对已审核过的申请再次审核！");
