@@ -30,7 +30,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
         if (!loginService.tokenValidate(request)) {
-            getFail(response);
+            String requestUrl = request.getRequestURI().toLowerCase();
+            int failMsgType = requestUrl.lastIndexOf("/to");
+            getFailMsg(response, failMsgType);
             return false;
         }
         return true;
@@ -47,15 +49,20 @@ public class LoginInterceptor implements HandlerInterceptor {
     }
 
     // 设置返回的失败信息
-    private void getFail(HttpServletResponse response) {
-        //将实体对象转换为JSON Object转换
-        String json = JSONObject.toJSONString(ResponseResult.build(ResponseResultCode.LOGIN_FIRST));
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json; charset=utf-8");
+    private void getFailMsg(HttpServletResponse response, int msgType) {
         PrintWriter out = null;
         try {
+            response.setCharacterEncoding("UTF-8");
+            String msg = null;
+            if (msgType > 0) {
+                response.setContentType("text/html; charset=utf-8");
+                msg = "<html><head><script>alert('登录信息已失效，请重新登录！');</script></head><body></body></html>";
+            } else {
+                response.setContentType("application/json; charset=utf-8");
+                msg = JSONObject.toJSONString(ResponseResult.build(ResponseResultCode.LOGIN_FIRST));
+            }
             out = response.getWriter();
-            out.append(json);
+            out.append(msg);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

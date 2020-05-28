@@ -16,7 +16,7 @@ public enum ResponseResultCode {
 
 	LOGIN_ERROR(40004, "用户名或密码错误！"),
 	CODE_ERROR(40005, "验证码错误！"),
-	LOGIN_FIRST(40006, "未登录，请先登录！"),
+	LOGIN_FIRST(40006, "登录信息已失效，请重新登录！"),
 	USER_STATE_ERROR(40007, "用户状态不正常！"),
 	OPERT_ERROR(40008, "操作失败！"),
 	USER_OLD_PASSWORD_ERROR(40009, "用户密码错误！"),
