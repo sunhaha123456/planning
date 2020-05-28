@@ -99,23 +99,23 @@
                     },
                     {
                         field : 'instanceName',
-                        title : '流程名称',
-                        width : 100
+                        title : '申请事项',
+                        width : 300
                     },
                     {
                         field : 'startUserName',
-                        title : '启动用户名',
-                        width : 100
+                        title : '申请用户',
+                        width : 50
                     },
                     {
                         field : 'startTime',
-                        title : '启动时间',
-                        width : 100
+                        title : '申请时间',
+                        width : 50
                     },
                     {
                         field : 'state',
-                        title : '流程状态',
-                        width : 100,
+                        title : '申请状态',
+                        width : 40,
                         formatter: function(value,row,index){
                             if (value == "0"){
                                 return "已启动";

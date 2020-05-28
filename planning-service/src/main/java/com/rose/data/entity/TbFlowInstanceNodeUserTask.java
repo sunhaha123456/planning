@@ -1,12 +1,12 @@
 package com.rose.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rose.common.data.base.BaseDataIdLong;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+import java.util.Date;
 
 @ToString(callSuper = true)
 @lombok.Data
@@ -43,4 +43,10 @@ public class TbFlowInstanceNodeUserTask extends BaseDataIdLong {
 
     @Column(name = "approval_content", columnDefinition = "VARCHAR(800) COMMENT '审批内容'")
     private String approvalContent;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "approval_date", columnDefinition="datetime COMMENT '审批时间'")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date approvalDate;
 }

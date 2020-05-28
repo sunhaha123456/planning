@@ -63,6 +63,13 @@ public class PublishNoticeServiceImpl implements PublishNoticeService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteNotice(Long id) {
+        TbNotice notice = noticeRepository.findOne(id);
+        if (notice == null) {
+            throw new BusinessException("公告已被别人删除过了！");
+        }
+        if (notice.getStatus() != 0) {
+            throw new BusinessException("请先下架！");
+        }
         noticeRepository.delete(id);
     }
 }

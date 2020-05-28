@@ -682,6 +682,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             handingInstanceNodeIdsExcludeCurrentNodeId.deleteCharAt(handingInstanceNodeIdsExcludeCurrentNodeId.length() - 1);
         }
 
+        Date now = new Date();
+
         if (approvalApplyOperateType == 0) { // 同意申请
             int instanceNodeCurrentLevel = handingTaskNode.getNodeLevel();
             int instanceNodeMaxLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
@@ -689,7 +691,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             List<TbFlowInstanceNode> nodeListTemp = null;
             List<TbFlowInstanceNodeUserTask> nodeUserTaskListTemp = null;
 
-            int c = flowInstanceNodeUserTaskRepository.updateUserTask(userTaskId, approvalApplyOperateType, approvalApplyContent, FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+            int c = flowInstanceNodeUserTaskRepository.updateUserTask(userTaskId, approvalApplyOperateType, approvalApplyContent, now, FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
             if (c <= 0) {
                 throw new BusinessException(ResponseResultCode.SERVER_ERROR);
             }
@@ -816,7 +818,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
         StringBuilder operateInfo = new StringBuilder();
         operateInfo.append(approvalApplyOperateType == 0 ? "审批详情：同意。" : "审批详情：拒绝。").append(approvalApplyContent);
-        TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(new Date(), instanceId, instance.getInstanceName(), handingTaskNode.getId(), handingTaskNode.getNodeName(), operateUserId, operateInfo.toString());
+        TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(now, instanceId, instance.getInstanceName(), handingTaskNode.getId(), handingTaskNode.getNodeName(), operateUserId, operateInfo.toString());
 
         flowInstanceOperateHistoryRepository.save(history);
     }

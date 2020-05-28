@@ -46,22 +46,27 @@
                     },
                     {
                         field : 'instanceName',
-                        title : '流程名称',
+                        title : '申请事项',
                         width : 300
                     },
                     {
-                        field : 'startUserName',
-                        title : '启动用户名',
-                        width : 80
+                        field : 'approvalDate',
+                        title : '审批时间',
+                        width : 70
                     },
                     {
-                        field : 'startTime',
-                        title : '启动时间',
+                        field : 'startUserName',
+                        title : '申请用户',
                         width : 60
                     },
                     {
+                        field : 'startTime',
+                        title : '申请时间',
+                        width : 70
+                    },
+                    {
                         field : 'state',
-                        title : '流程状态',
+                        title : '申请状态',
                         width : 60,
                         formatter: function(value,row,index){
                             if (value == "0"){

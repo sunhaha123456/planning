@@ -48,7 +48,7 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
     public PageList<TbFlowInstance> listApprovalApply(Long approvalUserId, String flowInstanceName, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sqlCount = new StringBuilder();
         List<Object> paramListCount = new ArrayList();
-        sqlCount.append(" SELECT count(distinct a.id) ");
+        sqlCount.append(" SELECT count(distinct a.id# b.id) ");
         sqlCount.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex());
         sqlCount.append(" and b.user_id = ? ");
         paramListCount.add(approvalUserId);
@@ -65,7 +65,7 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
 
         StringBuilder sqlSelect = new StringBuilder();
         List<Object> paramListSelect = new ArrayList();
-        sqlSelect.append(" SELECT a.id, a.instance_name instanceName, c.user_name startUserName, a.start_time startTime, a.state ");
+        sqlSelect.append(" SELECT a.id, a.instance_name instanceName, b.approval_date approvalDate, c.user_name startUserName, a.start_time startTime, a.state ");
         sqlSelect.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex());
         sqlSelect.append(" and b.user_id = ? ");
         paramListSelect.add(approvalUserId);
@@ -75,7 +75,7 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
             sqlSelect.append(" and instr(a.instance_name, ?) > 0 ");
             paramListSelect.add(flowInstanceName);
         }
-        sqlSelect.append(" group by a.id order by a.id desc ");
+        sqlSelect.append(" group by a.id,b.id order by b.approval_date desc ");
 
         PageUtil page = new PageUtil(pageNo, pageSize);
         sqlSelect.append(" limit ").append(page.getStart()).append(",").append(page.getPageSize());

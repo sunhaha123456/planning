@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface FlowInstanceNodeUserTaskRepository extends CrudRepository<TbFlowInstanceNodeUserTask, Long> {
@@ -20,8 +21,8 @@ public interface FlowInstanceNodeUserTaskRepository extends CrudRepository<TbFlo
     List<TbFlowInstanceNodeUserTask> listByInstanceIdAndNodeId(@Param(value = "instanceId") Long instanceId, @Param(value = "nodeId") Long nodeId);
 
     @Modifying
-    @Query(value = "update tb_flow_instance_node_user_task set approval_type = :approvalType, approval_content = :approvalContent, state = :newState where id = :id and state = :oldState", nativeQuery = true)
-    int updateUserTask(@Param(value = "id") Long id, @Param(value = "approvalType") Integer approvalType, @Param(value = "approvalContent") String approvalContent, @Param(value = "newState") Integer newState, @Param(value = "oldState") Integer oldState);
+    @Query(value = "update tb_flow_instance_node_user_task set approval_type = :approvalType, approval_content = :approvalContent, approval_date = :approvalDate, state = :newState where id = :id and state = :oldState", nativeQuery = true)
+    int updateUserTask(@Param(value = "id") Long id, @Param(value = "approvalType") Integer approvalType, @Param(value = "approvalContent") String approvalContent, @Param(value = "approvalDate") Date approvalDate, @Param(value = "newState") Integer newState, @Param(value = "oldState") Integer oldState);
 
     @Modifying
     @Query(value = "update tb_flow_instance_node_user_task set state = :newState where id in :idList and state = :oldState", nativeQuery = true)

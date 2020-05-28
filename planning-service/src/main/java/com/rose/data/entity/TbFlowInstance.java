@@ -21,6 +21,10 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Transient
     private String nodeName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Transient
+    private Date approvalDate;
+
     @Transient
     private Long userTaskId;
 

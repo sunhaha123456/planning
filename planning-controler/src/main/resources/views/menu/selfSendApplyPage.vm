@@ -46,17 +46,17 @@
                     },
                     {
                         field : 'instanceName',
-                        title : '流程名称',
+                        title : '申请事项',
                         width : 300
                     },
                     {
                         field : 'startTime',
-                        title : '启动时间',
+                        title : '申请时间',
                         width : 80
                     },
                     {
                         field : 'state',
-                        title : '流程状态',
+                        title : '申请状态',
                         width : 50,
                         formatter: function(value,row,index){
                             if (value == "0"){
