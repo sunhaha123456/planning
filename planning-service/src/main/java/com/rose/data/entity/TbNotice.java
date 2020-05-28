@@ -1,13 +1,11 @@
 package com.rose.data.entity;
 
 import com.rose.common.data.base.BaseDataIdLong;
-import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@ToString(callSuper = true)
 @lombok.Data
 @Entity
 @Table(name = "tb_notice")
@@ -25,4 +23,13 @@ public class TbNotice extends BaseDataIdLong {
 
     @Column(name = "sort", columnDefinition = "BIGINT COMMENT '排序'")
     private Long sort;
+
+    @Override
+    public String toString() {
+        return "TbNotice{" +
+                "status=" + status +
+                ", sort=" + sort +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }

@@ -1,7 +1,9 @@
 package com.rose.aspect;
 
 import com.rose.common.util.JsonUtil;
+import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
+import com.rose.data.entity.TbFlowInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -52,7 +54,7 @@ public class SysLogAspect {
             if (point.getArgs() != null && point.getArgs().length > 0) {
                 param = new ArrayList(point.getArgs().length);
                 for (Object p : point.getArgs()) {
-                    if ( p != null && !(p instanceof HttpServletRequest) && !(p instanceof HttpServletResponse) && !(p instanceof BindingResult) && !(p instanceof MultipartFile)) {
+                    if (p != null && !(p instanceof HttpServletRequest) && !(p instanceof HttpServletResponse) && !(p instanceof BindingResult) && !(p instanceof MultipartFile)) {
                         param.add(p);
                     }
                 }
@@ -76,7 +78,11 @@ public class SysLogAspect {
             if (method.contains("exportFile")) {
                 returnValue = null;
             }
-            log.info("日志：返回---userId：{}---method：{}---return：{}，共耗时-{}-毫秒", valueHolder.getUserIdHolder(), method, JsonUtil.objectToJson(returnValue), System.currentTimeMillis() - startTime);
+            String returnStr = JsonUtil.objectToJson(returnValue);
+            if (returnStr != null && returnStr.length() > 200) {
+                returnStr = returnValue.toString();
+            }
+            log.info("日志：返回---userId：{}---method：{}---return：{}，共耗时-{}-毫秒", valueHolder.getUserIdHolder(), method, returnStr, System.currentTimeMillis() - startTime);
             /*
             Long userId = valueHolder.getUserIdHolder();
             if (userId == null) {
