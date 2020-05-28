@@ -21,6 +21,7 @@ public class TbFlowInstance extends BaseDataIdLong {
     @Transient
     private String nodeName;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Transient
     private Date approvalDate;

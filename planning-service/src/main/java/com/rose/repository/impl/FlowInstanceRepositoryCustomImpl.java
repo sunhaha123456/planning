@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -45,7 +46,7 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
     }
 
     @Override
-    public PageList<TbFlowInstance> listApprovalApply(Long approvalUserId, String flowInstanceName, Integer pageNo, Integer pageSize) throws Exception {
+    public PageList<TbFlowInstance> listApprovalApply(Long approvalUserId, String flowInstanceName, Date approvalStartDate, Date approvalEndDate, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sqlCount = new StringBuilder();
         List<Object> paramListCount = new ArrayList();
         sqlCount.append(" SELECT count(distinct a.id# b.id) ");
@@ -57,6 +58,14 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
         if (StringUtil.isNotEmpty(flowInstanceName)) {
             sqlCount.append(" and instr(a.instance_name, ?) > 0 ");
             paramListCount.add(flowInstanceName);
+        }
+        if (approvalStartDate != null) {
+            sqlCount.append(" and b.approval_date >= ? ");
+            paramListCount.add(approvalStartDate);
+        }
+        if (approvalEndDate != null) {
+            sqlCount.append(" and b.approval_date <= ? ");
+            paramListCount.add(approvalEndDate);
         }
         Long c = getCount(sqlCount.toString(), paramListCount.toArray());
         if (c <= 0) {
@@ -74,6 +83,14 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
         if (StringUtil.isNotEmpty(flowInstanceName)) {
             sqlSelect.append(" and instr(a.instance_name, ?) > 0 ");
             paramListSelect.add(flowInstanceName);
+        }
+        if (approvalStartDate != null) {
+            sqlSelect.append(" and b.approval_date >= ? ");
+            paramListSelect.add(approvalStartDate);
+        }
+        if (approvalEndDate != null) {
+            sqlSelect.append(" and b.approval_date <= ? ");
+            paramListSelect.add(approvalEndDate);
         }
         sqlSelect.append(" group by a.id,b.id order by b.approval_date desc ");
 

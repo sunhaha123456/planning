@@ -71,7 +71,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Override
     public PageList<TbFlowInstance> searchApprovalApply(FlowInstanceRequest param) throws Exception {
-        return flowInstanceRepositoryCustom.listApprovalApply(valueHolder.getUserIdHolder(), param.getFlowInstanceName(), param.getPage(), param.getRows());
+        return flowInstanceRepositoryCustom.listApprovalApply(valueHolder.getUserIdHolder(), param.getFlowInstanceName(), param.getApprovalStartDate(), param.getApprovalEndDate(), param.getPage(), param.getRows());
     }
 
     @Override

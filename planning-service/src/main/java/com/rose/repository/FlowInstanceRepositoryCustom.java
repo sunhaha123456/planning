@@ -4,6 +4,8 @@ import com.rose.common.data.base.PageList;
 import com.rose.common.repository.BaseRepository;
 import com.rose.data.entity.TbFlowInstance;
 
+import java.util.Date;
+
 public interface FlowInstanceRepositoryCustom extends BaseRepository {
 
     /**
@@ -19,7 +21,7 @@ public interface FlowInstanceRepositoryCustom extends BaseRepository {
      */
     PageList<TbFlowInstance> list(Long templateId, String flowInstanceName, Integer state, Long startUserId, Integer pageNo, Integer pageSize) throws Exception;
 
-    PageList<TbFlowInstance> listApprovalApply(Long approvalUserId, String flowInstanceName, Integer pageNo, Integer pageSize) throws Exception;
+    PageList<TbFlowInstance> listApprovalApply(Long approvalUserId, String flowInstanceName, Date approvalStartDate, Date approvalEndDate, Integer pageNo, Integer pageSize) throws Exception;
 
     PageList<TbFlowInstance> listWaitingApproval(Long waitApprovalUserId, Integer pageNo, Integer pageSize) throws Exception;
 }
