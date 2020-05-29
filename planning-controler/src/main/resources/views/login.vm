@@ -83,9 +83,14 @@
     <form action="#" method="post" id="form1">
         <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
             <tr>
-                <td width="114" align="right" valign="middle"></td>
-                <td align="left" width="210"><input name="uname" type="text" id="uname" size="30" placeholder="用户名" value="superAdmin" /></td>
-                <td width="286"><div id="unameTip"></div></td>
+                <td width="114"></td>
+                <td align="left" width="210"><font size="5" color="#f0ffff"><strong>自助办公平台</strong></font></td>
+                <td width="286"></td>
+            </tr>
+            <tr>
+                <td align="right" valign="middle"></td>
+                <td align="left"><input name="uname" type="text" id="uname" size="30" placeholder="用户名" value="superAdmin" /></td>
+                <td><div id="unameTip"></div></td>
             </tr>
             <tr>
                 <td align="right" valign="middle"></td>
