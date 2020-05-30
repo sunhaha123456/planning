@@ -94,6 +94,26 @@
             });
         }
 
+        function addEmployerShow() {
+            alert("111");
+        }
+
+        function editEmployerShow() {
+            alert("222");
+        }
+
+        function deleteEmployer() {
+            alert("333");
+        }
+
+        function importUser() {
+            alert("444");
+        }
+
+        function downloadUser() {
+            window.location.href = contextPath + 'static/download/员工信息登记表.xlsx';
+        }
+
         $(function () {
             dataGridInit();
             searchEmployer();
@@ -107,9 +127,9 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addEmployerShow()">新增</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editEmployerShow()">编辑</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteEmployer()">删除</a>
-            <br/>
+            <br />
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="importUser()">导入</a>
-            <a href="#" class="easyui-linkbutton" plain="true" onclick="downUserTemplate()">下载用户模板</a>
+            <a href="#" class="easyui-linkbutton" plain="true" onclick="downloadUser()">下载模板</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
             姓名：<input type="text" class="textbox" id="employerNameSearch" style="width:160px" />

@@ -40,9 +40,29 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     @Column(name = "phone", columnDefinition = "varchar(255) COMMENT '手机号'")
     private String phone;
 
+    // 最高学历
+    @Column(name = "highest_education ", columnDefinition = "varchar(255) COMMENT '最高学历'")
+    private String highestEducation;
+
+    // 毕业院校
+    @Column(name = "graduated_school", columnDefinition = "varchar(255) COMMENT '毕业院校'")
+    private String graduatedSchool;
+
+    // 毕业时间
+    @Column(name = "graduatedDate", columnDefinition = "varchar(255) COMMENT '毕业时间'")
+    private String graduatedDate;
+
     // 职位
     @Column(name = "position", columnDefinition = "varchar(255) COMMENT '职位'")
     private String position;
+
+    // 紧急联系人
+    @Column(name = "emergency_contact_people", columnDefinition = "varchar(255) COMMENT '紧急联系人'")
+    private String emergencyContactPeople;
+
+    // 紧急联系人手机号
+    @Column(name = "emergency_contact_phone", columnDefinition = "varchar(255) COMMENT '紧急联系人手机号'")
+    private String emergencyContactPeoplePhone;
 
     // 员工类别     0正式员工   1试用期员工  2实习期员工  3临时雇员
     @Column(name = "employer_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '员工类别'")
