@@ -95,7 +95,11 @@
         }
 
         function addEmployerShow() {
-            alert("111");
+            $('#addUserForm').dialog('open');
+        }
+
+        function addUserFormCommit() {
+
         }
 
         function editEmployerShow() {
@@ -138,6 +142,87 @@
         </div>
     </div>
 </table>
+
+<form id="addUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
+      data-options="width:730,title:'新增',modal:true,closed:true,cache:false,iconCls:'icon-add',
+       onClose:function () {
+            $('#addUserForm').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    addUserFormCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#addUserForm').dialog('close');
+					}
+				}]">
+    <p>
+        &nbsp;&nbsp;姓名&nbsp;<input id="employerNameAdd" type="text" class="textbox" style="width:85px;" />
+        &nbsp;&nbsp;性别&nbsp;
+        <select class="easyui-combobox" id="genderAdd" style="width:50px;">
+            <option value="0" selected="true">男</option>
+            <option value="1">女</option>
+        </select>
+        &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoAdd" type="text" class="textbox" style="width:140px;" />
+        &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+        &nbsp;&nbsp;手机&nbsp;<input id="phoneAdd" type="text" class="textbox" style="width:100px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceAdd" type="text" class="textbox" style="width:300px;" />
+        &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceAdd" type="text" class="textbox" style="width:300px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;职位&nbsp;<input id="positionAdd" type="text" class="textbox" style="width:145px;" />
+        &nbsp;&nbsp;员工类别&nbsp;
+        <select class="easyui-combobox" id="employerTypeAdd" style="width:145px;">
+            <option value="1" selected="true">试用期员工</option>
+            <option value="2">实习期员工</option>
+            <option value="3">临时雇员</option>
+            <option value="0">正式员工</option>
+        </select>
+        &nbsp;&nbsp;在职状态&nbsp;
+        <select class="easyui-combobox" id="onJobStateAdd" style="width:80px;">
+            <option value="0" selected="true">在职</option>
+        </select>
+        &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTime" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+    </p>
+    <p>
+        &nbsp;&nbsp;工资&nbsp;<input id="salaryAmountAdd" type="text" class="textbox" style="width:100px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;补贴&nbsp;<input id="subsidyAmountAdd" type="text" class="textbox" style="width:100px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;工资描述
+    </p>
+    <p align="center">
+        <textarea id="salaryDescAdd" style="width:680px; height: 30px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;补贴描述
+    </p>
+    <p align="center">
+        <textarea placeholder="请输入补贴描述" id="subsidyDescAdd" style="width:680px; height: 30px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;最高学历&nbsp;<input id="highestEducationAdd" type="text" class="textbox" style="width:120px;" />
+        &nbsp;&nbsp;毕业院校&nbsp;<input id="graduatedSchoolAdd" type="text" class="textbox" style="width:135px;" />
+        &nbsp;&nbsp;毕业时间&nbsp;<input id="graduatedDateAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+    </p>
+    <p>
+        &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleAdd" type="text" class="textbox" style="width:110px;" />
+        &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneAdd" type="text" class="textbox" style="width:100px;" />
+    </p>
+    <p>&nbsp;&nbsp;员工备注</p>
+    <p align="center">
+        <textarea id="employerRemarkAdd" style="width:680px; height: 30px;" />
+    </p>
+</form>
 
 </body>
 </html>

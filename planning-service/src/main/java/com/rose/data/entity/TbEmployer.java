@@ -27,8 +27,8 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     @Column(name = "id_card_no", columnDefinition = "varchar(255) COMMENT '身份证号码'")
     private String idCardNo;
 
-    @Column(name = "cative_place", columnDefinition = "varchar(255) COMMENT '籍贯'")
-    private String cativePlace;
+    @Column(name = "native_place", columnDefinition = "varchar(255) COMMENT '籍贯'")
+    private String nativePlace;
 
     @Column(name = "birthday_date", columnDefinition = "varchar(255) COMMENT '生日'")
     private String birthdayDate;
@@ -101,6 +101,12 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
 
     @Column(name = "salary_desc", columnDefinition = "varchar(500) COMMENT '工资描述'")
     private String salaryDesc;
+
+    @Column(name = "subsidy_amount", columnDefinition = "decimal(19,2) NOT NULL DEFAULT 0.00 COMMENT '补贴'")
+    private BigDecimal subsidyAmount;
+
+    @Column(name = "subsidy_desc", columnDefinition = "varchar(500) COMMENT '补贴描述'")
+    private String subsidyDesc;
 
     @Column(name = "social_security_amount_personal", columnDefinition = "decimal(19,2) NOT NULL DEFAULT 0.00 COMMENT '社保金额个人部分'")
     private BigDecimal socialSecurityAmountPersonal;
