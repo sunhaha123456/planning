@@ -263,7 +263,7 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addMenuParentShow()">新增</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addMenuParentShow()">新增</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editMenuParentShow()">编辑</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="listChild()">查看二级菜单</a>
         </div>
@@ -271,7 +271,7 @@
 </table>
 
 <form id="manager_add" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#manager_add').form('reset');
        },
@@ -295,7 +295,7 @@
 </form>
 
 <form id="manager_edit" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#manager_edit').form('reset');
        },
@@ -318,10 +318,10 @@
     <p>排&nbsp;&nbsp;&nbsp;序：<input id="menuSortParentEdit" class="easyui-numberbox" data-options="required:true,min:0,precision:0,validType:'length[1,100]',missingMessage:'请输入排序',invalidMessage:'菜单名长度至少为1位'" type="text" style="width:200px;" /></p>
 </form>
 
-<div id="manager_listChild" class="easyui-window" style="background-color:#F4F4F4;" data-options="top:150,width:1100,title:'查看',modal:true,closed:true,iconCls:'icon-user-add',cache:false,collapsible:false,minimizable:false,maximizable:false,toolbar:'manager_listChild_tool'">
+<div id="manager_listChild" class="easyui-window" style="background-color:#F4F4F4;" data-options="top:150,width:1100,title:'查看',modal:true,closed:true,iconCls:'icon-tip',cache:false,collapsible:false,minimizable:false,maximizable:false,toolbar:'manager_listChild_tool'">
     <div id="manager_listChild_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addMenuChildShow()">新增</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addMenuChildShow()">新增</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editMenuChildShow()">编辑</a>
         </div>
     </div>
@@ -346,7 +346,7 @@
         </thead>
     </table>
     <form id="manager_listChild_add" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-          data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+          data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#manager_listChild_add').form('reset');
        },
@@ -370,7 +370,7 @@
         <p>排&nbsp;&nbsp;&nbsp;序：<input id="menuSortChildAdd" class="easyui-numberbox" data-options="required:true,min:0,precision:0,validType:'length[1,100]',missingMessage:'请输入排序',invalidMessage:'菜单名长度至少为1位'" type="text" style="width:200px;" /></p>
     </form>
     <form id="manager_listChild_edit" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-          data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+          data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#manager_listChild_edit').form('reset');
        },

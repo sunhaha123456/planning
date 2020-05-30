@@ -247,7 +247,7 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addUserShow()">新增</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addUserShow()">新增</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editUserShow()">编辑</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editUserPasswordShow()">修改密码</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="opertUserState(1)">冻结</a>
@@ -262,7 +262,7 @@
 </table>
 
 <form id="manager_add" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#manager_add').form('reset');
        },
@@ -290,7 +290,7 @@
 </form>
 
 <form id="manager_editUser" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#manager_editUser').form('reset');
        },
@@ -315,7 +315,7 @@
 </form>
 
 <form id="manager_editUserPassword" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#manager_editUserPassword').form('reset');
        },

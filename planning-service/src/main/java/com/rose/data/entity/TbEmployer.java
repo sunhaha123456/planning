@@ -41,13 +41,19 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     @Column(name = "position", columnDefinition = "varchar(255) COMMENT '职位'")
     private String position;
 
-    // 员工类别     0正式员工   1试用期员工  2实习期员工  3临时雇用员工
+    // 员工类别     0正式员工   1试用期员工  2实习期员工  3临时雇员
     @Column(name = "employer_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '员工类别'")
     private Integer employerType;
 
-    // 在职状态     0正常在职  1离职中  2已离职  3被解雇
+    @Transient
+    private String employerTypeStr;
+
+    // 在职状态     0在职  1离职中  2已离职
     @Column(name = "on_job_state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '在职状态'")
     private Integer onJobState;
+
+    @Transient
+    private String onJobStateStr;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Temporal(TemporalType.TIMESTAMP)
@@ -96,4 +102,7 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
 
     @Column(name = "accumulation_fund_desc_company", columnDefinition = "varchar(500) COMMENT '公积金企业部分描述'")
     private String accumulationFundDescCompany;
+
+    @Column(name = "employer_remark", columnDefinition = "varchar(600) COMMENT '备注'")
+    private String employerRemark;
 }

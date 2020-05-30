@@ -197,9 +197,9 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="addRoleShow()">新增</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addRoleShow()">新增</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editRoleShow()">编辑</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="distriRoleMenuShow()">分配菜单</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="distriRoleMenuShow()">分配菜单</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="opertUserState(1)">禁用</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="opertUserState(0)">启用</a>
         </div>
@@ -214,7 +214,7 @@
 </table>
 
 <form id="manager_add" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#manager_add').form('reset');
        },
@@ -236,7 +236,7 @@
 </form>
 
 <form id="manager_edit" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#manager_edit').form('reset');
        },
@@ -258,7 +258,7 @@
 </form>
 
 <form id="manager_distriRoleMenu" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'分配菜单',modal:true,closed:true,cache:false,iconCls:'icon-user-add',
+      data-options="top:150,width:320,title:'分配菜单',modal:true,closed:true,cache:false,iconCls:'icon-add-green',
        onClose:function () {
             $('#manager_distriRoleMenu').form('reset');
        },

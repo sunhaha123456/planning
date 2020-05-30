@@ -1,7 +1,6 @@
 package com.rose.common.data.base;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -35,6 +34,6 @@ public class BaseDataIdLongDelFlag implements Serializable {
 
 	// 0：正常，1：已删除
 	// 默认 0
-	@Column(name = "del_flag", columnDefinition = "INT(1) default 0")
+	@Column(name = "del_flag", columnDefinition = "TINYINT DEFAULT 0")
 	protected Integer delFlag;
 }
