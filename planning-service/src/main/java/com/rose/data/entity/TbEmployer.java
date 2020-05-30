@@ -30,6 +30,9 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     @Column(name = "cative_place", columnDefinition = "varchar(255) COMMENT '籍贯'")
     private String cativePlace;
 
+    @Column(name = "birthday_date", columnDefinition = "varchar(255) COMMENT '生日'")
+    private String birthdayDate;
+
     @Column(name = "now_place", columnDefinition = "varchar(255) COMMENT '现住址'")
     private String nowPlace;
 
@@ -65,7 +68,7 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "entry_time", columnDefinition="datetime COMMENT '转正日期'")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date  becomeRegularTime;
+    private Date becomeRegularTime;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Temporal(TemporalType.TIMESTAMP)
