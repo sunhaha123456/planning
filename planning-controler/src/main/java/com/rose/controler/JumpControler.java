@@ -111,4 +111,40 @@ public class JumpControler {
     public String toSystemSetting() {
         return "menu/systemSetting";
     }
+
+    /**
+     * 功能：跳转人员录入
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toEmployerEntry")
+    public String toEmployerEntry() {
+        return "menu/employerEntry";
+    }
+
+    /**
+     * 功能：跳转薪酬调整
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toEmployerSalaryAdjustment")
+    public String toEmployerSalaryAdjustment() {
+        return "menu/employerSalaryAdjustment";
+    }
+
+    /**
+     * 功能：跳转办理离职
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toEmployerQuit")
+    public String toEmployerQuit() {
+        return "menu/employerQuit";
+    }
+
+    /**
+     * 功能：跳转人事档案
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toEmployerArchives")
+    public String toEmployerArchives() {
+        return "menu/employerArchives";
+    }
 }
