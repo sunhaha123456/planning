@@ -34,6 +34,6 @@ public class BaseDataIdLongDelFlag implements Serializable {
 
 	// 0：正常，1：已删除
 	// 默认 0
-	@Column(name = "del_flag", columnDefinition = "TINYINT DEFAULT 0")
+	@Column(name = "del_flag", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
 	protected Integer delFlag;
 }

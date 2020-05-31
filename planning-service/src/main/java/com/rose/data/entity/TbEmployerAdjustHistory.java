@@ -11,8 +11,8 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @lombok.Data
 @Entity
-@Table(name = "tb_employer_adjustment_history")
-public class TbEmployerAdjustmentHistory extends BaseDataIdLongDelFlag implements Serializable {
+@Table(name = "tb_employer_adjust_history")
+public class TbEmployerAdjustHistory extends BaseDataIdLongDelFlag implements Serializable {
 
     @Column(name = "employer_id", columnDefinition = "BIGINT COMMENT '员工id'")
     private Long employerId;

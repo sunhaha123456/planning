@@ -99,19 +99,90 @@
         }
 
         function addUserFormCommit() {
-
+            var param = {
+                "employerName": $("#employerNameAdd").val(),
+                "gender": $('#genderAdd').combobox('getValue'),
+                "idCardNo": $("#idCardNoAdd").val(),
+                "birthdayDate": $('#birthdayDateAdd').datetimebox('getValue'),
+                "phone": $("#phoneAdd").val(),
+                "nativePlace": $("#nativePlaceAdd").val(),
+                "nowPlace": $("#nowPlaceAdd").val(),
+                "department": $("#departmentAdd").val(),
+                "position": $("#positionAdd").val(),
+                "employerType": $('#employerTypeAdd').datetimebox('getValue'),
+                "onJobState": $('#onJobStateAdd').datetimebox('getValue'),
+                "entryCompanyTime": $('#entryCompanyTimeAdd').datetimebox('getValue'),
+                "highestEducation": $('#highestEducationAdd').combobox('getValue'),
+                "graduatedSchool": $("#graduatedSchoolAdd").val(),
+                "graduatedDate": $('#graduatedDateAdd').datetimebox('getValue'),
+                "emergencyContactPeople": $("#emergencyContactPeopleAdd").val(),
+                "emergencyContactPeoplePhone": $("#emergencyContactPeoplePhoneAdd").val(),
+                "employerRemark": $("#employerRemarkAdd").val()
+            };
+            var result = ajaxSynchPostJson("user/employerEntry/save", param);
+            if (result.code == '200') {
+                alertSuccess();
+                $('#addUserForm').dialog('close');
+                searchEmployer();
+            } else {
+                alertWarn(result.msg);
+            }
         }
 
-        function editEmployerShow() {
-            alert("222");
-        }
+        function detailEmployerShow() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length == 0) {
+                alertWarn("请先选中记录！");
+                return;
+            }
+            var result = ajaxSynchGet("user/employerEntry/getEmployer", {"id": rows[0].id});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
 
-        function deleteEmployer() {
-            alert("333");
+            $("#employerNameDetail").val(result.data.employerName);
+            $('#genderDetail').combobox('setValue', result.data.gender);
+            $('#idCardNoDetail').val(result.data.idCardNo);
+            $('#birthdayDateDetail').datebox('setValue', result.data.birthdayDate);
+            $('#phoneDetail').val(result.data.phone);
+            $('#nativePlaceDetail').val(result.data.nativePlace);
+            $('#nowPlaceDetail').val(result.data.nowPlace);
+            $('#departmentDetail').val(result.data.department);
+            $('#positionDetail').val(result.data.position);
+            $('#employerTypeDetail').combobox('setValue', result.data.employerType);
+            $('#onJobStateDetail').combobox('setValue', result.data.onJobState);
+            $('#entryCompanyTimeDetail').datebox('setValue', result.data.entryCompanyTime);
+            $('#highestEducationDetail').combobox('setValue', result.data.highestEducation);
+            $('#graduatedSchoolDetail').val(result.data.graduatedSchool);
+            $('#graduatedDateDetail').datebox('setValue', result.data.graduatedDate);
+            $('#emergencyContactPeopleDetail').val(result.data.emergencyContactPeople);
+            $('#emergencyContactPeoplePhoneDetail').val(result.data.emergencyContactPeoplePhone);
+            $('#employerRemarkDetail').val(result.data.employerRemark);
+
+            $('#detailUserForm').dialog('open');
         }
 
         function importUser() {
-            alert("444");
+            $('#importUserForm').dialog('open');
+        }
+
+        function importUserFormCommit() {
+            if ($("#userExcelFile").val() == '') {
+                alertWarn("未选择文件！");
+            }
+            var result = ajaxSynchUploadFilePost("user/employerEntry/importFile",
+                    [
+                        {key:"userExcelFile", value:"#userExcelFile"}
+                    ],
+                    []
+            );
+            if (result.code == '200') {
+                alertSuccess();
+                $('#importUserForm').dialog('close');
+            } else {
+                alertWarn(result.msg);
+            }
         }
 
         function downloadUser() {
@@ -129,10 +200,8 @@
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addEmployerShow()">新增</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editEmployerShow()">编辑</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteEmployer()">删除</a>
-            <br />
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="importUser()">导入</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailEmployerShow()">查看</a>
             <a href="#" class="easyui-linkbutton" plain="true" onclick="downloadUser()">下载模板</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
@@ -144,7 +213,7 @@
 </table>
 
 <form id="addUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
-      data-options="width:730,title:'新增',modal:true,closed:true,cache:false,iconCls:'icon-add',
+      data-options="width:750,title:'新增',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#addUserForm').form('reset');
        },
@@ -161,67 +230,154 @@
                     $('#addUserForm').dialog('close');
 					}
 				}]">
-    <p>
-        &nbsp;&nbsp;姓名&nbsp;<input id="employerNameAdd" type="text" class="textbox" style="width:85px;" />
-        &nbsp;&nbsp;性别&nbsp;
-        <select class="easyui-combobox" id="genderAdd" style="width:50px;">
-            <option value="0" selected="true">男</option>
-            <option value="1">女</option>
-        </select>
-        &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoAdd" type="text" class="textbox" style="width:140px;" />
-        &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
-        &nbsp;&nbsp;手机&nbsp;<input id="phoneAdd" type="text" class="textbox" style="width:100px;" />
-    </p>
-    <p>
-        &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceAdd" type="text" class="textbox" style="width:300px;" />
-        &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceAdd" type="text" class="textbox" style="width:300px;" />
-    </p>
-    <p>
-        &nbsp;&nbsp;职位&nbsp;<input id="positionAdd" type="text" class="textbox" style="width:145px;" />
-        &nbsp;&nbsp;员工类别&nbsp;
-        <select class="easyui-combobox" id="employerTypeAdd" style="width:145px;">
-            <option value="1" selected="true">试用期员工</option>
-            <option value="2">实习期员工</option>
-            <option value="3">临时雇员</option>
-            <option value="0">正式员工</option>
-        </select>
-        &nbsp;&nbsp;在职状态&nbsp;
-        <select class="easyui-combobox" id="onJobStateAdd" style="width:80px;">
-            <option value="0" selected="true">在职</option>
-        </select>
-        &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTime" class="easyui-datebox" data-options="editable:false" style="width:100px" />
-    </p>
-    <p>
-        &nbsp;&nbsp;工资&nbsp;<input id="salaryAmountAdd" type="text" class="textbox" style="width:100px;" />
-    </p>
-    <p>
-        &nbsp;&nbsp;补贴&nbsp;<input id="subsidyAmountAdd" type="text" class="textbox" style="width:100px;" />
-    </p>
-    <p>
-        &nbsp;&nbsp;工资描述
-    </p>
-    <p align="center">
-        <textarea id="salaryDescAdd" style="width:680px; height: 30px;" />
-    </p>
-    <p>
-        &nbsp;&nbsp;补贴描述
-    </p>
-    <p align="center">
-        <textarea placeholder="请输入补贴描述" id="subsidyDescAdd" style="width:680px; height: 30px;" />
-    </p>
-    <p>
-        &nbsp;&nbsp;最高学历&nbsp;<input id="highestEducationAdd" type="text" class="textbox" style="width:120px;" />
-        &nbsp;&nbsp;毕业院校&nbsp;<input id="graduatedSchoolAdd" type="text" class="textbox" style="width:135px;" />
-        &nbsp;&nbsp;毕业时间&nbsp;<input id="graduatedDateAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
-    </p>
-    <p>
-        &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleAdd" type="text" class="textbox" style="width:110px;" />
-        &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneAdd" type="text" class="textbox" style="width:100px;" />
-    </p>
-    <p>&nbsp;&nbsp;员工备注</p>
-    <p align="center">
-        <textarea id="employerRemarkAdd" style="width:680px; height: 30px;" />
-    </p>
+    <div style="overflow-y: auto; height: 330px;">
+        <p>
+            &nbsp;&nbsp;姓名&nbsp;<input id="employerNameAdd" type="text" class="textbox" style="width:85px;" />
+            &nbsp;&nbsp;性别&nbsp;
+            <select class="easyui-combobox" id="genderAdd" style="width:50px;">
+                <option value="0" selected="true">男</option>
+                <option value="1">女</option>
+            </select>
+            &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoAdd" type="text" class="textbox" style="width:140px;" />
+            &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+            &nbsp;&nbsp;手机&nbsp;<input id="phoneAdd" type="text" class="textbox" style="width:100px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceAdd" type="text" class="textbox" style="width:300px;" />
+            &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceAdd" type="text" class="textbox" style="width:300px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;部门&nbsp;<input id="departmentAdd" type="text" class="textbox" style="width:145px;" />
+            &nbsp;&nbsp;职位&nbsp;<input id="positionAdd" type="text" class="textbox" style="width:145px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;员工类别&nbsp;
+            <select class="easyui-combobox" id="employerTypeAdd" style="width:145px;">
+                <option value="1" selected="true">试用期员工</option>
+                <option value="2">实习期员工</option>
+                <option value="3">临时雇员</option>
+                <option value="0">正式员工</option>
+            </select>
+            &nbsp;&nbsp;在职状态&nbsp;
+            <select class="easyui-combobox" id="onJobStateAdd" style="width:80px;">
+                <option value="0" selected="true">在职</option>
+            </select>
+            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+        </p>
+        <p>
+            &nbsp;&nbsp;最高学历&nbsp;
+            <select class="easyui-combobox" id="highestEducationAdd" style="width:90px;">
+                <option value="0" selected="true">小学</option>
+                <option value="1">初中</option>
+                <option value="2">高中</option>
+                <option value="3">中转</option>
+                <option value="4">高职</option>
+                <option value="5">大专</option>
+                <option value="6">本科</option>
+                <option value="7">硕士研究生</option>
+                <option value="8">博士研究生</option>
+            </select>
+            &nbsp;&nbsp;毕业院校&nbsp;<input id="graduatedSchoolAdd" type="text" class="textbox" style="width:135px;" />
+            &nbsp;&nbsp;毕业时间&nbsp;<input id="graduatedDateAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+        </p>
+        <p>
+            &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleAdd" type="text" class="textbox" style="width:110px;" />
+            &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneAdd" type="text" class="textbox" style="width:100px;" />
+        </p>
+        <p>&nbsp;&nbsp;员工备注</p>
+        <p align="center">
+            <textarea id="employerRemarkAdd" style="width:690px; height: 70px;" />
+        </p>
+    </div>
+</form>
+
+<form id="detailUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
+      data-options="width:750,title:'查看',modal:true,closed:true,cache:false,iconCls:'icon-tip',
+       onClose:function () {
+            $('#detailUserForm').form('reset');
+       }">
+    <div style="overflow-y: auto; height: 330px;">
+        <p>
+            &nbsp;&nbsp;姓名&nbsp;<input id="employerNameDetail" type="text" class="textbox" style="width:85px;" />
+            &nbsp;&nbsp;性别&nbsp;
+            <select class="easyui-combobox" id="genderDetail" style="width:50px;">
+                <option value="0">男</option>
+                <option value="1">女</option>
+            </select>
+            &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoDetail" type="text" class="textbox" style="width:140px;" />
+            &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateDetail" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+            &nbsp;&nbsp;手机&nbsp;<input id="phoneDetail" type="text" class="textbox" style="width:100px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceDetail" type="text" class="textbox" style="width:300px;" />
+            &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceDetail" type="text" class="textbox" style="width:300px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;部门&nbsp;<input id="departmentDetail" type="text" class="textbox" style="width:145px;" />
+            &nbsp;&nbsp;职位&nbsp;<input id="positionDetail" type="text" class="textbox" style="width:145px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;员工类别&nbsp;
+            <select class="easyui-combobox" id="employerTypeDetail" style="width:145px;">
+                <option value="1" selected="true">试用期员工</option>
+                <option value="2">实习期员工</option>
+                <option value="3">临时雇员</option>
+                <option value="0">正式员工</option>
+            </select>
+            &nbsp;&nbsp;在职状态&nbsp;
+            <select class="easyui-combobox" id="onJobStateDetail" style="width:80px;">
+                <option value="0">在职</option>
+                <option value="0">离职中</option>
+                <option value="0">已离职</option>
+            </select>
+            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeDetail" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+        </p>
+        <p>
+            &nbsp;&nbsp;最高学历&nbsp;
+            <select class="easyui-combobox" id="highestEducationDetail" style="width:90px;">
+                <option value="0">小学</option>
+                <option value="1">初中</option>
+                <option value="2">高中</option>
+                <option value="3">中转</option>
+                <option value="4">高职</option>
+                <option value="5">大专</option>
+                <option value="6">本科</option>
+                <option value="7">硕士研究生</option>
+                <option value="8">博士研究生</option>
+            </select>
+            &nbsp;&nbsp;毕业院校&nbsp;<input id="graduatedSchoolDetail" type="text" class="textbox" style="width:135px;" />
+            &nbsp;&nbsp;毕业时间&nbsp;<input id="graduatedDateDetail" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+        </p>
+        <p>
+            &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleDetail" type="text" class="textbox" style="width:110px;" />
+            &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneDetail" type="text" class="textbox" style="width:100px;" />
+        </p>
+        <p>&nbsp;&nbsp;员工备注</p>
+        <p align="center">
+            <textarea id="employerRemarkDetail" style="width:690px; height: 70px;" />
+        </p>
+    </div>
+</form>
+
+<form id="importUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:150,width:320,title:'导入',modal:true,closed:true,cache:false,iconCls:'icon-add',
+       onClose:function () {
+            $('#importUserForm').form('reset');
+       },
+		buttons:[{
+					text : '上传',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    importUserFormCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#importUserForm').dialog('close');
+					}
+				}]">
+    <p><input id="userExcelFile" type="file"/></p>
 </form>
 
 </body>

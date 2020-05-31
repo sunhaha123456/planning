@@ -122,6 +122,15 @@ public class JumpControler {
     }
 
     /**
+     * 功能：跳转人员调整
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toEmployerAdjust")
+    public String toEmployerAdjust() {
+        return "menu/employerAdjust";
+    }
+
+    /**
      * 功能：跳转薪酬调整
      * @return
      */

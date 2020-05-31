@@ -30,8 +30,11 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     @Column(name = "native_place", columnDefinition = "varchar(255) COMMENT '籍贯'")
     private String nativePlace;
 
-    @Column(name = "birthday_date", columnDefinition = "varchar(255) COMMENT '生日'")
-    private String birthdayDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "birthday_date", columnDefinition="datetime COMMENT '生日'")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date birthdayDate;
 
     @Column(name = "now_place", columnDefinition = "varchar(255) COMMENT '现住址'")
     private String nowPlace;
@@ -41,16 +44,23 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     private String phone;
 
     // 最高学历
-    @Column(name = "highest_education ", columnDefinition = "varchar(255) COMMENT '最高学历'")
-    private String highestEducation;
+    // 0小学 1初中 2高中 3中转 4高职 5大专 6本科 7硕士研究生 8博士研究生
+    @Column(name = "highest_education ", columnDefinition = "TINYINT DEFAULT 0 COMMENT '最高学历'")
+    private Integer highestEducation;
 
     // 毕业院校
     @Column(name = "graduated_school", columnDefinition = "varchar(255) COMMENT '毕业院校'")
     private String graduatedSchool;
 
     // 毕业时间
-    @Column(name = "graduatedDate", columnDefinition = "varchar(255) COMMENT '毕业时间'")
-    private String graduatedDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "graduated_date", columnDefinition="datetime COMMENT '毕业时间'")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date graduatedDate;
+
+    @Column(name = "department", columnDefinition = "varchar(255) COMMENT '部门'")
+    private String department;
 
     // 职位
     @Column(name = "position", columnDefinition = "varchar(255) COMMENT '职位'")
@@ -78,56 +88,56 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     @Transient
     private String onJobStateStr;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "entry_company_time", columnDefinition="datetime COMMENT '入职时间'")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date entryCompanyTime;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "entry_time", columnDefinition="datetime COMMENT '转正日期'")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date becomeRegularTime;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "quit_time", columnDefinition="datetime COMMENT '离职时间'")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date quitTime;
 
-    @Column(name = "salary_amount", columnDefinition = "decimal(19,2) NOT NULL DEFAULT 0.00 COMMENT '工资金额'")
+    @Column(name = "salary_amount", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '工资金额'")
     private BigDecimal salaryAmount;
 
     @Column(name = "salary_desc", columnDefinition = "varchar(500) COMMENT '工资描述'")
     private String salaryDesc;
 
-    @Column(name = "subsidy_amount", columnDefinition = "decimal(19,2) NOT NULL DEFAULT 0.00 COMMENT '补贴'")
+    @Column(name = "subsidy_amount", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '补贴'")
     private BigDecimal subsidyAmount;
 
     @Column(name = "subsidy_desc", columnDefinition = "varchar(500) COMMENT '补贴描述'")
     private String subsidyDesc;
 
-    @Column(name = "social_security_amount_personal", columnDefinition = "decimal(19,2) NOT NULL DEFAULT 0.00 COMMENT '社保金额个人部分'")
+    @Column(name = "social_security_amount_personal", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '社保金额个人部分'")
     private BigDecimal socialSecurityAmountPersonal;
 
     @Column(name = "social_security_desc_personal", columnDefinition = "varchar(500) COMMENT '社保个人部分描述'")
     private String socialSecurityDescPersonal;
 
-    @Column(name = "social_security_amount_company", columnDefinition = "decimal(19,2) NOT NULL DEFAULT 0.00 COMMENT '社保金额企业部分'")
+    @Column(name = "social_security_amount_company", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '社保金额企业部分'")
     private BigDecimal socialSecurityAmountCompany;
 
     @Column(name = "social_security_desc_company", columnDefinition = "varchar(500) COMMENT '社保企业部分描述'")
     private String socialSecurityDescCompany;
 
-    @Column(name = "accumulation_fund_amount_personal", columnDefinition = "decimal(19,2) NOT NULL DEFAULT 0.00 COMMENT '公积金金额个人部分'")
+    @Column(name = "accumulation_fund_amount_personal", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '公积金金额个人部分'")
     private BigDecimal accumulationFundAmountPersonal;
 
     @Column(name = "accumulation_fund_desc_personal", columnDefinition = "varchar(500) COMMENT '公积金个人部分描述'")
     private String accumulationFundDescPersonal;
 
-    @Column(name = "accumulation_fund_amount_company", columnDefinition = "decimal(19,2) NOT NULL DEFAULT 0.00 COMMENT '公积金金额企业部分'")
-    private BigDecimal accumulationFundAmount;
+    @Column(name = "accumulation_fund_amount_company", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '公积金金额企业部分'")
+    private BigDecimal accumulationFundAmountCompany;
 
     @Column(name = "accumulation_fund_desc_company", columnDefinition = "varchar(500) COMMENT '公积金企业部分描述'")
     private String accumulationFundDescCompany;
