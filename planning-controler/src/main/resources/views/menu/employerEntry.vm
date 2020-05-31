@@ -178,8 +178,9 @@
                     []
             );
             if (result.code == '200') {
-                alertSuccess();
                 $('#importUserForm').dialog('close');
+                searchEmployer();
+                alertSuccess();
             } else {
                 alertWarn(result.msg);
             }
@@ -270,7 +271,7 @@
                 <option value="0" selected="true">小学</option>
                 <option value="1">初中</option>
                 <option value="2">高中</option>
-                <option value="3">中转</option>
+                <option value="3">中专</option>
                 <option value="4">高职</option>
                 <option value="5">大专</option>
                 <option value="6">本科</option>
@@ -378,6 +379,7 @@
 					}
 				}]">
     <p><input id="userExcelFile" type="file"/></p>
+    <p>注意：导入只会新增用户，不会更新用户</p>
 </form>
 
 </body>

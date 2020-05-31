@@ -5,6 +5,7 @@ import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
 import com.rose.data.entity.TbEmployer;
+import com.rose.data.enums.EmployerHighestEducationEnum;
 import com.rose.data.enums.EmployerOnJobStateEnum;
 import com.rose.data.enums.EmployerTyepEnum;
 import com.rose.data.to.request.EmployerSearchRequest;
@@ -106,13 +107,32 @@ public class EmployerServiceImpl implements EmployerService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void importFile(List<TbEmployer> list) {
-
+        if (list == null || list.size() == 0) {
+            throw new BusinessException("请上传文件！");
+        }
+        Date now = new Date();
+        TbEmployer employer = null;
+        for (int x = 0; x<list.size(); x++) {
+            employer = list.get(x);
+            employer.setId(null);
+            employer.setCreateDate(now);
+            employer.setLastModified(now);
+            employer.setDelFlag(0);
+            employer.setGender("男".equals(employer.getGenderStr()) ? 0 : 1);
+            employer.setEmployerType(EmployerTyepEnum.getIndex(employer.getEmployerTypeStr()));
+            employer.setOnJobState(EmployerOnJobStateEnum.getIndex(employer.getOnJobStateStr()));
+            employer.setHighestEducation(EmployerHighestEducationEnum.getIndex(employer.getHighestEducationStr()));
+            try {
+                validateEmployer(employer);
+            } catch (BusinessException e) {
+                e.setMsg("第" + (x + 2) + "行，" + e.getMsg());
+                throw e;
+            }
+        }
+        employerRepository.save(list);
     }
 
     private void validateEmployer(TbEmployer param) {
-        if (param == null) {
-            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
-        }
         if (StringUtil.isEmpty(param.getEmployerName())) {
             throw new BusinessException("姓名不能为空！");
         }

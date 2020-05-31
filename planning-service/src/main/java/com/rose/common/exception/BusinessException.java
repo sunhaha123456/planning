@@ -1,6 +1,7 @@
 package com.rose.common.exception;
 
 import com.rose.common.data.response.ResponseResultCode;
+import lombok.Data;
 
 /**
  * 功能：
@@ -8,6 +9,7 @@ import com.rose.common.data.response.ResponseResultCode;
  * @author sunpeng
  * @date 2017
  */
+@Data
 public class BusinessException extends RuntimeException {
 
     public int code;

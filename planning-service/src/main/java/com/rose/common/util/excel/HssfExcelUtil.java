@@ -45,6 +45,8 @@ public class HssfExcelUtil extends ExcelUtil {
     @Override
     public <T> List<T> readExcel(Class<T> clazz, int sheetNo, boolean hasTitle, String group) throws Exception {
         List<T> dataModels = new ArrayList<>();
+        //String[] fieldNames = getClassFieldByExcelImport(clazz, null);
+        String[] fieldNames = getField(clazz, group);
         // 获取excel工作簿
         HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
         HSSFSheet sheet = workbook.getSheetAt(sheetNo);
@@ -56,7 +58,6 @@ public class HssfExcelUtil extends ExcelUtil {
             }
             // 生成实例并通过反射调用setter方法
             T target = clazz.newInstance();
-            String[] fieldNames = getClassFieldByExcelImport(clazz, null);
             for (int j = 0; j < fieldNames.length; j++) {
                 String fieldName = fieldNames[j];
                 if (fieldName == null || SERIALVERSIONUID.equals(fieldName)) {
@@ -310,6 +311,29 @@ public class HssfExcelUtil extends ExcelUtil {
         font.setColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
         contentStyle.setFont(font);
         return contentStyle;
+    }
+
+    //判断需要哪些属性，如果注解的属性是空，则认为是所有的属性
+    private String[] getField(Class clazz, String groupName) {
+        Field[] fields = clazz.getDeclaredFields();
+        String[] fieldNames = new String[fields.length];
+        List<String> fieldAnnotations = new ArrayList<>();
+        for (int i = 0; i < fields.length; i++) {
+            fieldNames[i] = fields[i].getName();
+            if (fields[i].isAnnotationPresent(ExcelImport.class)) {
+                ExcelImport excel = fields[i].getAnnotation(ExcelImport.class);
+                if ("".equals(groupName) || groupName == null || "".equals(excel.group()[0])) {
+                    fieldAnnotations.add(fields[i].getName());
+                } else if (ArrayUtils.contains(excel.group(), groupName)) {
+                    fieldAnnotations.add(fields[i].getName());
+                }
+            }
+        }
+        if (fieldAnnotations.size() > 0) {
+            fieldNames = new String[fieldAnnotations.size()];
+            return fieldAnnotations.toArray(fieldNames);
+        }
+        return fieldNames;
     }
 
     // --- 待删除 start ---

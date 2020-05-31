@@ -3,6 +3,7 @@ package com.rose.common.util.excel;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.DateUtil;
 import com.rose.common.util.ReflectUtil;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -32,6 +33,8 @@ public class XssfExcelUtil extends ExcelUtil {
     @Override
     public <T> List<T> readExcel(Class<T> clazz, int sheetNo, boolean hasTitle, String group) throws Exception {
         List<T> dataModels = new ArrayList<>();
+        String[] fieldNames = getField(clazz, group);
+        //String[] fieldNames = getClassFieldByExcelImport(clazz, group);
         // 获取excel工作簿
         XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
         XSSFSheet sheet = workbook.getSheetAt(sheetNo);
@@ -43,7 +46,6 @@ public class XssfExcelUtil extends ExcelUtil {
             }
             // 生成实例并通过反射调用setter方法
             T target = clazz.newInstance();
-            String[] fieldNames = getClassFieldByExcelImport(clazz, group);
             for (int j = 0; j < fieldNames.length; j++) {
                 String fieldName = fieldNames[j];
                 if (fieldName == null || SERIALVERSIONUID.equals(fieldName)) {
@@ -88,6 +90,29 @@ public class XssfExcelUtil extends ExcelUtil {
 		}
 		return super.parseValueWithType(value, type);
 	}
+
+    //判断需要哪些属性，如果注解的属性是空，则认为是所有的属性
+    private String[] getField(Class clazz, String groupName) {
+        Field[] fields = clazz.getDeclaredFields();
+        String[] fieldNames = new String[fields.length];
+        List<String> fieldAnnotations = new ArrayList<>();
+        for (int i = 0; i < fields.length; i++) {
+            fieldNames[i] = fields[i].getName();
+            if (fields[i].isAnnotationPresent(ExcelImport.class)) {
+                ExcelImport excel = fields[i].getAnnotation(ExcelImport.class);
+                if ("".equals(groupName) || groupName == null || "".equals(excel.group()[0])) {
+                    fieldAnnotations.add(fields[i].getName());
+                } else if (ArrayUtils.contains(excel.group(), groupName)) {
+                    fieldAnnotations.add(fields[i].getName());
+                }
+            }
+        }
+        if (fieldAnnotations.size() > 0) {
+            fieldNames = new String[fieldAnnotations.size()];
+            return fieldAnnotations.toArray(fieldNames);
+        }
+        return fieldNames;
+    }
 
     // ------ 待删除 ------
     /**

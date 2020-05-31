@@ -7,12 +7,12 @@ package com.rose.data.enums;
 public enum EmployerHighestEducationEnum {
 
     // tb_employer 表 highest_education 字段，如下：
-    // 最高学历     0小学 1初中 2高中 3中转 4高职 5大专 6本科 7硕士研究生 8博士研究生
+    // 最高学历     0小学 1初中 2高中 3中专 4高职 5大专 6本科 7硕士研究生 8博士研究生
 
     EDUCATION_PRIMARY_SCHOOL(0, "小学"),
     EDUCATION_MIDDLE(1, "初中"),
     EDUCATION_HIGH(2, "高中"),
-    EDUCATION_MIDDLE_SPECIAL(3, "中转"),
+    EDUCATION_MIDDLE_SPECIAL(3, "中专"),
     EDUCATION_VOCATIONAL(4, "高职"),
     EDUCATION_BIG_SPECIAL(5, "大专"),
     EDUCATION_UNDERGRADUATE(6, "本科"),
