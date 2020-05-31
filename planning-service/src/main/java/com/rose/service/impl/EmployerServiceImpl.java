@@ -33,7 +33,7 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     public PageList<TbEmployer> search(EmployerSearchRequest param) throws Exception {
-        PageList<TbEmployer> page = employerRepositoryCustom.list(param.getEmployerName(), param.getPhone(), param.getPage(), param.getRows());
+        PageList<TbEmployer> page = employerRepositoryCustom.list(param.getEmployerName(), param.getPhone(), param.getEmployerType(), param.getOnJobState(), param.getPage(), param.getRows());
         if (page != null && page.getRows() != null) {
             for (TbEmployer e : page.getRows()) {
                 e.setEmployerTypeStr(EmployerTyepEnum.getName(e.getEmployerType()));

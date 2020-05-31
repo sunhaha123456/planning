@@ -18,7 +18,7 @@ import java.util.List;
 public class EmployerRepositoryCustomImpl extends BaseRepositoryImpl implements EmployerRepositoryCustom {
 
     @Override
-    public PageList<TbEmployer> list(String employerName, String phone, Integer pageNo, Integer pageSize) throws Exception {
+    public PageList<TbEmployer> list(String employerName, String phone, Integer employerType, Integer onJobState, Integer pageNo, Integer pageSize) throws Exception {
         StringBuilder sql = new StringBuilder();
         List<Object> paramList = new ArrayList();
         sql.append(" SELECT id, employer_name employerName, gender, phone, position, employer_type employerType, on_job_state onJobState ");
@@ -31,6 +31,14 @@ public class EmployerRepositoryCustomImpl extends BaseRepositoryImpl implements 
         if (StringUtil.isNotEmpty(phone)) {
             sql.append(" AND instr(phone, ?) > 0 ");
             paramList.add(phone);
+        }
+        if (employerType != null) {
+            sql.append(" AND employer_type = ? ");
+            paramList.add(employerType);
+        }
+        if (onJobState != null) {
+            sql.append(" AND on_job_state = ? ");
+            paramList.add(onJobState);
         }
         return queryPage(sql.toString(), TbEmployer.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
     }

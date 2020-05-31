@@ -7,4 +7,6 @@ import lombok.Data;
 public class EmployerSearchRequest extends PageParam {
     private String employerName;
     private String phone;
+    private Integer employerType;
+    private Integer onJobState;
 }

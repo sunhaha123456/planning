@@ -13,7 +13,11 @@
     <script th:src="@{/static/myFun.js}"></script>
     <script th:inline="javascript">
         function searchEmployer() {
-            var result = ajaxSynchPostJson("user/employerEntry/search", {"employerName": $('#employerNameSearch').val(), "phone": $('#employerPhoneSearch').val(), "page":1, "rows":10});
+            var result = ajaxSynchPostJson("user/employerEntry/search", {
+                "employerName": $('#employerNameSearch').val(), "phone": $('#employerPhoneSearch').val(),
+                "employerType": $('#employerTypeSearch').datetimebox('getValue'),
+                "onJobState": $('#onJobStateSearch').datetimebox('getValue'),
+                "page":1, "rows":10});
             if (result.code == '200') {
                 dataGridPageInit();
                 $('#manager').datagrid('loadData', result.data);
@@ -206,8 +210,24 @@
             <a href="#" class="easyui-linkbutton" plain="true" onclick="downloadUser()">下载模板</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
-            姓名：<input type="text" class="textbox" id="employerNameSearch" style="width:160px" />
-            手机号：<input type="text" class="textbox" id="employerPhoneSearch" style="width:160px" />
+            姓名&nbsp;<input type="text" class="textbox" id="employerNameSearch" style="width:100px" />&nbsp;&nbsp;
+            手机号&nbsp;<input type="text" class="textbox" id="employerPhoneSearch" style="width:100px" />&nbsp;&nbsp;
+            员工类别&nbsp;
+            <select class="easyui-combobox" id="employerTypeSearch" style="width:85px;">
+                <option value="" selected="true">请选择</option>
+                <option value="0">正式员工</option>
+                <option value="1">试用期员工</option>
+                <option value="2">实习期员工</option>
+                <option value="3">临时雇员</option>
+            </select>&nbsp;&nbsp;
+            在职状态&nbsp;
+            <select class="easyui-combobox" id="onJobStateSearch" style="width:70px;">
+                <option value="" selected="true">请选择</option>
+                <option value="0">在职</option>
+                <option value="1">离职中</option>
+                <option value="2">已离职</option>
+            </select>&nbsp;&nbsp;
+
             <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchEmployer()">查询</a>
         </div>
     </div>
