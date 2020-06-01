@@ -31,7 +31,7 @@ public class EmployerQuitControler {
         return userService.search(param);
     }
 
-    @PostMapping(value= "/save")
+    @PostMapping(value= "/add")
     public void save(@RequestBody UserSaveRequest param) throws Exception {
         userService.save(param);
     }

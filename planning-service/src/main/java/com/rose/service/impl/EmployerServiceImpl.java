@@ -1,7 +1,6 @@
 package com.rose.service.impl;
 
 import com.rose.common.data.base.PageList;
-import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
 import com.rose.data.entity.TbEmployer;
@@ -45,39 +44,24 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void save(TbEmployer param) {
-        validateEmployer(param);
+    public void add(TbEmployer param) {
+        addEmployerValidate(param);
         Date now = new Date();
-        if (param.getId() == null) {
-            param.setCreateDate(now);
-            param.setLastModified(now);
-            param.setDelFlag(0);
-        } else {
-            TbEmployer employer = employerRepository.findOne(param.getId());
-            if (employer == null) {
-                throw new BusinessException(ResponseResultCode.PARAM_ERROR);
-            }
-            param.setCreateDate(employer.getCreateDate());
-            param.setLastModified(now);
-            param.setBecomeRegularTime(employer.getBecomeRegularTime());
-            param.setBecomeRegularTime(employer.getBecomeRegularTime());
-            param.setQuitTime(employer.getQuitTime());
-            param.setSalaryAmount(employer.getSalaryAmount());
-            param.setSalaryDesc(employer.getSalaryDesc());
-            param.setSubsidyAmount(employer.getSubsidyAmount());
-            param.setSubsidyDesc(employer.getSubsidyDesc());
-            param.setSocialSecurityAmountPersonal(employer.getSocialSecurityAmountPersonal());
-            param.setSocialSecurityDescPersonal(employer.getSocialSecurityDescPersonal());
-            param.setSocialSecurityAmountCompany(employer.getSocialSecurityAmountCompany());
-            param.setSocialSecurityDescCompany(employer.getSocialSecurityDescCompany());
-            param.setAccumulationFundAmountPersonal(employer.getAccumulationFundAmountPersonal());
-            param.setAccumulationFundDescPersonal(employer.getAccumulationFundDescPersonal());
-            param.setAccumulationFundAmountCompany(employer.getAccumulationFundAmountCompany());
-            param.setAccumulationFundDescCompany(employer.getAccumulationFundDescCompany());
-            param.setEmployerRemark(employer.getEmployerRemark());
-            param.setDelFlag(employer.getDelFlag());
-        }
+        param.setId(null);
+        param.setCreateDate(now);
+        param.setLastModified(now);
+        param.setDelFlag(0);
         employerRepository.save(param);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateEmployerInfo(TbEmployer param) {
+        TbEmployer employer = employerRepository.findOne(param.getId());
+        if (employer == null) {
+            throw new BusinessException("对应员工信息不存在！");
+        }
+        employerRepository.updateInfo(param.getId(), param.getPhone(), param.getNowPlace(), param.getHighestEducation(), param.getGraduatedSchool(), param.getGraduatedDate(), param.getEmergencyContactPeople(), param.getEmergencyContactPeoplePhone(), param.getEmployerRemark(), new Date());
     }
 
     @Override
@@ -123,7 +107,7 @@ public class EmployerServiceImpl implements EmployerService {
             employer.setOnJobState(EmployerOnJobStateEnum.getIndex(employer.getOnJobStateStr()));
             employer.setHighestEducation(EmployerHighestEducationEnum.getIndex(employer.getHighestEducationStr()));
             try {
-                validateEmployer(employer);
+                addEmployerValidate(employer);
             } catch (BusinessException e) {
                 e.setMsg("第" + (x + 2) + "行，" + e.getMsg());
                 throw e;
@@ -132,7 +116,17 @@ public class EmployerServiceImpl implements EmployerService {
         employerRepository.save(list);
     }
 
-    private void validateEmployer(TbEmployer param) {
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delete(Long id) {
+        TbEmployer employer = employerRepository.findOne(id);
+        if (employer == null) {
+            throw new BusinessException("对应员工信息不存在！");
+        }
+        employerRepository.updateDelFlag(id);
+    }
+
+    private void addEmployerValidate(TbEmployer param) {
         if (StringUtil.isEmpty(param.getEmployerName())) {
             throw new BusinessException("姓名不能为空！");
         }
@@ -162,12 +156,6 @@ public class EmployerServiceImpl implements EmployerService {
         }
         if (param.getEntryCompanyTime() == null) {
             throw new BusinessException("入职时间不能为空！");
-        }
-        if (StringUtil.isEmpty(param.getGraduatedSchool())) {
-            throw new BusinessException("毕业院校不能为空！");
-        }
-        if (param.getGraduatedDate() == null) {
-            throw new BusinessException("毕业时间不能为空！");
         }
         if (StringUtil.isEmpty(param.getEmergencyContactPeople())) {
             throw new BusinessException("紧急联系人不能为空！");

@@ -82,7 +82,7 @@
                 if (authAdd == '请选择') {
                     alertWarn('请选择用户角色！');
                 } else {
-                    var result = ajaxSynchPostJson("user/userManage/save", {"loginName":loginNameAdd, "userName":userNameAdd, "upwd":passwordAdd, "roleGroupId":authAdd})
+                    var result = ajaxSynchPostJson("user/userManage/add", {"loginName":loginNameAdd, "userName":userNameAdd, "upwd":passwordAdd, "roleGroupId":authAdd})
                     if (result.code == '200') {
                         alertSuccess();
                         $('#manager_add').dialog('close');
@@ -100,7 +100,7 @@
                 var id = rows[0].id;
                 var userName = $('#userNameEditUser').val();
                 var auth = $('#authEditUser').combobox('getValue');
-                var result = ajaxSynchPostJson("user/userManage/save", {"id":id, "userName":userName, "roleGroupId":auth});
+                var result = ajaxSynchPostJson("user/userManage/add", {"id":id, "userName":userName, "roleGroupId":auth});
                 if (result.code == '200') {
                     alertSuccess();
                     $('#manager_editUser').dialog('close');

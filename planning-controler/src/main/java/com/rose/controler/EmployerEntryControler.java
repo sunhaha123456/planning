@@ -37,9 +37,9 @@ public class EmployerEntryControler {
         return employerService.search(param);
     }
 
-    @PostMapping(value= "/save")
-    public void save(@RequestBody TbEmployer param) {
-        employerService.save(param);
+    @PostMapping(value= "/add")
+    public void add(@RequestBody TbEmployer param) {
+        employerService.add(param);
     }
 
     @GetMapping(value= "/getEmployer")

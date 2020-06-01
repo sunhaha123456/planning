@@ -14,7 +14,9 @@ public interface EmployerService {
 
     PageList<TbEmployer> search(EmployerSearchRequest param) throws Exception;
 
-    void save(TbEmployer param);
+    void add(TbEmployer param);
+
+    void updateEmployerInfo(TbEmployer param);
 
     /**
      * 功能：获取详情
@@ -25,4 +27,6 @@ public interface EmployerService {
     TbEmployer getEmployer(Long id, boolean salaryFlag);
 
     void importFile(List<TbEmployer> list);
+
+    void delete(Long id);
 }
