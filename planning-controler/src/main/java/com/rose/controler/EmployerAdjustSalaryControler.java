@@ -37,7 +37,7 @@ public class EmployerAdjustSalaryControler {
 
     @GetMapping(value= "/getEmployer")
     public TbEmployer getEmployer(@RequestParam Long id) throws Exception {
-        return employerService.getEmployer(id, false);
+        return employerService.getEmployer(id, true);
     }
 
     @PostMapping(value= "/delete")
