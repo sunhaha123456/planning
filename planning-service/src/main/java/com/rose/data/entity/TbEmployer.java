@@ -132,38 +132,23 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
     @Column(name = "salary_amount", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '工资金额'")
     private BigDecimal salaryAmount;
 
-    @Column(name = "salary_desc", columnDefinition = "varchar(500) COMMENT '工资描述'")
-    private String salaryDesc;
-
     @Column(name = "subsidy_amount", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '补贴'")
     private BigDecimal subsidyAmount;
-
-    @Column(name = "subsidy_desc", columnDefinition = "varchar(500) COMMENT '补贴描述'")
-    private String subsidyDesc;
 
     @Column(name = "social_security_amount_personal", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '社保金额个人部分'")
     private BigDecimal socialSecurityAmountPersonal;
 
-    @Column(name = "social_security_desc_personal", columnDefinition = "varchar(500) COMMENT '社保个人部分描述'")
-    private String socialSecurityDescPersonal;
-
     @Column(name = "social_security_amount_company", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '社保金额企业部分'")
     private BigDecimal socialSecurityAmountCompany;
-
-    @Column(name = "social_security_desc_company", columnDefinition = "varchar(500) COMMENT '社保企业部分描述'")
-    private String socialSecurityDescCompany;
 
     @Column(name = "accumulation_fund_amount_personal", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '公积金金额个人部分'")
     private BigDecimal accumulationFundAmountPersonal;
 
-    @Column(name = "accumulation_fund_desc_personal", columnDefinition = "varchar(500) COMMENT '公积金个人部分描述'")
-    private String accumulationFundDescPersonal;
-
     @Column(name = "accumulation_fund_amount_company", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '公积金金额企业部分'")
     private BigDecimal accumulationFundAmountCompany;
 
-    @Column(name = "accumulation_fund_desc_company", columnDefinition = "varchar(500) COMMENT '公积金企业部分描述'")
-    private String accumulationFundDescCompany;
+    @Column(name = "income_desc", columnDefinition = "varchar(500) COMMENT '补贴描述'")
+    private String incomeDesc;
 
     @ExcelImport(group = {"userImport"})
     @Column(name = "employer_remark", columnDefinition = "varchar(600) COMMENT '备注'")

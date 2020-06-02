@@ -73,17 +73,12 @@ public class EmployerServiceImpl implements EmployerService {
             TbEmployer employerRet = new TbEmployer();
             BeanUtils.copyProperties(employerDb, employerRet);
             employerRet.setSalaryAmount(null);
-            employerRet.setSalaryDesc(null);
             employerRet.setSubsidyAmount(null);
-            employerRet.setSubsidyDesc(null);
             employerRet.setSocialSecurityAmountPersonal(null);
-            employerRet.setSocialSecurityDescPersonal(null);
             employerRet.setSocialSecurityAmountCompany(null);
-            employerRet.setSocialSecurityDescCompany(null);
             employerRet.setAccumulationFundAmountPersonal(null);
-            employerRet.setAccumulationFundDescPersonal(null);
             employerRet.setAccumulationFundAmountCompany(null);
-            employerRet.setAccumulationFundDescCompany(null);
+            employerRet.setIncomeDesc(null);
             return employerRet;
         }
     }
