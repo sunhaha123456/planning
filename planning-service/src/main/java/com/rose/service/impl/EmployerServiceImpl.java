@@ -56,7 +56,7 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void updateEmployerInfo(TbEmployer param) {
+    public void updateEmployerLimitInfo(TbEmployer param) {
         TbEmployer employer = employerRepository.findOne(param.getId());
         if (employer == null) {
             throw new BusinessException("对应员工信息不存在！");

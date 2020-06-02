@@ -16,7 +16,7 @@ public interface EmployerService {
 
     void add(TbEmployer param);
 
-    void updateEmployerInfo(TbEmployer param);
+    void updateEmployerLimitInfo(TbEmployer param);
 
     /**
      * 功能：获取详情

@@ -30,9 +30,9 @@ public class EmployerAdjustControler {
         return employerService.search(param);
     }
 
-    @PostMapping(value= "/updateEmployerInfo")
+    @PostMapping(value= "/updateEmployerLimitInfo")
     public void updateEmployerInfo(@RequestBody TbEmployer param) {
-        employerService.updateEmployerInfo(param);
+        employerService.updateEmployerLimitInfo(param);
     }
 
     @GetMapping(value= "/getEmployer")

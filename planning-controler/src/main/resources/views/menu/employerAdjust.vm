@@ -200,7 +200,7 @@
                 "emergencyContactPeoplePhone": $("#emergencyContactPeoplePhoneEdit").val(),
                 "employerRemark": $("#employerRemarkEdit").val()
             };
-            var result = ajaxSynchPostJson("user/employerAdjust/updateEmployerInfo", param);
+            var result = ajaxSynchPostJson("user/employerAdjust/updateEmployerLimitInfo", param);
             if (result.code == '200') {
                 alertSuccess();
                 $('#editUserForm').dialog('close');
@@ -241,7 +241,6 @@
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="detailEmployerShow()">查看</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editEmployerShow()">人员信息调整</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteUser()">删除</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
             姓名&nbsp;<input type="text" class="textbox" id="employerNameSearch" style="width:100px" />&nbsp;&nbsp;

@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 
 /**
- * 描述：薪酬调整 controller
+ * 描述：人员信息管理 controller
  * @author sunpeng
  */
 @Slf4j
 @RestController
-@RequestMapping("/user/employerAdjustSalary")
-public class EmployerAdjustSalaryControler {
+@RequestMapping("/user/employerManage")
+public class EmployerManageControler {
 
     @Inject
     private EmployerService employerService;
@@ -30,14 +30,14 @@ public class EmployerAdjustSalaryControler {
         return employerService.search(param);
     }
 
-    @PostMapping(value= "/updateEmployerInfo")
-    public void updateEmployerInfo(@RequestBody TbEmployer param) {
-        employerService.updateEmployerInfo(param);
-    }
-
     @GetMapping(value= "/getEmployer")
     public TbEmployer getEmployer(@RequestParam Long id) throws Exception {
-        return employerService.getEmployer(id, true);
+        return employerService.getEmployer(id, false);
+    }
+
+    @PostMapping(value= "/updateEmployerLimitInfo")
+    public void updateEmployerInfo(@RequestBody TbEmployer param) {
+        employerService.updateEmployerLimitInfo(param);
     }
 
     @PostMapping(value= "/delete")
