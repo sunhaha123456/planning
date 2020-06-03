@@ -13,7 +13,7 @@
     <script th:src="@{/static/myFun.js}"></script>
     <script th:inline="javascript">
         function searchEmployer() {
-            var result = ajaxSynchPostJson("user/employerAdjust/search", {
+            var result = ajaxSynchPostJson("user/employerSalaryPositionManage/search", {
                 "employerName": $('#employerNameSearch').val(), "phone": $('#employerPhoneSearch').val(),
                 "employerType": $('#employerTypeSearch').datetimebox('getValue'),
                 "onJobState": $('#onJobStateSearch').datetimebox('getValue'),
@@ -90,7 +90,7 @@
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var result = ajaxSynchPostJson("user/employerAdjust/search", {"employerName": $('#employerNameSearch').val(), "phone": $('#employerPhoneSearch').val(), "page":pageNumber, "rows":pageSize});
+                    var result = ajaxSynchPostJson("user/employerSalaryPositionManage/search", {"employerName": $('#employerNameSearch').val(), "phone": $('#employerPhoneSearch').val(), "page":pageNumber, "rows":pageSize});
                     if (result.code == '200') {
                         $('#manager').datagrid('loadData', result.data);
                     }
@@ -104,7 +104,7 @@
                 alertWarn("请先选中记录！");
                 return;
             }
-            var result = ajaxSynchGet("user/employerAdjust/getEmployer", {"id": rows[0].id});
+            var result = ajaxSynchGet("user/employerSalaryPositionManage/getEmployer", {"id": rows[0].id});
             if (result.code != '200') {
                 alertWarn(result.msg);
                 return;
@@ -127,8 +127,24 @@
             $('#graduatedDateDetail').datebox('setValue', result.data.graduatedDate);
             $('#emergencyContactPeopleDetail').val(result.data.emergencyContactPeople);
             $('#emergencyContactPeoplePhoneDetail').val(result.data.emergencyContactPeoplePhone);
+            if (result.data.becomeRegularTime == null || result.data.becomeRegularTime == '') {
+                $('#becomeRegularTimeDetail').val("未填写");
+            } else {
+                $('#becomeRegularTimeDetail').val(result.data.becomeRegularTime);
+            }
+            if (result.data.quitTime == null || result.data.quitTime == '') {
+                $('#quitTimeDetail').val("未填写");
+            } else {
+                $('#quitTimeDetail').val(result.data.quitTime);
+            }
+            $('#salaryAmountDetail').val(result.data.salaryAmount);
+            $('#subsidyAmountDetail').val(result.data.subsidyAmount);
+            $('#socialSecurityAmountPersonalDetail').val(result.data.socialSecurityAmountPersonal);
+            $('#socialSecurityAmountCompany').val(result.data.socialSecurityAmountCompany);
+            $('#accumulationFundAmountPersonalDetail').val(result.data.accumulationFundAmountPersonal);
+            $('#accumulationFundAmountCompanyDetail').val(result.data.accumulationFundAmountCompany);
+            $('#incomeDescDetail').val(result.data.incomeDesc);
             $('#employerRemarkDetail').val(result.data.employerRemark);
-
             $('#detailUserForm').dialog('open');
         }
 
@@ -138,7 +154,7 @@
                 alertWarn("请先选中记录！");
                 return;
             }
-            var result = ajaxSynchGet("user/employerAdjust/getEmployer", {"id": rows[0].id});
+            var result = ajaxSynchGet("user/employerSalaryPositionManage/getEmployer", {"id": rows[0].id});
             if (result.code != '200') {
                 alertWarn(result.msg);
                 return;
@@ -200,7 +216,7 @@
                 "emergencyContactPeoplePhone": $("#emergencyContactPeoplePhoneEdit").val(),
                 "employerRemark": $("#employerRemarkEdit").val()
             };
-            var result = ajaxSynchPostJson("user/employerAdjust/updateEmployerLimitInfo", param);
+            var result = ajaxSynchPostJson("user/employerSalaryPositionManage/updateEmployerInfo", param);
             if (result.code == '200') {
                 alertSuccess();
                 $('#editUserForm').dialog('close');
@@ -208,25 +224,6 @@
             } else {
                 alertWarn(result.msg);
             }
-        }
-
-        function deleteUser() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length == 0) {
-                alertWarn("请先选中记录！");
-                return;
-            }
-            $.messager.confirm('确定操作', "确定要删除吗？", function (flag) {
-                if (flag) {
-                    var result = ajaxSynchPostJson("user/employerAdjust/delete?id=" + rows[0].id, null);
-                    if (result.code == '200') {
-                        searchEmployer();
-                        alertInfo(result.msg);
-                    } else {
-                        alertWarn(result.msg);
-                    }
-                }
-            });
         }
 
         $(function () {
@@ -240,7 +237,7 @@
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="detailEmployerShow()">查看</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editEmployerShow()">人员信息调整</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editEmployerShow()">调整</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
             姓名&nbsp;<input type="text" class="textbox" id="employerNameSearch" style="width:100px" />&nbsp;&nbsp;
@@ -327,15 +324,33 @@
                 <option value="0">已离职</option>
             </select>
         </p>
+        <p>
+            &nbsp;&nbsp;转正日期&nbsp;<input id="becomeRegularTimeDetail" type="text" class="textbox" style="width:103px;" />
+            &nbsp;&nbsp;离职日期&nbsp;<input id="quitTimeDetail" type="text" class="textbox" style="width:103px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;工资金额&nbsp;<input id="salaryAmountDetail" type="text" class="textbox" style="width:103px;" />
+            &nbsp;&nbsp;补贴金额&nbsp;<input id="subsidyAmountDetail" type="text" class="textbox" style="width:103px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;社保个人部分&nbsp;<input id="socialSecurityAmountPersonalDetail" type="text" class="textbox" style="width:80px;" />
+            &nbsp;&nbsp;社保企业部分&nbsp;<input id="socialSecurityAmountCompanyDetail" type="text" class="textbox" style="width:80px;" />
+            &nbsp;&nbsp;公积金个人部分&nbsp;<input id="accumulationFundAmountPersonalDetail" type="text" class="textbox" style="width:80px;" />
+            &nbsp;&nbsp;公积金企业部分&nbsp;<input id="accumulationFundAmountCompanyDetail" type="text" class="textbox" style="width:80px;" />
+        </p>
+        <p>&nbsp;&nbsp;收入描述</p>
+        <p align="center">
+            <textarea id="incomeDescDetail" style="width:695px; height: 50px;" />
+        </p>
         <p>&nbsp;&nbsp;员工备注</p>
         <p align="center">
-            <textarea id="employerRemarkDetail" style="width:690px; height: 70px;" />
+            <textarea id="employerRemarkDetail" style="width:690px; height: 50px;" />
         </p>
     </div>
 </form>
 
 <form id="editUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
-      data-options="width:750,title:'人员信息调整',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
+      data-options="width:750,title:'薪酬职位调整',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#editUserForm').form('reset');
        },
@@ -365,6 +380,15 @@
             &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceEdit" type="text" class="textbox" style="width:300px;" />
         </p>
         <p>
+            &nbsp;&nbsp;部门&nbsp;<input id="departmentEdit" type="text" class="textbox" style="width:145px; background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;职位&nbsp;<input id="positionEdit" type="text" class="textbox" style="width:145px; background: #CCCCCC;" readonly="readonly" />
+        </p>
+        <p>
+            &nbsp;&nbsp;员工类别&nbsp;<input id="employerTypeEdit" type="text" class="textbox" style="width:145px; background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;在职状态&nbsp;<input id="onJobStateEdit" type="text" class="textbox" style="width:80px; background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeEdit" type="text" class="textbox" style="width:80px; background: #CCCCCC;" readonly="readonly" />
+        </p>
+        <p>
             &nbsp;&nbsp;最高学历&nbsp;
             <select class="easyui-combobox" id="highestEducationEdit" style="width:90px;">
                 <option value="0" selected="true">小学</option>
@@ -384,18 +408,9 @@
             &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleEdit" type="text" class="textbox" style="width:110px;" />
             &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneEdit" type="text" class="textbox" style="width:100px;" />
         </p>
-        <p>
-            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeEdit" type="text" class="textbox" style="width:80px; background: #CCCCCC;" readonly="readonly" />
-        </p>
-        <p>
-            &nbsp;&nbsp;所在部门&nbsp;<input id="departmentEdit" type="text" class="textbox" style="width:140px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;所在职位&nbsp;<input id="positionEdit" type="text" class="textbox" style="width:140px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;员工类别&nbsp;<input id="employerTypeEdit" type="text" class="textbox" style="width:85px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;在职状态&nbsp;<input id="onJobStateEdit" type="text" class="textbox" style="width:70px; background: #CCCCCC;" readonly="readonly" />
-        </p>
         <p>&nbsp;&nbsp;员工备注</p>
         <p align="center">
-            <textarea id="employerRemarkEdit" style="width:690px; height: 70px;" />
+            <textarea id="employerRemarkEdit" style="width:690px; height: 50px;" />
         </p>
     </div>
 </form>

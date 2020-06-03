@@ -122,20 +122,31 @@ public class JumpControler {
     }
 
     /**
-     * 功能：跳转人员调整
-     * @return
-     */
-    @GetMapping(value = "/user/menuManage/toEmployerAdjust")
-    public String toEmployerAdjust() {
-        return "menu/employerAdjust";
-    }
-
-    /**
      * 功能：跳转人员管理
      * @return
      */
-    @GetMapping(value = "/user/menuManage/toEmployereManage")
-    public String toEmployerDel() {
+    @GetMapping(value = "/user/menuManage/toEmployerManage")
+    public String toEmployerManage() {
         return "menu/employerManage";
     }
+
+    /**
+     * 功能：跳转薪酬岗位管理
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toEmployerSalaryPositionManage")
+    public String toEmployerSalaryPositionManage() {
+        return "menu/employerSalaryPositionManage";
+    }
+
+    /**
+     * 功能：跳转人事档案
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toEmployerArchive")
+    public String toEmployerArchive() {
+        return "menu/employerArchive";
+    }
+
+
 }

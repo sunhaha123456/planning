@@ -16,8 +16,8 @@ import javax.inject.Inject;
  */
 @Slf4j
 @RestController
-@RequestMapping("/user/employerAdjust")
-public class EmployerAdjustControler {
+@RequestMapping("/user/employerSalaryPositionManage")
+public class EmployerSalaryPositionManageControler {
 
     @Inject
     private EmployerService employerService;
@@ -30,18 +30,13 @@ public class EmployerAdjustControler {
         return employerService.search(param);
     }
 
-    @PostMapping(value= "/updateEmployerLimitInfo")
+    @PostMapping(value= "/updateEmployerInfo")
     public void updateEmployerInfo(@RequestBody TbEmployer param) {
         employerService.updateEmployerLimitInfo(param);
     }
 
     @GetMapping(value= "/getEmployer")
     public TbEmployer getEmployer(@RequestParam Long id) throws Exception {
-        return employerService.getEmployer(id, false);
-    }
-
-    @PostMapping(value= "/delete")
-    public void delete(@RequestParam Long id) {
-        employerService.delete(id);
+        return employerService.getEmployer(id, true);
     }
 }
