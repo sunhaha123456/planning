@@ -18,6 +18,8 @@ public interface EmployerService {
 
     void updateEmployerLimitInfo(TbEmployer param);
 
+    void updateEmployerSalaryPosition(TbEmployer param);
+
     /**
      * 功能：获取详情
      * @param id

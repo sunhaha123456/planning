@@ -185,7 +185,7 @@
             $('#employerTypeEdit').combobox('setValue', result.data.employerType);
             $('#onJobStateEdit').combobox('setValue', result.data.onJobState);
             $('#salaryAmountEdit').val(result.data.salaryAmount);
-            $('#subsidyAmountEdit').val(result.data.subsidyAmoun);
+            $('#subsidyAmountEdit').val(result.data.subsidyAmount);
             $('#socialSecurityAmountPersonalEdit').val(result.data.socialSecurityAmountPersonal);
             $('#socialSecurityAmountCompanyEdit').val(result.data.socialSecurityAmountCompany);
             $('#accumulationFundAmountPersonalEdit').val(result.data.accumulationFundAmountPersonal);
@@ -204,13 +204,20 @@
             }
             var param = {
                 "id": rows[0].id,
-                "phone": $("#phoneEdit").val(),
-                "nowPlace": $("#nowPlaceEdit").val(),
-                "highestEducation": $('#highestEducationEdit').combobox('getValue'),
-                "graduatedSchool": $("#graduatedSchoolEdit").val(),
-                "graduatedDate": $('#graduatedDateEdit').datetimebox('getValue'),
-                "emergencyContactPeople": $("#emergencyContactPeopleEdit").val(),
-                "emergencyContactPeoplePhone": $("#emergencyContactPeoplePhoneEdit").val(),
+                "entryCompanyTime": $('#entryCompanyTimeEdit').datetimebox('getValue'),
+                "becomeRegularTime": $('#becomeRegularTimeEdit').datetimebox('getValue'),
+                "quitTime": $('#quitTimeEdit').datetimebox('getValue'),
+                "department": $("#departmentEdit").val(),
+                "position": $("#positionEdit").val(),
+                "employerType": $('#employerTypeEdit').combobox('getValue'),
+                "onJobState": $('#onJobStateEdit').combobox('getValue'),
+                "salaryAmount": $("#salaryAmountEdit").val(),
+                "subsidyAmount": $("#subsidyAmountEdit").val(),
+                "socialSecurityAmountPersonal": $("#socialSecurityAmountPersonalEdit").val(),
+                "socialSecurityAmountCompany": $("#socialSecurityAmountCompanyEdit").val(),
+                "accumulationFundAmountPersonal": $("#accumulationFundAmountPersonalEdit").val(),
+                "accumulationFundAmountCompany": $("#accumulationFundAmountCompanyEdit").val(),
+                "incomeDesc": $("#incomeDescEdit").val(),
                 "employerRemark": $("#employerRemarkEdit").val()
             };
             var result = ajaxSynchPostJson("user/employerSalaryPositionManage/updateEmployerSalaryPosition", param);

@@ -64,6 +64,36 @@ public class EmployerServiceImpl implements EmployerService {
         employerRepository.updateInfo(param.getId(), param.getPhone(), param.getNowPlace(), param.getHighestEducation(), param.getGraduatedSchool(), param.getGraduatedDate(), param.getEmergencyContactPeople(), param.getEmergencyContactPeoplePhone(), param.getEmployerRemark(), new Date());
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateEmployerSalaryPosition(TbEmployer param) {
+        TbEmployer employer = employerRepository.findOne(param.getId());
+        if (employer == null) {
+            throw new BusinessException("对应员工信息不存在！");
+        }
+
+        Date now = new Date();
+
+        employer.setLastModified(now);
+        employer.setEntryCompanyTime(param.getEntryCompanyTime());
+        employer.setBecomeRegularTime(param.getBecomeRegularTime());
+        employer.setQuitTime(param.getQuitTime());
+        employer.setDepartment(param.getDepartment());
+        employer.setPosition(param.getPosition());
+        employer.setEmployerType(param.getEmployerType());
+        employer.setOnJobState(param.getOnJobState());
+        employer.setSalaryAmount(param.getSalaryAmount());
+        employer.setSubsidyAmount(param.getSubsidyAmount());
+        employer.setSocialSecurityAmountPersonal(param.getSocialSecurityAmountPersonal());
+        employer.setSocialSecurityAmountCompany(param.getSocialSecurityAmountCompany());
+        employer.setAccumulationFundAmountPersonal(param.getAccumulationFundAmountPersonal());
+        employer.setAccumulationFundAmountCompany(param.getAccumulationFundAmountCompany());
+        employer.setIncomeDesc(param.getIncomeDesc());
+        employer.setEmployerRemark(param.getEmployerRemark());
+
+        employerRepository.save(employer);
+    }
+
     @Override
     public TbEmployer getEmployer(Long id, boolean salaryFlag) {
         TbEmployer employerDb = employerRepository.findOne(id);

@@ -37,6 +37,6 @@ public class EmployerSalaryPositionManageControler {
 
     @PostMapping(value= "/updateEmployerSalaryPosition")
     public void updateEmployerSalaryPosition(@RequestBody TbEmployer param) {
-        employerService.updateEmployerLimitInfo(param);
+        employerService.updateEmployerSalaryPosition(param);
     }
 }
