@@ -37,14 +37,14 @@ public class EmployerEntryControler {
         return employerService.search(param);
     }
 
-    @PostMapping(value= "/add")
-    public void add(@RequestBody TbEmployer param) {
-        employerService.add(param);
-    }
-
     @GetMapping(value= "/getEmployer")
     public TbEmployer getEmployer(@RequestParam Long id) throws Exception {
         return employerService.getEmployer(id, false);
+    }
+
+    @PostMapping(value= "/add")
+    public void add(@RequestBody TbEmployer param) {
+        employerService.add(param);
     }
 
     @PostMapping("/importFile")

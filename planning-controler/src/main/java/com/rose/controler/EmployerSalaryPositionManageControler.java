@@ -30,13 +30,13 @@ public class EmployerSalaryPositionManageControler {
         return employerService.search(param);
     }
 
-    @PostMapping(value= "/updateEmployerInfo")
-    public void updateEmployerInfo(@RequestBody TbEmployer param) {
-        employerService.updateEmployerLimitInfo(param);
-    }
-
     @GetMapping(value= "/getEmployer")
     public TbEmployer getEmployer(@RequestParam Long id) throws Exception {
         return employerService.getEmployer(id, true);
+    }
+
+    @PostMapping(value= "/updateEmployerSalaryPosition")
+    public void updateEmployerSalaryPosition(@RequestBody TbEmployer param) {
+        employerService.updateEmployerLimitInfo(param);
     }
 }

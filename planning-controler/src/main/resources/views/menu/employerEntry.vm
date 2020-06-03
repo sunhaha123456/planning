@@ -156,7 +156,11 @@
             $('#positionDetail').val(result.data.position);
             $('#employerTypeDetail').combobox('setValue', result.data.employerType);
             $('#onJobStateDetail').combobox('setValue', result.data.onJobState);
-            $('#entryCompanyTimeDetail').datebox('setValue', result.data.entryCompanyTime);
+            if (result.data.entryCompanyTime == null || result.data.entryCompanyTime == '') {
+                $('#entryCompanyTimeDetail').val("未填写");
+            } else {
+                $('#entryCompanyTimeDetail').val(result.data.entryCompanyTime);
+            }
             $('#highestEducationDetail').combobox('setValue', result.data.highestEducation);
             $('#graduatedSchoolDetail').val(result.data.graduatedSchool);
             $('#graduatedDateDetail').datebox('setValue', result.data.graduatedDate);
@@ -354,7 +358,7 @@
             &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneDetail" type="text" class="textbox" style="width:100px;" />
         </p>
         <p>
-            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeDetail" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeDetail" style="width:100px" />
         </p>
         <p>
             &nbsp;&nbsp;所在部门&nbsp;<input id="departmentDetail" type="text" class="textbox" style="width:140px;" />
