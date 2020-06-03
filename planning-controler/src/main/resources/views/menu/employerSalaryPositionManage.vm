@@ -395,9 +395,9 @@
             &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneEdit" type="text" class="textbox" style="width:100px;background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
         </p>
         <p>
-            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeEdit" class="easyui-datebox" data-options="editable:false" style="width:100px" /
-            &nbsp;&nbsp;转正日期&nbsp;<input id="becomeRegularTimeEdit" class="easyui-datebox" data-options="editable:false" style="width:103px" /
-            &nbsp;&nbsp;离职日期&nbsp;<input id="quitTimeEdit" class="easyui-datebox" data-options="editable:false" style="width:103px" /
+            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeEdit" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+            &nbsp;&nbsp;转正日期&nbsp;<input id="becomeRegularTimeEdit" class="easyui-datebox" data-options="editable:false" style="width:103px" />
+            &nbsp;&nbsp;离职日期&nbsp;<input id="quitTimeEdit" class="easyui-datebox" data-options="editable:false" style="width:103px" />
         </p>
         <p>
             &nbsp;&nbsp;所在部门&nbsp;<input id="departmentEdit" type="text" class="textbox" style="width:140px;" />
