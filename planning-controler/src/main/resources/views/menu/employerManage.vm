@@ -154,23 +154,11 @@
             $('#departmentEdit').val(result.data.department);
             $('#positionEdit').val(result.data.position);
 
-            if (result.data.employerType == 0) {
-                $('#employerTypeEdit').val("正式员工");
-            } else if (result.data.employerType == 1) {
-                $('#employerTypeEdit').val("试用期员工");
-            } else if (result.data.employerType == 2) {
-                $('#employerTypeEdit').val("实习期员工");
-            } else if (result.data.employerType == 3) {
-                $('#employerTypeEdit').val("临时雇员");
-            }
+            $('#employerTypeEdit').combobox('setValue', result.data.employerType);
+            $("#employerTypeEdit").combobox({disabled: true});
 
-            if (result.data.onJobState == 0) {
-                $('#onJobStateEdit').val("在职");
-            } else if (result.data.onJobState == 1) {
-                $('#onJobStateEdit').val("离职中");
-            } else if (result.data.onJobState == 2) {
-                $('#onJobStateEdit').val("已离职");
-            }
+            $('#onJobStateEdit').combobox('setValue', result.data.onJobState);
+            $("#onJobStateEdit").combobox({disabled: true});
 
             $('#entryCompanyTimeEdit').val(result.data.entryCompanyTime);
             $('#highestEducationEdit').combobox('setValue', result.data.highestEducation);
@@ -316,7 +304,7 @@
             &nbsp;&nbsp;所在职位&nbsp;<input id="positionDetail" type="text" class="textbox" style="width:140px;" />
             &nbsp;&nbsp;员工类别&nbsp;
             <select class="easyui-combobox" id="employerTypeDetail" style="width:85px;">
-                <option value="1" selected="true">试用期员工</option>
+                <option value="1">试用期员工</option>
                 <option value="2">实习期员工</option>
                 <option value="3">临时雇员</option>
                 <option value="0">正式员工</option>
@@ -355,14 +343,14 @@
 				}]">
     <div style="overflow-y: auto; height: 330px;">
         <p>
-            &nbsp;&nbsp;姓名&nbsp;<input id="employerNameEdit" type="text" class="textbox" style="width:85px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;性别&nbsp;<input id="genderEdit" type="text" class="textbox" style="width:50px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoEdit" type="text" class="textbox" style="width:140px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateEdit" type="text" class="textbox" style="width:100px; background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;姓名&nbsp;<input id="employerNameEdit" type="text" class="textbox" style="width:85px; background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
+            &nbsp;&nbsp;性别&nbsp;<input id="genderEdit" type="text" class="textbox" style="width:50px; background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
+            &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoEdit" type="text" class="textbox" style="width:140px; background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
+            &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateEdit" type="text" class="textbox" style="width:100px; background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
             &nbsp;&nbsp;手机&nbsp;<input id="phoneEdit" type="text" class="textbox" style="width:100px;" />
         </p>
         <p>
-            &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceEdit" type="text" class="textbox" style="width:300px; background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceEdit" type="text" class="textbox" style="width:300px; background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
             &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceEdit" type="text" class="textbox" style="width:300px;" />
         </p>
         <p>
@@ -386,13 +374,24 @@
             &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneEdit" type="text" class="textbox" style="width:100px;" />
         </p>
         <p>
-            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeEdit" type="text" class="textbox" style="width:80px; background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeEdit" type="text" class="textbox" style="width:80px; background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
         </p>
         <p>
-            &nbsp;&nbsp;所在部门&nbsp;<input id="departmentEdit" type="text" class="textbox" style="width:140px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;所在职位&nbsp;<input id="positionEdit" type="text" class="textbox" style="width:140px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;员工类别&nbsp;<input id="employerTypeEdit" type="text" class="textbox" style="width:85px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;在职状态&nbsp;<input id="onJobStateEdit" type="text" class="textbox" style="width:70px; background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;所在部门&nbsp;<input id="departmentEdit" type="text" class="textbox" style="width:140px; background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
+            &nbsp;&nbsp;所在职位&nbsp;<input id="positionEdit" type="text" class="textbox" style="width:140px; background: #E3E3E3; color: #6D6D6D" readonly="readonly" />
+            &nbsp;&nbsp;员工类别&nbsp;
+            <select class="easyui-combobox" id="employerTypeEdit" style="width:85px;">
+                <option value="1">试用期员工</option>
+                <option value="2">实习期员工</option>
+                <option value="3">临时雇员</option>
+                <option value="0">正式员工</option>
+            </select>
+            &nbsp;&nbsp;在职状态&nbsp;
+            <select class="easyui-combobox" id="onJobStateEdit" style="width:70px;">
+                <option value="0">在职</option>
+                <option value="0">离职中</option>
+                <option value="0">已离职</option>
+            </select>
         </p>
         <p>&nbsp;&nbsp;员工备注</p>
         <p align="center">

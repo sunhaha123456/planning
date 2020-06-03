@@ -167,27 +167,12 @@
             $('#phoneEdit').val(result.data.phone);
             $('#nativePlaceEdit').val(result.data.nativePlace);
             $('#nowPlaceEdit').val(result.data.nowPlace);
+
+            $('#highestEducationEdit').combobox('setValue', result.data.highestEducation);
+            $("#highestEducationEdit").combobox({disabled: true});
+
             $('#departmentEdit').val(result.data.department);
             $('#positionEdit').val(result.data.position);
-
-            if (result.data.employerType == 0) {
-                $('#employerTypeEdit').val("正式员工");
-            } else if (result.data.employerType == 1) {
-                $('#employerTypeEdit').val("试用期员工");
-            } else if (result.data.employerType == 2) {
-                $('#employerTypeEdit').val("实习期员工");
-            } else if (result.data.employerType == 3) {
-                $('#employerTypeEdit').val("临时雇员");
-            }
-
-            if (result.data.onJobState == 0) {
-                $('#onJobStateEdit').val("在职");
-            } else if (result.data.onJobState == 1) {
-                $('#onJobStateEdit').val("离职中");
-            } else if (result.data.onJobState == 2) {
-                $('#onJobStateEdit').val("已离职");
-            }
-
             $('#entryCompanyTimeEdit').val(result.data.entryCompanyTime);
             $('#highestEducationEdit').combobox('setValue', result.data.highestEducation);
             $('#graduatedSchoolEdit').val(result.data.graduatedSchool);
@@ -350,7 +335,7 @@
 </form>
 
 <form id="editUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
-      data-options="width:750,title:'薪酬职位调整',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
+      data-options="width:750,title:'调整',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#editUserForm').form('reset');
        },
@@ -373,24 +358,15 @@
             &nbsp;&nbsp;性别&nbsp;<input id="genderEdit" type="text" class="textbox" style="width:50px; background: #CCCCCC;" readonly="readonly" />
             &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoEdit" type="text" class="textbox" style="width:140px; background: #CCCCCC;" readonly="readonly" />
             &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateEdit" type="text" class="textbox" style="width:100px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;手机&nbsp;<input id="phoneEdit" type="text" class="textbox" style="width:100px;" />
+            &nbsp;&nbsp;手机&nbsp;<input id="phoneEdit" type="text" class="textbox" style="width:100px;background: #CCCCCC;" readonly="readonly" />
         </p>
         <p>
             &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceEdit" type="text" class="textbox" style="width:300px; background: #CCCCCC;" readonly="readonly" />
             &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceEdit" type="text" class="textbox" style="width:300px;" />
         </p>
         <p>
-            &nbsp;&nbsp;部门&nbsp;<input id="departmentEdit" type="text" class="textbox" style="width:145px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;职位&nbsp;<input id="positionEdit" type="text" class="textbox" style="width:145px; background: #CCCCCC;" readonly="readonly" />
-        </p>
-        <p>
-            &nbsp;&nbsp;员工类别&nbsp;<input id="employerTypeEdit" type="text" class="textbox" style="width:145px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;在职状态&nbsp;<input id="onJobStateEdit" type="text" class="textbox" style="width:80px; background: #CCCCCC;" readonly="readonly" />
-            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeEdit" type="text" class="textbox" style="width:80px; background: #CCCCCC;" readonly="readonly" />
-        </p>
-        <p>
             &nbsp;&nbsp;最高学历&nbsp;
-            <select class="easyui-combobox" id="highestEducationEdit" style="width:90px;">
+            <select class="easyui-combobox" id="highestEducationEdit" style="width:90px;background: #CCCCCC;" readonly="readonly" />
                 <option value="0" selected="true">小学</option>
                 <option value="1">初中</option>
                 <option value="2">高中</option>
@@ -401,12 +377,50 @@
                 <option value="7">硕士研究生</option>
                 <option value="8">博士研究生</option>
             </select>
-            &nbsp;&nbsp;毕业院校&nbsp;<input id="graduatedSchoolEdit" type="text" class="textbox" style="width:135px;" />
-            &nbsp;&nbsp;毕业时间&nbsp;<input id="graduatedDateEdit" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+            &nbsp;&nbsp;毕业院校&nbsp;<input id="graduatedSchoolEdit" type="text" class="textbox" style="width:135px;background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;毕业时间&nbsp;<input id="graduatedDateEdit" type="text" class="textbox" style="width:100px;background: #CCCCCC;" readonly="readonly" />
         </p>
         <p>
-            &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleEdit" type="text" class="textbox" style="width:110px;" />
-            &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneEdit" type="text" class="textbox" style="width:100px;" />
+            &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleEdit" type="text" class="textbox" style="width:110px;background: #CCCCCC;" readonly="readonly" />
+            &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneEdit" type="text" class="textbox" style="width:100px;background: #CCCCCC;" readonly="readonly" />
+        </p>
+        <p>
+            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeEdit" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+        </p>
+        <p>
+            &nbsp;&nbsp;所在部门&nbsp;<input id="departmentEdit" type="text" class="textbox" style="width:140px;" />
+            &nbsp;&nbsp;所在职位&nbsp;<input id="positionEdit" type="text" class="textbox" style="width:140px;" />
+            &nbsp;&nbsp;员工类别&nbsp;
+            <select class="easyui-combobox" id="employerTypeEdit" style="width:85px;">
+                <option value="1" selected="true">试用期员工</option>
+                <option value="2">实习期员工</option>
+                <option value="3">临时雇员</option>
+                <option value="0">正式员工</option>
+            </select>
+            &nbsp;&nbsp;在职状态&nbsp;
+            <select class="easyui-combobox" id="onJobStateEdit" style="width:70px;">
+                <option value="0">在职</option>
+                <option value="0">离职中</option>
+                <option value="0">已离职</option>
+            </select>
+        </p>
+        <p>
+            &nbsp;&nbsp;转正日期&nbsp;<input id="becomeRegularTimeEdit" type="text" class="textbox" style="width:103px;" />
+            &nbsp;&nbsp;离职日期&nbsp;<input id="quitTimeEdit" type="text" class="textbox" style="width:103px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;工资金额&nbsp;<input id="salaryAmountEdit" type="text" class="textbox" style="width:103px;" />
+            &nbsp;&nbsp;补贴金额&nbsp;<input id="subsidyAmountEdit" type="text" class="textbox" style="width:103px;" />
+        </p>
+        <p>
+            &nbsp;&nbsp;社保个人部分&nbsp;<input id="socialSecurityAmountPersonalEdit" type="text" class="textbox" style="width:80px;" />
+            &nbsp;&nbsp;社保企业部分&nbsp;<input id="socialSecurityAmountCompanyEdit" type="text" class="textbox" style="width:80px;" />
+            &nbsp;&nbsp;公积金个人部分&nbsp;<input id="accumulationFundAmountPersonalEdit" type="text" class="textbox" style="width:80px;" />
+            &nbsp;&nbsp;公积金企业部分&nbsp;<input id="accumulationFundAmountCompanyEdit" type="text" class="textbox" style="width:80px;" />
+        </p>
+        <p>&nbsp;&nbsp;收入描述</p>
+        <p align="center">
+            <textarea id="incomeDescEdit" style="width:695px; height: 50px;" />
         </p>
         <p>&nbsp;&nbsp;员工备注</p>
         <p align="center">
