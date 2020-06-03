@@ -3,11 +3,14 @@ package com.rose.service.impl;
 import com.rose.common.data.base.PageList;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.StringUtil;
+import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.TbEmployer;
+import com.rose.data.entity.TbEmployerAdjustHistory;
 import com.rose.data.enums.EmployerHighestEducationEnum;
 import com.rose.data.enums.EmployerOnJobStateEnum;
 import com.rose.data.enums.EmployerTyepEnum;
 import com.rose.data.to.request.EmployerSearchRequest;
+import com.rose.repository.EmployerAdjustHistoryRepository;
 import com.rose.repository.EmployerRepository;
 import com.rose.repository.EmployerRepositoryCustom;
 import com.rose.service.EmployerService;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +33,10 @@ public class EmployerServiceImpl implements EmployerService {
     private EmployerRepository employerRepository;
     @Inject
     private EmployerRepositoryCustom employerRepositoryCustom;
+    @Inject
+    private EmployerAdjustHistoryRepository employerAdjustHistoryRepository;
+    @Inject
+    private ValueHolder valueHolder;
 
     @Override
     public PageList<TbEmployer> search(EmployerSearchRequest param) throws Exception {
@@ -51,6 +59,7 @@ public class EmployerServiceImpl implements EmployerService {
         param.setCreateDate(now);
         param.setLastModified(now);
         param.setDelFlag(0);
+        addEmployerSalaryInit(param);
         employerRepository.save(param);
     }
 
@@ -92,6 +101,28 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setEmployerRemark(param.getEmployerRemark());
 
         employerRepository.save(employer);
+
+        TbEmployerAdjustHistory employerAdjustHistory = new TbEmployerAdjustHistory();
+        employerAdjustHistory.setCreateDate(now);
+        employerAdjustHistory.setLastModified(now);
+        employerAdjustHistory.setOperateUserId(valueHolder.getUserIdHolder());
+        employerAdjustHistory.setOperateInfo("调整人员信息");
+        employerAdjustHistory.setEntryCompanyTime(param.getEntryCompanyTime());
+        employerAdjustHistory.setBecomeRegularTime(param.getBecomeRegularTime());
+        employerAdjustHistory.setQuitTime(param.getQuitTime());
+        employerAdjustHistory.setDepartment(param.getDepartment());
+        employerAdjustHistory.setPosition(param.getPosition());
+        employerAdjustHistory.setEmployerType(param.getEmployerType());
+        employerAdjustHistory.setOnJobState(param.getOnJobState());
+        employerAdjustHistory.setSalaryAmount(param.getSalaryAmount());
+        employerAdjustHistory.setSubsidyAmount(param.getSubsidyAmount());
+        employerAdjustHistory.setSocialSecurityAmountPersonal(param.getSocialSecurityAmountPersonal());
+        employerAdjustHistory.setSocialSecurityAmountCompany(param.getSocialSecurityAmountCompany());
+        employerAdjustHistory.setAccumulationFundAmountPersonal(param.getAccumulationFundAmountPersonal());
+        employerAdjustHistory.setAccumulationFundAmountCompany(param.getAccumulationFundAmountCompany());
+        employerAdjustHistory.setIncomeDesc(param.getIncomeDesc());
+        employerAdjustHistory.setEmployerRemark(param.getEmployerRemark());
+        employerAdjustHistoryRepository.save(employerAdjustHistory);
     }
 
     @Override
@@ -131,6 +162,7 @@ public class EmployerServiceImpl implements EmployerService {
             employer.setEmployerType(EmployerTyepEnum.getIndex(employer.getEmployerTypeStr()));
             employer.setOnJobState(EmployerOnJobStateEnum.getIndex(employer.getOnJobStateStr()));
             employer.setHighestEducation(EmployerHighestEducationEnum.getIndex(employer.getHighestEducationStr()));
+            addEmployerSalaryInit(employer);
             try {
                 addEmployerValidate(employer);
             } catch (BusinessException e) {
@@ -149,6 +181,16 @@ public class EmployerServiceImpl implements EmployerService {
             throw new BusinessException("对应员工信息不存在！");
         }
         employerRepository.updateDelFlag(id);
+
+        Date now = new Date();
+
+        TbEmployerAdjustHistory employerAdjustHistory = new TbEmployerAdjustHistory();
+        employerAdjustHistory.setCreateDate(now);
+        employerAdjustHistory.setLastModified(now);
+        employerAdjustHistory.setOperateUserId(valueHolder.getUserIdHolder());
+        employerAdjustHistory.setOperateInfo("删除人员信息");
+        employerAdjustHistory.setEmployerId(id);
+        employerAdjustHistoryRepository.save(employerAdjustHistory);
     }
 
     private void addEmployerValidate(TbEmployer param) {
@@ -188,5 +230,18 @@ public class EmployerServiceImpl implements EmployerService {
         if (StringUtil.isEmpty(param.getEmergencyContactPeoplePhone())) {
             throw new BusinessException("紧急联系人手机不能为空！");
         }
+    }
+
+    private void addEmployerSalaryInit(TbEmployer param) {
+        param.setEntryCompanyTime(null);
+        param.setBecomeRegularTime(null);
+        param.setQuitTime(null);
+        param.setSalaryAmount(BigDecimal.ZERO);
+        param.setSubsidyAmount(BigDecimal.ZERO);
+        param.setSocialSecurityAmountPersonal(BigDecimal.ZERO);
+        param.setSocialSecurityAmountCompany(BigDecimal.ZERO);
+        param.setAccumulationFundAmountPersonal(BigDecimal.ZERO);
+        param.setAccumulationFundAmountCompany(BigDecimal.ZERO);
+        param.setIncomeDesc(null);
     }
 }

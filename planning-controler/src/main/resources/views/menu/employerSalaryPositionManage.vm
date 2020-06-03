@@ -184,12 +184,12 @@
             $('#positionEdit').val(result.data.position);
             $('#employerTypeEdit').combobox('setValue', result.data.employerType);
             $('#onJobStateEdit').combobox('setValue', result.data.onJobState);
-            $('#salaryAmountEdit').val(result.data.salaryAmount);
-            $('#subsidyAmountEdit').val(result.data.subsidyAmount);
-            $('#socialSecurityAmountPersonalEdit').val(result.data.socialSecurityAmountPersonal);
-            $('#socialSecurityAmountCompanyEdit').val(result.data.socialSecurityAmountCompany);
-            $('#accumulationFundAmountPersonalEdit').val(result.data.accumulationFundAmountPersonal);
-            $('#accumulationFundAmountCompanyEdit').val(result.data.accumulationFundAmountCompany);
+            $("#salaryAmountEdit").numberbox('setValue', result.data.salaryAmount);
+            $("#subsidyAmountEdit").numberbox('setValue', result.data.subsidyAmount);
+            $("#socialSecurityAmountPersonalEdit").numberbox('setValue', result.data.socialSecurityAmountPersonal);
+            $("#socialSecurityAmountCompanyEdit").numberbox('setValue', result.data.socialSecurityAmountCompany);
+            $("#accumulationFundAmountPersonalEdit").numberbox('setValue', result.data.accumulationFundAmountPersonal);
+            $("#accumulationFundAmountCompanyEdit").numberbox('setValue', result.data.accumulationFundAmountCompany);
             $('#incomeDescEdit').val(result.data.incomeDesc);
             $('#employerRemarkEdit').val(result.data.employerRemark);
 
@@ -202,32 +202,36 @@
                 alertWarn("请先选中记录！");
                 return;
             }
-            var param = {
-                "id": rows[0].id,
-                "entryCompanyTime": $('#entryCompanyTimeEdit').datetimebox('getValue'),
-                "becomeRegularTime": $('#becomeRegularTimeEdit').datetimebox('getValue'),
-                "quitTime": $('#quitTimeEdit').datetimebox('getValue'),
-                "department": $("#departmentEdit").val(),
-                "position": $("#positionEdit").val(),
-                "employerType": $('#employerTypeEdit').combobox('getValue'),
-                "onJobState": $('#onJobStateEdit').combobox('getValue'),
-                "salaryAmount": $("#salaryAmountEdit").val(),
-                "subsidyAmount": $("#subsidyAmountEdit").val(),
-                "socialSecurityAmountPersonal": $("#socialSecurityAmountPersonalEdit").val(),
-                "socialSecurityAmountCompany": $("#socialSecurityAmountCompanyEdit").val(),
-                "accumulationFundAmountPersonal": $("#accumulationFundAmountPersonalEdit").val(),
-                "accumulationFundAmountCompany": $("#accumulationFundAmountCompanyEdit").val(),
-                "incomeDesc": $("#incomeDescEdit").val(),
-                "employerRemark": $("#employerRemarkEdit").val()
-            };
-            var result = ajaxSynchPostJson("user/employerSalaryPositionManage/updateEmployerSalaryPosition", param);
-            if (result.code == '200') {
-                alertSuccess();
-                $('#editUserForm').dialog('close');
-                searchEmployer();
-            } else {
-                alertWarn(result.msg);
-            }
+            $.messager.confirm('确定操作', "调整变更操作将会记录到员工的档案中！确定调整吗？", function (flag) {
+                if (flag) {
+                    var param = {
+                        "id": rows[0].id,
+                        "entryCompanyTime": $('#entryCompanyTimeEdit').datetimebox('getValue'),
+                        "becomeRegularTime": $('#becomeRegularTimeEdit').datetimebox('getValue'),
+                        "quitTime": $('#quitTimeEdit').datetimebox('getValue'),
+                        "department": $("#departmentEdit").val(),
+                        "position": $("#positionEdit").val(),
+                        "employerType": $('#employerTypeEdit').combobox('getValue'),
+                        "onJobState": $('#onJobStateEdit').combobox('getValue'),
+                        "salaryAmount": $("#salaryAmountEdit").val(),
+                        "subsidyAmount": $("#subsidyAmountEdit").val(),
+                        "socialSecurityAmountPersonal": $("#socialSecurityAmountPersonalEdit").val(),
+                        "socialSecurityAmountCompany": $("#socialSecurityAmountCompanyEdit").val(),
+                        "accumulationFundAmountPersonal": $("#accumulationFundAmountPersonalEdit").val(),
+                        "accumulationFundAmountCompany": $("#accumulationFundAmountCompanyEdit").val(),
+                        "incomeDesc": $("#incomeDescEdit").val(),
+                        "employerRemark": $("#employerRemarkEdit").val()
+                    };
+                    var result = ajaxSynchPostJson("user/employerSalaryPositionManage/updateEmployerSalaryPosition", param);
+                    if (result.code == '200') {
+                        alertSuccess();
+                        $('#editUserForm').dialog('close');
+                        searchEmployer();
+                    } else {
+                        alertWarn(result.msg);
+                    }
+                }
+            });
         }
 
         $(function () {
@@ -424,14 +428,14 @@
             </select>
         </p>
         <p>
-            &nbsp;&nbsp;工资金额&nbsp;<input id="salaryAmountEdit" type="text" class="textbox" style="width:103px;" />
-            &nbsp;&nbsp;补贴金额&nbsp;<input id="subsidyAmountEdit" type="text" class="textbox" style="width:103px;" />
+        &nbsp;&nbsp;工资金额&nbsp;<input id="salaryAmountEdit" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:103px;" />
+        &nbsp;&nbsp;补贴金额&nbsp;<input id="subsidyAmountEdit" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:103px;" />
         </p>
         <p>
-            &nbsp;&nbsp;社保个人部分&nbsp;<input id="socialSecurityAmountPersonalEdit" type="text" class="textbox" style="width:80px;" />
-            &nbsp;&nbsp;社保企业部分&nbsp;<input id="socialSecurityAmountCompanyEdit" type="text" class="textbox" style="width:80px;" />
-            &nbsp;&nbsp;公积金个人部分&nbsp;<input id="accumulationFundAmountPersonalEdit" type="text" class="textbox" style="width:80px;" />
-            &nbsp;&nbsp;公积金企业部分&nbsp;<input id="accumulationFundAmountCompanyEdit" type="text" class="textbox" style="width:80px;" />
+            &nbsp;&nbsp;社保个人部分&nbsp;<input id="socialSecurityAmountPersonalEdit" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+            &nbsp;&nbsp;社保企业部分&nbsp;<input id="socialSecurityAmountCompanyEdit" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+            &nbsp;&nbsp;公积金个人部分&nbsp;<input id="accumulationFundAmountPersonalEdit" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+            &nbsp;&nbsp;公积金企业部分&nbsp;<input id="accumulationFundAmountCompanyEdit" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
         </p>
         <p>&nbsp;&nbsp;收入描述</p>
         <p align="center">
