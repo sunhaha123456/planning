@@ -119,7 +119,7 @@ public class TbEmployer extends BaseDataIdLongDelFlag implements Serializable {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "entry_time", columnDefinition="datetime COMMENT '转正日期'")
+    @Column(name = "become_regular_time", columnDefinition="datetime COMMENT '转正日期'")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date becomeRegularTime;
 

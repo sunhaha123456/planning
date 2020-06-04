@@ -1,11 +1,14 @@
 package com.rose.controler;
 
 import com.rose.common.data.base.PageList;
+import com.rose.common.data.response.ResponseResultCode;
+import com.rose.common.exception.BusinessException;
 import com.rose.data.entity.TbEmployer;
+import com.rose.data.entity.TbFlowInstanceOperateHistory;
 import com.rose.data.to.request.EmployerSearchRequest;
+import com.rose.data.to.request.FlowInstanceRequest;
 import com.rose.service.EmployerService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -21,9 +24,6 @@ public class EmployerSalaryPositionManageControler {
 
     @Inject
     private EmployerService employerService;
-
-    @Value("${file.upload.maxSize}")
-    private Long fileMaxSize;
 
     @PostMapping(value= "/search")
     public PageList<TbEmployer> search(@RequestBody EmployerSearchRequest param) throws Exception {

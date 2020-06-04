@@ -1,7 +1,7 @@
 package com.rose.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.rose.common.data.base.BaseDataIdLongDelFlag;
+import com.rose.common.data.base.BaseDataIdLong;
 import com.rose.common.util.excel.ExcelImport;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,12 +15,15 @@ import java.util.Date;
 @lombok.Data
 @Entity
 @Table(name = "tb_employer_adjust_history")
-public class TbEmployerAdjustHistory extends BaseDataIdLongDelFlag implements Serializable {
+public class TbEmployerAdjustHistory extends BaseDataIdLong implements Serializable {
 
     @Column(name = "operate_user_id", columnDefinition = "BIGINT COMMENT '操作用户id'")
     private Long operateUserId;
 
-    @Column(name = "operate_info", columnDefinition = "VARCHAR(600) COMMENT '操作信息'")
+    @Transient
+    private String operateUserName;
+
+    @Column(name = "operate_info", columnDefinition = "VARCHAR(255) COMMENT '操作信息'")
     private String operateInfo;
 
     @Column(name = "employer_id", columnDefinition = "BIGINT COMMENT '员工id'")
@@ -35,7 +38,7 @@ public class TbEmployerAdjustHistory extends BaseDataIdLongDelFlag implements Se
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "entry_time", columnDefinition="datetime COMMENT '转正日期'")
+    @Column(name = "become_regular_time", columnDefinition="datetime COMMENT '转正日期'")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date becomeRegularTime;
 
@@ -55,9 +58,15 @@ public class TbEmployerAdjustHistory extends BaseDataIdLongDelFlag implements Se
     @Column(name = "employer_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '员工类别'")
     private Integer employerType;
 
+    @Transient
+    private String employerTypeStr;
+
     // 在职状态     0在职  1离职中  2已离职
     @Column(name = "on_job_state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '在职状态'")
     private Integer onJobState;
+
+    @Transient
+    private String onJobStateStr;
 
     @Column(name = "salary_amount", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '工资金额'")
     private BigDecimal salaryAmount;

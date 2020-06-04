@@ -141,12 +141,12 @@
             $('#positionDetail').val(result.data.position);
             $('#employerTypeDetail').combobox('setValue', result.data.employerType);
             $('#onJobStateDetail').combobox('setValue', result.data.onJobState);
-            $('#salaryAmountDetail').val(result.data.salaryAmount);
-            $('#subsidyAmountDetail').val(result.data.subsidyAmount);
-            $('#socialSecurityAmountPersonalDetail').val(result.data.socialSecurityAmountPersonal);
-            $('#socialSecurityAmountCompany').val(result.data.socialSecurityAmountCompany);
-            $('#accumulationFundAmountPersonalDetail').val(result.data.accumulationFundAmountPersonal);
-            $('#accumulationFundAmountCompanyDetail').val(result.data.accumulationFundAmountCompany);
+            $("#salaryAmountDetail").numberbox('setValue', result.data.salaryAmount);
+            $("#subsidyAmountDetail").numberbox('setValue', result.data.subsidyAmount);
+            $("#socialSecurityAmountPersonalDetail").numberbox('setValue', result.data.socialSecurityAmountPersonal);
+            $("#socialSecurityAmountCompanyDetail").numberbox('setValue', result.data.socialSecurityAmountCompany);
+            $("#accumulationFundAmountPersonalDetail").numberbox('setValue', result.data.accumulationFundAmountPersonal);
+            $("#accumulationFundAmountCompanyDetail").numberbox('setValue', result.data.accumulationFundAmountCompany);
             $('#incomeDescDetail').val(result.data.incomeDesc);
             $('#employerRemarkDetail').val(result.data.employerRemark);
             $('#detailUserForm').dialog('open');
@@ -335,14 +335,14 @@
             </select>
         </p>
         <p>
-            &nbsp;&nbsp;工资金额&nbsp;<input id="salaryAmountDetail" type="text" class="textbox" style="width:103px;" />
-            &nbsp;&nbsp;补贴金额&nbsp;<input id="subsidyAmountDetail" type="text" class="textbox" style="width:103px;" />
+            &nbsp;&nbsp;工资金额&nbsp;<input id="salaryAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:103px;" />
+            &nbsp;&nbsp;补贴金额&nbsp;<input id="subsidyAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:103px;" />
         </p>
         <p>
-            &nbsp;&nbsp;社保个人部分&nbsp;<input id="socialSecurityAmountPersonalDetail" type="text" class="textbox" style="width:80px;" />
-            &nbsp;&nbsp;社保企业部分&nbsp;<input id="socialSecurityAmountCompanyDetail" type="text" class="textbox" style="width:80px;" />
-            &nbsp;&nbsp;公积金个人部分&nbsp;<input id="accumulationFundAmountPersonalDetail" type="text" class="textbox" style="width:80px;" />
-            &nbsp;&nbsp;公积金企业部分&nbsp;<input id="accumulationFundAmountCompanyDetail" type="text" class="textbox" style="width:80px;" />
+            &nbsp;&nbsp;社保个人部分&nbsp;<input id="socialSecurityAmountPersonalDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+            &nbsp;&nbsp;社保企业部分&nbsp;<input id="socialSecurityAmountCompanyDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+            &nbsp;&nbsp;公积金个人部分&nbsp;<input id="accumulationFundAmountPersonalDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+            &nbsp;&nbsp;公积金企业部分&nbsp;<input id="accumulationFundAmountCompanyDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
         </p>
         <p>&nbsp;&nbsp;收入描述</p>
         <p align="center">

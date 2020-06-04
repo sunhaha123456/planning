@@ -2,6 +2,8 @@ package com.rose.service;
 
 import com.rose.common.data.base.PageList;
 import com.rose.data.entity.TbEmployer;
+import com.rose.data.entity.TbEmployerAdjustHistory;
+import com.rose.data.to.request.AdjustHistoryRequest;
 import com.rose.data.to.request.EmployerSearchRequest;
 
 import java.util.List;
@@ -31,4 +33,6 @@ public interface EmployerService {
     void importFile(List<TbEmployer> list);
 
     void delete(Long id);
+
+    PageList<TbEmployerAdjustHistory> getChangeHistory(AdjustHistoryRequest param) throws Exception;
 }

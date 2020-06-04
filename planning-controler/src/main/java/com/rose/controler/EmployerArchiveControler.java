@@ -1,7 +1,11 @@
 package com.rose.controler;
 
 import com.rose.common.data.base.PageList;
+import com.rose.common.data.response.ResponseResultCode;
+import com.rose.common.exception.BusinessException;
 import com.rose.data.entity.TbEmployer;
+import com.rose.data.entity.TbEmployerAdjustHistory;
+import com.rose.data.to.request.AdjustHistoryRequest;
 import com.rose.data.to.request.EmployerSearchRequest;
 import com.rose.service.EmployerService;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +39,11 @@ public class EmployerArchiveControler {
         return employerService.getEmployer(id, true);
     }
 
-    @PostMapping(value= "/updateEmployerSalaryPosition")
-    public void updateEmployerSalaryPosition(@RequestBody TbEmployer param) {
-        employerService.updateEmployerSalaryPosition(param);
+    @PostMapping(value= "/getAdjustHistory")
+    public PageList<TbEmployerAdjustHistory> getChangeHistory(@RequestBody AdjustHistoryRequest param) throws Exception {
+        if (param == null || param.getId() == null) {
+            throw new BusinessException(ResponseResultCode.PARAM_ERROR);
+        }
+        return employerService.getChangeHistory(param);
     }
 }

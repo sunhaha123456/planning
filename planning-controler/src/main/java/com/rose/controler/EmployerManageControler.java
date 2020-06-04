@@ -5,7 +5,6 @@ import com.rose.data.entity.TbEmployer;
 import com.rose.data.to.request.EmployerSearchRequest;
 import com.rose.service.EmployerService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -21,9 +20,6 @@ public class EmployerManageControler {
 
     @Inject
     private EmployerService employerService;
-
-    @Value("${file.upload.maxSize}")
-    private Long fileMaxSize;
 
     @PostMapping(value= "/search")
     public PageList<TbEmployer> search(@RequestBody EmployerSearchRequest param) throws Exception {
