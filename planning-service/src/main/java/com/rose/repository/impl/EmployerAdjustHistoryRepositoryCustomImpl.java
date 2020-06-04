@@ -30,6 +30,7 @@ public class EmployerAdjustHistoryRepositoryCustomImpl extends BaseRepositoryImp
         sql.append(" from tb_employer_adjust_history a left join tb_sys_user b on a.operate_user_id = b.id ");
         sql.append(" where a.employer_id = ? ");
         paramList.add(employerId);
+        sql.append(" order by a.create_date desc ");
         return queryPage(sql.toString(), TbEmployerAdjustHistory.class, new PageUtil(pageNo, pageSize), null, paramList.toArray());
     }
 }

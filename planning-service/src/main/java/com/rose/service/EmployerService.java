@@ -35,4 +35,6 @@ public interface EmployerService {
     void delete(Long id);
 
     PageList<TbEmployerAdjustHistory> getChangeHistory(AdjustHistoryRequest param) throws Exception;
+
+    TbEmployerAdjustHistory getAdjustHistoryDetail(Long id);
 }

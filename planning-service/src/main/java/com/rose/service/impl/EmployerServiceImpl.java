@@ -248,6 +248,11 @@ public class EmployerServiceImpl implements EmployerService {
         return page;
     }
 
+    @Override
+    public TbEmployerAdjustHistory getAdjustHistoryDetail(Long id) {
+        return employerAdjustHistoryRepository.findOne(id);
+    }
+
     private void addEmployerValidate(TbEmployer param) {
         if (StringUtil.isEmpty(param.getEmployerName())) {
             throw new BusinessException("姓名不能为空！");

@@ -46,4 +46,9 @@ public class EmployerArchiveControler {
         }
         return employerService.getChangeHistory(param);
     }
+
+    @GetMapping(value= "/getAdjustHistoryDetail")
+    public TbEmployerAdjustHistory getAdjustHistoryDetail(@RequestParam Long id) throws Exception {
+        return employerService.getAdjustHistoryDetail(id);
+    }
 }
