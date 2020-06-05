@@ -425,7 +425,7 @@
     <p style="margin-top: 10px;">
         &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="showAdjustHistoryDetail()">查看详情</a>
     </p>
-    <p align="center" style="margin-top: 20px;">
+    <p align="center" style="margin-top: 20px; font-size: 18px">
         姓名：<span id="employerNameHistory"></span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;性别：<span id="genderHistory"></span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;身份证：<span id="idCardNoHistory"></span>
