@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 
 /**
- * 描述：人员调整 controller
+ * 描述：薪酬岗位管理 controller
  * @author sunpeng
  */
 @Slf4j
 @RestController
-@RequestMapping("/user/employerSalaryPositionManage")
-public class EmployerSalaryPositionManageControler {
+@RequestMapping("/user/employerSalaryManage")
+public class EmployerSalaryManageControler {
 
     @Inject
     private EmployerService employerService;

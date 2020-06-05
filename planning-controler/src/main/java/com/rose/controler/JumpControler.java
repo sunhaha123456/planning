@@ -134,9 +134,9 @@ public class JumpControler {
      * 功能：跳转薪酬岗位管理
      * @return
      */
-    @GetMapping(value = "/user/menuManage/toEmployerSalaryPositionManage")
+    @GetMapping(value = "/user/menuManage/toEmployerSalaryManage")
     public String toEmployerSalaryPositionManage() {
-        return "menu/employerSalaryPositionManage";
+        return "menu/employerSalaryManage";
     }
 
     /**
@@ -148,5 +148,48 @@ public class JumpControler {
         return "menu/employerArchive";
     }
 
+    /**
+     * 功能：跳转财务模块的员工信息查看
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toFinanceEmployerInfo")
+    public String toFinanceEmployerInfo() {
+        return "menu/financeEmployerInfo";
+    }
 
+    /**
+     * 功能：跳转财务模块的薪酬发放查看
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toSalaryPaid")
+    public String toSalaryPaid() {
+        return "menu/salaryPaid";
+    }
+
+    /**
+     * 功能：跳转财务模块的其他支出查看
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toOtherPaid")
+    public String toOtherPaid() {
+        return "menu/otherPaid";
+    }
+
+    /**
+     * 功能：跳转财务模块的营业收入查看
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toBusinessIncome")
+    public String toBusinessIncome() {
+        return "menu/businessIncome";
+    }
+
+    /**
+     * 功能：跳转财务模块的财务报表
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toFinanceStatement")
+    public String toFinanceStatement() {
+        return "menu/financeStatement";
+    }
 }
