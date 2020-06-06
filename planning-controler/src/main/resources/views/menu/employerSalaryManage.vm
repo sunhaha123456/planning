@@ -244,7 +244,7 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="detailEmployerShow()">薪酬岗位查看</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailEmployerShow()">薪酬岗位查看</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editEmployerShow()">薪酬岗位调整</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
@@ -272,7 +272,7 @@
 </table>
 
 <form id="detailUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
-      data-options="width:750,title:'薪酬岗位查看',modal:true,closed:true,cache:false,iconCls:'icon-add',
+      data-options="width:750,title:'薪酬岗位查看',modal:true,closed:true,cache:false,iconCls:'icon-tip',
        onClose:function () {
             $('#detailUserForm').form('reset');
        }">

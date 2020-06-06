@@ -13,6 +13,9 @@ public interface EmployerRepository extends CrudRepository<TbEmployer, Long> {
     @Query(value = "select * from tb_employer where id = :id and del_flag = 0", nativeQuery = true)
     TbEmployer findOne(@Param(value = "id") Long id);
 
+    @Query(value = "select * from tb_employer where id_card_no = :idCardNo and del_flag = 0", nativeQuery = true)
+    TbEmployer findByIdCardNo(@Param(value = "idCardNo") String idCardNo);
+
     @Modifying
     @Query(value = "update tb_employer set del_flag = 1 where id = :id", nativeQuery = true)
     int updateDelFlag(@Param(value = "id") Long id);

@@ -263,6 +263,10 @@ public class EmployerServiceImpl implements EmployerService {
         if (StringUtil.isEmpty(param.getIdCardNo())) {
             throw new BusinessException("身份证错误！");
         }
+        TbEmployer employer = employerRepository.findByIdCardNo(param.getIdCardNo());
+        if (employer != null) {
+            throw new BusinessException("身份证" + param.getIdCardNo() + "重复！");
+        }
         if (param.getBirthdayDate() == null) {
             throw new BusinessException("生日不能为空！");
         }

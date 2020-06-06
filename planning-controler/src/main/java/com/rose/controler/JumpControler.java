@@ -149,47 +149,57 @@ public class JumpControler {
     }
 
     /**
-     * 功能：跳转财务模块的员工信息查看
+     * 功能：跳转工资薪酬模块的员工信息查看
      * @return
      */
-    @GetMapping(value = "/user/menuManage/toFinanceEmployerInfo")
-    public String toFinanceEmployerInfo() {
-        return "menu/financeEmployerInfo";
+    @GetMapping(value = "/user/menuManage/toEmployerSalaryInfo")
+    public String toEmployerSalaryInfo() {
+        return "menu/employerSalaryInfo";
     }
 
     /**
-     * 功能：跳转财务模块的薪酬发放查看
+     * 功能：跳转工资薪酬模块的员工发薪录入
      * @return
      */
-    @GetMapping(value = "/user/menuManage/toSalaryPaid")
-    public String toSalaryPaid() {
-        return "menu/salaryPaid";
+    @GetMapping(value = "/user/menuManage/toEmployerSalaryPaidEntry")
+    public String toEmployerSalaryPaidEntry() {
+        return "menu/employerSalaryPaidEntry";
     }
 
     /**
-     * 功能：跳转财务模块的其他支出查看
+     * 功能：跳转工资薪酬模块的员工发薪管理
      * @return
      */
-    @GetMapping(value = "/user/menuManage/toOtherPaid")
-    public String toOtherPaid() {
-        return "menu/otherPaid";
+    @GetMapping(value = "/user/menuManage/toEmployerSalaryPaidManage")
+    public String toEmployerSalaryPaidManage() {
+        return "menu/employerSalaryPaidManage";
     }
 
-    /**
-     * 功能：跳转财务模块的营业收入查看
-     * @return
-     */
-    @GetMapping(value = "/user/menuManage/toBusinessIncome")
-    public String toBusinessIncome() {
-        return "menu/businessIncome";
-    }
-
-    /**
-     * 功能：跳转财务模块的财务报表
-     * @return
-     */
-    @GetMapping(value = "/user/menuManage/toFinanceStatement")
-    public String toFinanceStatement() {
-        return "menu/financeStatement";
-    }
+//
+//    /**
+//     * 功能：跳转财务模块的其他支出查看
+//     * @return
+//     */
+//    @GetMapping(value = "/user/menuManage/toOtherPaid")
+//    public String toOtherPaid() {
+//        return "menu/otherPaid";
+//    }
+//
+//    /**
+//     * 功能：跳转财务模块的营业收入查看
+//     * @return
+//     */
+//    @GetMapping(value = "/user/menuManage/toBusinessIncome")
+//    public String toBusinessIncome() {
+//        return "menu/businessIncome";
+//    }
+//
+//    /**
+//     * 功能：跳转财务模块的财务报表
+//     * @return
+//     */
+//    @GetMapping(value = "/user/menuManage/toFinanceStatement")
+//    public String toFinanceStatement() {
+//        return "menu/financeStatement";
+//    }
 }
