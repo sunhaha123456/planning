@@ -50,12 +50,6 @@ public class TbCompanyPaidSalary extends BaseDataIdLongDelFlag implements Serial
     @Column(name = "position", columnDefinition = "varchar(255) COMMENT '职位'")
     private String position;
 
-    @Column(name = "employer_type", columnDefinition = "varchar(255) COMMENT '员工类别'")
-    private String employerType;
-
-    @Column(name = "on_job_state", columnDefinition = "varchar(255) COMMENT '在职状态'")
-    private String onJobState;
-
     @Column(name = "total_paid_amount", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '总支付金额'")
     private BigDecimal totalPaidAmount;
 
@@ -88,4 +82,7 @@ public class TbCompanyPaidSalary extends BaseDataIdLongDelFlag implements Serial
 
     @Column(name = "accumulation_company_paid", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '公积金企业承担金额'")
     private BigDecimal accumulatioCompanyPaid;
+
+    @Transient
+    private TbEmployer employer;
 }

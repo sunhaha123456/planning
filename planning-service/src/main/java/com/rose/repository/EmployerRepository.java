@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
+import java.util.List;
 
 public interface EmployerRepository extends CrudRepository<TbEmployer, Long> {
 
@@ -15,6 +16,9 @@ public interface EmployerRepository extends CrudRepository<TbEmployer, Long> {
 
     @Query(value = "select * from tb_employer where id_card_no = :idCardNo and del_flag = 0", nativeQuery = true)
     TbEmployer findByIdCardNo(@Param(value = "idCardNo") String idCardNo);
+
+    @Query(value = "select * from tb_employer where on_job_state != 2 and del_flag = 0", nativeQuery = true)
+    List<TbEmployer> listNotQuit();
 
     @Modifying
     @Query(value = "update tb_employer set del_flag = 1 where id = :id", nativeQuery = true)

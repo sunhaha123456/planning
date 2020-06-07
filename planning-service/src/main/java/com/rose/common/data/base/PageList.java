@@ -9,6 +9,8 @@ public class PageList<T> {
 
     private List<T> rows;
 
+    private Object otherData;
+
     public PageList() {
 
     }

@@ -12,15 +12,24 @@
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
     <script th:inline="javascript">
-        function searchEmployer() {
-            var result = ajaxSynchPostJson("user/employerSalaryInfo/search", {
-                "employerName": $('#employerNameSearch').val(), "phone": $('#employerPhoneSearch').val(),
-                "employerType": $('#employerTypeSearch').datetimebox('getValue'),
-                "onJobState": $('#onJobStateSearch').datetimebox('getValue'),
-                "page":1, "rows":10});
+        function searchEmployerSalaryPaid() {
+            var salaryDate = "";
+            var year =$('#salaryYearSearch').val();
+            if (year != null && year != "") {
+                var month = $('#salaryMonthSearch').datetimebox('getValue');
+                salaryDate = year + "-" + month;
+            }
+            var result = ajaxSynchPostJson("user/employerSalaryPaidManage/search", {
+                "employerName": $('#employerNameSearch').val(),
+                "phone": $('#employerPhoneSearch').val(),
+                "idCardNo": $('#employerIdCardNoSearch').val(),
+                "salaryDate": salaryDate,
+                "page":1, "rows":10
+            });
             if (result.code == '200') {
                 dataGridPageInit();
                 $('#manager').datagrid('loadData', result.data);
+                $("#companyTotalSpendShow").text(result.data.otherData);
             } else {
                 alertWarn(result.msg);
             }
@@ -43,41 +52,59 @@
                         hidden : true
                     },
                     {
+                        field : 'salaryDate',
+                        title : '工资日期',
+                        width : 40
+                    },
+                    {
                         field : 'employerName',
                         title : '姓名',
-                        width : 70
+                        width : 35
                     },
                     {
-                        field : 'gender',
-                        title : '性别',
-                        width : 25,
-                        formatter: function(value,row,index){
-                            if (value == 0){
-                                return "男";
-                            } else {
-                                return "女";
-                            }
-                        }
+                        field : 'idCardNo',
+                        title : '身份证',
+                        width : 80
                     },
                     {
-                        field : 'phone',
-                        title : '手机号',
-                        width : 100
+                        field : 'totalPaidAmount',
+                        title : '总支付金额',
+                        width : 35
                     },
                     {
-                        field : 'position',
-                        title : '职位',
-                        width : 100
+                        field : 'paidSalaryAmount',
+                        title : '支付工资',
+                        width : 35
                     },
                     {
-                        field : 'employerTypeStr',
-                        title : '员工类别',
-                        width : 70
+                        field : 'paidSubsidyAmount',
+                        title : '支付补贴',
+                        width : 35
                     },
                     {
-                        field : 'onJobStateStr',
-                        title : '在职状态',
+                        field : 'deductionAmount',
+                        title : '扣款金额',
+                        width : 35
+                    },
+                    {
+                        field : 'socialPersonalPaid',
+                        title : '社保个人承担',
                         width : 50
+                    },
+                    {
+                        field : 'socialCompanyPaid',
+                        title : '社保企业承担',
+                        width : 50
+                    },
+                    {
+                        field : 'accumulationPersonalPaid',
+                        title : '公积金个人承担',
+                        width : 55
+                    },
+                    {
+                        field : 'accumulatioCompanyPaid',
+                        title : '公积金企业承担',
+                        width : 55
                     }
                 ]]
             });
@@ -90,7 +117,19 @@
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var result = ajaxSynchPostJson("user/employerSalaryInfo/search", {"employerName": $('#employerNameSearch').val(), "phone": $('#employerPhoneSearch').val(), "page":pageNumber, "rows":pageSize});
+                    var salaryDate = "";
+                    var year =$('#salaryYearSearch').val();
+                    if (year != null && year != "") {
+                        var month = $('#salaryMonthSearch').datetimebox('getValue');
+                        salaryDate = year + "-" + month;
+                    }
+                    var result = ajaxSynchPostJson("user/employerSalaryPaidManage/search", {
+                        "employerName": $('#employerNameSearch').val(),
+                        "phone": $('#employerPhoneSearch').val(),
+                        "idCardNo": $('#employerIdCardNoSearch').val(),
+                        "salaryDate": salaryDate,
+                        "page":pageNumber, "rows":pageSize
+                    });
                     if (result.code == '200') {
                         $('#manager').datagrid('loadData', result.data);
                     }
@@ -98,63 +137,80 @@
             });
         }
 
-        function detailEmployerShow() {
+        function detailSalaryShow() {
             var rows = $('#manager').datagrid('getSelections');
             if (rows.length == 0) {
                 alertWarn("请先选中记录！");
                 return;
             }
-            var result = ajaxSynchGet("user/employerSalaryInfo/getEmployer", {"id": rows[0].id});
+            var result = ajaxSynchGet("user/employerSalaryPaidManage/getEmployerSalaryPaid", {"id": rows[0].id});
             if (result.code != '200') {
                 alertWarn(result.msg);
                 return;
             }
 
-            $("#employerNameDetail").val(result.data.employerName);
-            $('#genderDetail').combobox('setValue', result.data.gender);
-            $('#idCardNoDetail').val(result.data.idCardNo);
-            $('#birthdayDateDetail').datebox('setValue', result.data.birthdayDate);
-            $('#phoneDetail').val(result.data.phone);
-            $('#nativePlaceDetail').val(result.data.nativePlace);
-            $('#nowPlaceDetail').val(result.data.nowPlace);
-            $('#highestEducationDetail').combobox('setValue', result.data.highestEducation);
-            $('#graduatedSchoolDetail').val(result.data.graduatedSchool);
-            $('#graduatedDateDetail').datebox('setValue', result.data.graduatedDate);
-            $('#emergencyContactPeopleDetail').val(result.data.emergencyContactPeople);
-            $('#emergencyContactPeoplePhoneDetail').val(result.data.emergencyContactPeoplePhone);
-            if (result.data.entryCompanyTime == null || result.data.entryCompanyTime == '') {
-                $('#entryCompanyTimeDetail').val("未填写");
-            } else {
-                $('#entryCompanyTimeDetail').val(result.data.entryCompanyTime);
-            }
-            if (result.data.becomeRegularTime == null || result.data.becomeRegularTime == '') {
-                $('#becomeRegularTimeDetail').val("未填写");
-            } else {
-                $('#becomeRegularTimeDetail').val(result.data.becomeRegularTime);
-            }
-            if (result.data.quitTime == null || result.data.quitTime == '') {
-                $('#quitTimeDetail').val("未填写");
-            } else {
-                $('#quitTimeDetail').val(result.data.quitTime);
-            }
+            $("#employerNameDetail").val(result.data.employer.employerName);
+            $('#genderDetail').val(result.data.employer.gender == '0' ? "男" : "女");
+            $('#idCardNoDetail').val(result.data.employer.idCardNo);
+            $('#phoneDetail').val(result.data.employer.phone);
+
+            $('#entryCompanyTimeDetail').val(result.data.employer.entryCompanyTime);
+            $('#becomeRegularTimeDetail').val(result.data.employer.becomeRegularTime);
+            $('#quitTimeDetail').val(result.data.employer.quitTime);
+
             $('#departmentDetail').val(result.data.department);
             $('#positionDetail').val(result.data.position);
-            $('#employerTypeDetail').combobox('setValue', result.data.employerType);
-            $('#onJobStateDetail').combobox('setValue', result.data.onJobState);
+
             $("#salaryAmountDetail").numberbox('setValue', result.data.salaryAmount);
             $("#subsidyAmountDetail").numberbox('setValue', result.data.subsidyAmount);
-            $("#socialSecurityAmountPersonalDetail").numberbox('setValue', result.data.socialSecurityAmountPersonal);
-            $("#socialSecurityAmountCompanyDetail").numberbox('setValue', result.data.socialSecurityAmountCompany);
-            $("#accumulationFundAmountPersonalDetail").numberbox('setValue', result.data.accumulationFundAmountPersonal);
-            $("#accumulationFundAmountCompanyDetail").numberbox('setValue', result.data.accumulationFundAmountCompany);
-            $('#incomeDescDetail').val(result.data.incomeDesc);
-            $('#employerRemarkDetail').val(result.data.employerRemark);
-            $('#detailUserForm').dialog('open');
+
+            $("#paidSalaryAmountDetail").numberbox('setValue', result.data.paidSalaryAmount);
+            $("#paidSubsidyAmountDetail").numberbox('setValue', result.data.paidSubsidyAmount);
+
+            $("#socialSecurityAmountPersonalDetail").numberbox('setValue', result.data.socialPersonalPaid);
+            $("#socialSecurityAmountCompanyDetail").numberbox('setValue', result.data.socialCompanyPaid);
+
+            $("#accumulationFundAmountPersonalDetail").numberbox('setValue', result.data.accumulationPersonalPaid);
+            $("#accumulationFundAmountCompanyDetail").numberbox('setValue', result.data.accumulatioCompanyPaid);
+
+            $("#deductionAmountDetail").numberbox('setValue', result.data.deductionAmount);
+            $("#deductionRemarkDetail").val(result.data.deductionRemark);
+
+            $("#entryUserRemarkDetail").val(result.data.entryUserRemark);
+
+            $('#detailSalaryForm').dialog('open');
+        }
+
+        function deleteSalary() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length == 0) {
+                alertWarn("请先选中记录！");
+                return;
+            }
+            $.messager.confirm('确定操作', "确定要删除吗？", function (flag) {
+                if (flag) {
+                    var result = ajaxSynchPostJson("user/employerSalaryPaidManage/delete?id=" + rows[0].id, null);
+                    if (result.code == '200') {
+                        searchEmployerSalaryPaid();
+                        alertInfo(result.msg);
+                    } else {
+                        alertWarn(result.msg);
+                    }
+                }
+            });
+        }
+
+        function webPageInit() {
+            var year = new Date().Format("yyyy");
+            var month = new Date().Format("MM");
+            $("#salaryYearSearch").val(year);
+            $('#salaryMonthSearch').combobox('setValue', month);
         }
 
         $(function () {
             dataGridInit();
-            searchEmployer();
+            searchEmployerSalaryPaid();
+            webPageInit();
         });
     </script>
 </head>
@@ -162,57 +218,46 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="detailEmployerShow()">人员信息查看</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailSalaryShow()">查看</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteSalary()">删除</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
             姓名&nbsp;<input type="text" class="textbox" id="employerNameSearch" style="width:100px" />&nbsp;&nbsp;
             手机号&nbsp;<input type="text" class="textbox" id="employerPhoneSearch" style="width:100px" />&nbsp;&nbsp;
-            工资年月&nbsp;<input id="salaryDate" class="easyui-datetimebox" data-options="editable:false" style="width:150px" />&nbsp;&nbsp;
-            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchEmployer()">查询</a>
+            身份证&nbsp;<input type="text" class="textbox" id="employerIdCardNoSearch" style="width:100px" />&nbsp;&nbsp;
+            工资日期&nbsp;
+            <input id="salaryYearSearch" placeholder="年份" type="text" class="textbox" style="width:50px" />&nbsp;
+            <select id="salaryMonthSearch" class="easyui-combobox" style="width:50px;">
+                <option value="01">1月</option>
+                <option value="02">2月</option>
+                <option value="02">3月</option>
+                <option value="02">4月</option>
+                <option value="02">5月</option>
+                <option value="02">6月</option>
+                <option value="02">7月</option>
+                <option value="02">8月</option>
+                <option value="02">9月</option>
+                <option value="02">10月</option>
+                <option value="02">11月</option>
+                <option value="02">12月</option>
+            </select>&nbsp;&nbsp;
+            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchEmployerSalaryPaid()">查询</a>&nbsp;&nbsp;
+            公司总支付&nbsp;<span id="companyTotalSpendShow"/>
         </div>
     </div>
 </table>
 
-<form id="detailUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
-      data-options="width:750,title:'薪酬岗位查看',modal:true,closed:true,cache:false,iconCls:'icon-add',
+<form id="detailSalaryForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
+      data-options="width:750,title:'查看',modal:true,closed:true,cache:false,iconCls:'icon-tip',
        onClose:function () {
-            $('#detailUserForm').form('reset');
+            $('#detailSalaryForm').form('reset');
        }">
     <div style="overflow-y: auto; height: 330px;">
         <p>
             &nbsp;&nbsp;姓名&nbsp;<input id="employerNameDetail" type="text" class="textbox" style="width:85px;" />
-            &nbsp;&nbsp;性别&nbsp;
-            <select class="easyui-combobox" id="genderDetail" style="width:50px;">
-                <option value="0">男</option>
-                <option value="1">女</option>
-            </select>
+            &nbsp;&nbsp;性别&nbsp;<input id="genderDetail" type="text" style="width:50px;" />
             &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoDetail" type="text" class="textbox" style="width:140px;" />
-            &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateDetail" class="easyui-datebox" data-options="editable:false" style="width:100px" />
             &nbsp;&nbsp;手机&nbsp;<input id="phoneDetail" type="text" class="textbox" style="width:100px;" />
-        </p>
-        <p>
-            &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceDetail" type="text" class="textbox" style="width:300px;" />
-            &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceDetail" type="text" class="textbox" style="width:300px;" />
-        </p>
-        <p>
-            &nbsp;&nbsp;最高学历&nbsp;
-            <select class="easyui-combobox" id="highestEducationDetail" style="width:90px;">
-                <option value="0">小学</option>
-                <option value="1">初中</option>
-                <option value="2">高中</option>
-                <option value="3">中转</option>
-                <option value="4">高职</option>
-                <option value="5">大专</option>
-                <option value="6">本科</option>
-                <option value="7">硕士研究生</option>
-                <option value="8">博士研究生</option>
-            </select>
-            &nbsp;&nbsp;毕业院校&nbsp;<input id="graduatedSchoolDetail" type="text" class="textbox" style="width:135px;" />
-            &nbsp;&nbsp;毕业时间&nbsp;<input id="graduatedDateDetail" class="easyui-datebox" data-options="editable:false" style="width:100px" />
-        </p>
-        <p>
-            &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleDetail" type="text" class="textbox" style="width:82px;" />
-            &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneDetail" type="text" class="textbox" style="width:93px;" />
         </p>
         <p>
             &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeDetail" type="text" class="textbox" style="width:100px;" />
@@ -220,39 +265,33 @@
             &nbsp;&nbsp;离职日期&nbsp;<input id="quitTimeDetail" type="text" class="textbox" style="width:103px;" />
         </p>
         <p>
-            &nbsp;&nbsp;所在部门&nbsp;<input id="departmentDetail" type="text" class="textbox" style="width:140px;" />
-            &nbsp;&nbsp;所在职位&nbsp;<input id="positionDetail" type="text" class="textbox" style="width:140px;" />
-            &nbsp;&nbsp;员工类别&nbsp;
-            <select class="easyui-combobox" id="employerTypeDetail" style="width:85px;">
-                <option value="1" selected="true">试用期员工</option>
-                <option value="2">实习期员工</option>
-                <option value="3">临时雇员</option>
-                <option value="0">正式员工</option>
-            </select>
-            &nbsp;&nbsp;在职状态&nbsp;
-            <select class="easyui-combobox" id="onJobStateDetail" style="width:70px;">
-                <option value="0">在职</option>
-                <option value="0">离职中</option>
-                <option value="0">已离职</option>
-            </select>
+            &nbsp;&nbsp;本月所在部门&nbsp;<input id="departmentDetail" type="text" class="textbox" style="width:140px;" />
+            &nbsp;&nbsp;本月所在职位&nbsp;<input id="positionDetail" type="text" class="textbox" style="width:140px;" />
         </p>
         <p>
-            &nbsp;&nbsp;工资金额&nbsp;<input id="salaryAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:103px;" />
-            &nbsp;&nbsp;补贴金额&nbsp;<input id="subsidyAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:103px;" />
+            &nbsp;&nbsp;本月岗位工资&nbsp;<input id="salaryAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:115px;" />
+            &nbsp;&nbsp;本月岗位补贴&nbsp;<input id="subsidyAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:117px;" />
         </p>
         <p>
-            &nbsp;&nbsp;社保个人部分&nbsp;<input id="socialSecurityAmountPersonalDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
-            &nbsp;&nbsp;社保企业部分&nbsp;<input id="socialSecurityAmountCompanyDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
-            &nbsp;&nbsp;公积金个人部分&nbsp;<input id="accumulationFundAmountPersonalDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
-            &nbsp;&nbsp;公积金企业部分&nbsp;<input id="accumulationFundAmountCompanyDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+            &nbsp;&nbsp;本月实发工资&nbsp;<input id="paidSalaryAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:115px;" />
+            &nbsp;&nbsp;本月实发补贴&nbsp;<input id="paidSubsidyAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:117px;" />
+            &nbsp;&nbsp;本月扣款金额&nbsp;<input id="deductionAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
         </p>
-        <p>&nbsp;&nbsp;收入描述</p>
-        <p align="center">
-            <textarea id="incomeDescDetail" style="width:695px; height: 70px;" />
+        <p>
+            &nbsp;&nbsp;本月社保个人部分&nbsp;<input id="socialSecurityAmountPersonalDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:93px;" />
+            &nbsp;&nbsp;本月社保企业部分&nbsp;<input id="socialSecurityAmountCompanyDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:91px;" />
         </p>
-        <p>&nbsp;&nbsp;员工备注</p>
+        <p>
+            &nbsp;&nbsp;本月公积金个人部分&nbsp;<input id="accumulationFundAmountPersonalDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+            &nbsp;&nbsp;本月公积金企业部分&nbsp;<input id="accumulationFundAmountCompanyDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:80px;" />
+        </p>
+        <p>&nbsp;&nbsp;本月扣款备注</p>
         <p align="center">
-            <textarea id="employerRemarkDetail" style="width:690px; height: 70px;" />
+            <textarea id="deductionRemarkDetail" style="width:695px; height: 50px;" />
+        </p>
+        <p>&nbsp;&nbsp;本月工资备注</p>
+        <p align="center">
+            <textarea id="entryUserRemarkDetail" style="width:695px; height: 50px;" />
         </p>
     </div>
 </form>
