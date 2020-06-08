@@ -228,7 +228,7 @@
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="importSalaryShow()">导入</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailSalaryShow()">查看</a>
-            <a href="#" class="easyui-linkbutton" plain="true" onclick="downloadSalaryTemplate()">未离职员工工资模板下载</a>
+            <a href="#" class="easyui-linkbutton" plain="true" onclick="downloadSalaryTemplate()">未离职员工发薪模板下载</a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
             姓名&nbsp;<input type="text" class="textbox" id="employerNameSearch" style="width:100px" />&nbsp;&nbsp;
