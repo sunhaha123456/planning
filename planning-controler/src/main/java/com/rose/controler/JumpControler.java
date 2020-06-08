@@ -175,31 +175,30 @@ public class JumpControler {
         return "menu/employerSalaryPaidManage";
     }
 
-//
-//    /**
-//     * 功能：跳转财务模块的其他支出查看
-//     * @return
-//     */
-//    @GetMapping(value = "/user/menuManage/toOtherPaid")
-//    public String toOtherPaid() {
-//        return "menu/otherPaid";
-//    }
-//
-//    /**
-//     * 功能：跳转财务模块的营业收入查看
-//     * @return
-//     */
-//    @GetMapping(value = "/user/menuManage/toBusinessIncome")
-//    public String toBusinessIncome() {
-//        return "menu/businessIncome";
-//    }
-//
-//    /**
-//     * 功能：跳转财务模块的财务报表
-//     * @return
-//     */
-//    @GetMapping(value = "/user/menuManage/toFinanceStatement")
-//    public String toFinanceStatement() {
-//        return "menu/financeStatement";
-//    }
+    /**
+     * 功能：跳转财务模块的收支录入
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toFinanceInOutEntry")
+    public String toFinanceInOutEntry() {
+        return "menu/financeInOutEntry";
+    }
+
+    /**
+     * 功能：跳转财务模块的收支管理
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toFinanceInOutManage")
+    public String toFinanceInOutManage() {
+        return "menu/financeInOutManage";
+    }
+
+    /**
+     * 功能：跳转财务模块的财务报表
+     * @return
+     */
+    @GetMapping(value = "/user/menuManage/toFinanceInOutReport")
+    public String toFinanceInOutReport() {
+        return "menu/financeInOutReport";
+    }
 }
