@@ -48,10 +48,10 @@ public class EmployerEntryControler {
     }
 
     @PostMapping("/importFile")
-    public void importFile(@RequestParam(value = "userExcelFile") MultipartFile userExcelFile) throws Exception {
-        FileUtil.fileValidate(Arrays.asList(userExcelFile), fileMaxSize);
+    public void importFile(@RequestParam(value = "employerExcelFile") MultipartFile employerExcelFile) throws Exception {
+        FileUtil.fileValidate(Arrays.asList(employerExcelFile), fileMaxSize);
 
-        InputStream is = userExcelFile.getInputStream();
+        InputStream is = employerExcelFile.getInputStream();
         if (!is.markSupported()) {
             is = new PushbackInputStream(is, 8);
         }
