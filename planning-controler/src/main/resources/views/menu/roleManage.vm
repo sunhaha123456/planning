@@ -197,11 +197,11 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addRoleShow()">新增</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editRoleShow()">编辑</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="distriRoleMenuShow()">分配菜单</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="opertUserState(1)">禁用</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="opertUserState(0)">启用</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addRoleShow()"><font size="2">新增</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editRoleShow()"><font size="2">编辑</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add-green" plain="true" onclick="distriRoleMenuShow()"><font size="2">分配菜单</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="opertUserState(1)"><font size="2">禁用</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="opertUserState(0)"><font size="2">启用</font></a>
         </div>
 
         <!--/*

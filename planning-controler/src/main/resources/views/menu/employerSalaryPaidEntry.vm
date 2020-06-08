@@ -226,15 +226,15 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="importSalaryShow()">导入</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailSalaryShow()">查看</a>
-            <a href="#" class="easyui-linkbutton" plain="true" onclick="downloadSalaryTemplate()">未离职员工发薪模板下载</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="importSalaryShow()"><font size="2">导入</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailSalaryShow()"><font size="2">查看</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="downloadSalaryTemplate()"><font size="2">未离职员工发薪模板下载</font></a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
-            姓名&nbsp;<input type="text" class="textbox" id="employerNameSearch" style="width:100px" />&nbsp;&nbsp;
-            手机号&nbsp;<input type="text" class="textbox" id="employerPhoneSearch" style="width:100px" />&nbsp;&nbsp;
-            身份证&nbsp;<input type="text" class="textbox" id="employerIdCardNoSearch" style="width:100px" />&nbsp;&nbsp;
-            工资日期&nbsp;
+            <font size="2" style="vertical-align: middle;">姓名</font>&nbsp;&nbsp;<input type="text" class="textbox" id="employerNameSearch" style="width:100px" />&nbsp;&nbsp;
+            <font size="2">手机号</font>&nbsp;&nbsp;<input type="text" class="textbox" id="employerPhoneSearch" style="width:100px" />&nbsp;&nbsp;
+            <font size="2">身份证</font>&nbsp;&nbsp;<input type="text" class="textbox" id="employerIdCardNoSearch" style="width:100px" />&nbsp;&nbsp;
+            <font size="2" style="vertical-align: middle;">工资日期</font>&nbsp;&nbsp;
             <input id="salaryYearSearch" placeholder="年份" type="text" class="textbox" style="width:50px" />&nbsp;
             <select id="salaryMonthSearch" class="easyui-combobox" style="width:50px;">
                 <option value="01">1月</option>
@@ -251,7 +251,7 @@
                 <option value="02">12月</option>
             </select>&nbsp;&nbsp;
             <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchEmployerSalaryPaid()">查询</a>&nbsp;&nbsp;
-            公司总支付&nbsp;<span id="companyTotalSpendShow"/>
+            <font size="2">公司总支付</font>&nbsp;&nbsp;<span id="companyTotalSpendShow"/>
         </div>
     </div>
 </table>

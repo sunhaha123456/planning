@@ -170,11 +170,11 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="startApply()">发起申请</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowChartShow()">流程预览</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="startApply()"><font size="2">发起申请</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowChartShow()"><font size="2">流程预览</font></a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
-            流程名称：<input type="text" class="textbox" id="flowTemplateNameSearch" style="width:160px" />
+            <font size="2">流程名称</font>&nbsp;&nbsp;<input type="text" class="textbox" id="flowTemplateNameSearch" style="width:160px" />&nbsp;&nbsp;
             <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchApply()">查询</a>
         </div>
     </div>

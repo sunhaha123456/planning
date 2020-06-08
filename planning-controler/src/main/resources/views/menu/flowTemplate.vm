@@ -462,10 +462,10 @@
 </head>
 <body>
 <div style="margin-bottom:5px;">
-    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addTemplateShow()">新增模板</a>
-    <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="operateTemplateState(0)">启用模板</a>
-    <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="operateTemplateState(1)">停用模板</a>
-    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)">删除模板</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addTemplateShow()"><font size="2">新增模板</font></a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="operateTemplateState(0)"><font size="2">启用模板</font></a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="operateTemplateState(1)"><font size="2">停用模板</font></a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateTemplateState(2)"><font size="2">删除模板</font></a>
 </div>
 
 <div>
@@ -474,11 +474,11 @@
     </div>
     <div style="float:left; width: 73%">
         <div>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="saveNodeShow(0)">新增一级节点</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="saveNodeShow(1)">新增子项节点</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="saveNodeShow(2)">编辑</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteNode()">删除</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowChartShow()">流程预览</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="saveNodeShow(0)"><font size="2">新增一级节点</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="saveNodeShow(1)"><font size="2">新增子项节点</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="saveNodeShow(2)"><font size="2">编辑</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteNode()"><font size="2">删除</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowChartShow()"><font size="2">流程预览</font></a>
         </div>
         <div style="margin-top: 10px;">
             <span id="templateStatus" style="padding-left: 10px;"></span>

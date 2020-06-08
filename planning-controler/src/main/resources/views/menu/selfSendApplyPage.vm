@@ -288,15 +288,15 @@
 <body>
 <table id="flowInstanceManager">
     <div id="flowInstanceManager_tool">
-        <div>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(0)">撤销流程</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(1)">删除流程</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()">查看申请</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()">流程预览</a>
+        <div style="margin-bottom:5px;">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="operateFlowInstance(0)"><font size="2">撤销流程</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="operateFlowInstance(1)"><font size="2">删除流程</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-nav" plain="true" onclick="seeApplyContent()"><font size="2">查看申请</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="flowInstancePreviewShow()"><font size="2">流程预览</font></a>
         </div>
-        <div>
-            &nbsp;流程名称：<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />&nbsp;&nbsp;
-            流程状态：
+        <div style="padding:0 0 0 7px;color:#333;">
+            <font size="2">流程名称</font>&nbsp;&nbsp;<input type="text" class="textbox" id="flowInstanceNameSearch" style="width:180px" />&nbsp;&nbsp;
+            <font size="2">流程状态</font>&nbsp;&nbsp;
             <select class="easyui-combobox" id="flowInstanceStateSearch" style="width:100px;">
                 <option value="" selected="true">请选择</option>
                 <option value="0">审批中</option>
