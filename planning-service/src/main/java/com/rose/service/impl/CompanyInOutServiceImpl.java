@@ -66,6 +66,7 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
         if (param.getEntryHappenDate() == null) {
             throw new BusinessException("请填写录入项发生时间！");
         }
+        lockTimeValiate(param.getEntryHappenDate());
         companyInOutRepository.save(param);
     }
 
@@ -84,6 +85,11 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long id) {
+        TbCompanyInOut res = companyInOutRepository.findOne(id);
+        if (res == null) {
+            throw new BusinessException("对应记录已不存在！");
+        }
+        lockTimeValiate(res.getEntryHappenDate());
         companyInOutRepository.updateDelFlag(id, new Date());
     }
 
