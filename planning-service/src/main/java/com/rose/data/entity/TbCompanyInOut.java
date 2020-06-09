@@ -38,7 +38,7 @@ public class TbCompanyInOut extends BaseDataIdLongDelFlag implements Serializabl
     @Column(name = "entry_amount", columnDefinition = "decimal(19,2) DEFAULT 0.00 COMMENT '录入项金额'")
     private BigDecimal entryAmount;
 
-    // 录入项类别 0营业额 1支出 2利润
+    // 录入项类别 0支出 1营收 2利润
     @Column(name = "entry_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '录入项类别'")
     private Integer entryType;
 

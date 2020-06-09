@@ -58,9 +58,9 @@
                         width : 100,
                         formatter: function(value,row,index){
                             if (value == 0){
-                                return "营业额";
-                            } else if (value == 1){
                                 return "支出";
+                            } else if (value == 1){
+                                return "营收";
                             } else {
                                 return "利润";
                             }
@@ -105,35 +105,23 @@
         }
 
         function addEntryShow() {
-            $('#addUserForm').dialog('open');
+            $('#addEntryForm').dialog('open');
         }
 
-        function addEntryCommit() {
+        function addEntryFormCommit() {
             var param = {
-                "employerName": $("#employerNameAdd").val(),
-                "gender": $('#genderAdd').combobox('getValue'),
-                "idCardNo": $("#idCardNoAdd").val(),
-                "birthdayDate": $('#birthdayDateAdd').datetimebox('getValue'),
-                "phone": $("#phoneAdd").val(),
-                "nativePlace": $("#nativePlaceAdd").val(),
-                "nowPlace": $("#nowPlaceAdd").val(),
-                "department": $("#departmentAdd").val(),
-                "position": $("#positionAdd").val(),
-                "employerType": $('#employerTypeAdd').datetimebox('getValue'),
-                "onJobState": $('#onJobStateAdd').datetimebox('getValue'),
-                "entryCompanyTime": $('#entryCompanyTimeAdd').datetimebox('getValue'),
-                "highestEducation": $('#highestEducationAdd').combobox('getValue'),
-                "graduatedSchool": $("#graduatedSchoolAdd").val(),
-                "graduatedDate": $('#graduatedDateAdd').datetimebox('getValue'),
-                "emergencyContactPeople": $("#emergencyContactPeopleAdd").val(),
-                "emergencyContactPeoplePhone": $("#emergencyContactPeoplePhoneAdd").val(),
-                "employerRemark": $("#employerRemarkAdd").val()
+                "entryName": $("#entryNameEdit").val(),
+                "entryAmount": $("#entryAmountEdit").val(),
+                "entryType": $('#entryTypeEdit').combobox('getValue')
+                "entryHappenDate": $('#entryHappenDateEdit').datetimebox('getValue'),
+                "entryDesc": $("#entryDescEdit").val(),
+                "entryUserRemark": $("#entryUserRemarkEdit").val()
             };
             var result = ajaxSynchPostJson("user/financeInOutEntry/add", param);
             if (result.code == '200') {
                 alertSuccess();
-                $('#addUserForm').dialog('close');
-                searchEmployer();
+                $('#addEntryForm').dialog('close');
+                searchEntry();
             } else {
                 alertWarn(result.msg);
             }
@@ -151,7 +139,13 @@
                 return;
             }
 
-            $("#employerNameDetail").val(result.data.employerName);
+            $("#entryNameDetail").val(result.data.entryName);
+            $("#entryAmountDetail").numberbox('setValue', result.data.entryAmount);
+            $('#entryTypeDetail').combobox('setValue', result.data.entryType);
+            $("#entryHappenDateDetail").val(result.data.entryHappenDate);
+            $("#entryUserNameDetail").val(result.data.entryUserName);
+            $("#entryDescDetail").val(result.data.entryDesc);
+            $("#entryUserRemarkDetail").val(result.data.entryUserRemark);
 
             $('#detailEntryForm').dialog('open');
         }
@@ -170,13 +164,13 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailEntryShow()"><font size="2">查看</font></a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
-            <font size="2">开始时间</font>&nbsp;&nbsp;<input id="startDateSearch" class="easyui-datebox" data-options="editable:false" style="width:150px" />&nbsp;&nbsp;
-            <font size="2">结束时间</font>&nbsp;&nbsp;<input id="endDateSearch" class="easyui-datebox" data-options="editable:false" style="width:150px" />&nbsp;&nbsp;
+            <font size="2">开始时间</font>&nbsp;&nbsp;<input id="startDateSearch" class="easyui-datebox" data-options="editable:false" style="width:100px" />&nbsp;&nbsp;
+            <font size="2">结束时间</font>&nbsp;&nbsp;<input id="endDateSearch" class="easyui-datebox" data-options="editable:false" style="width:100px" />&nbsp;&nbsp;
             <font size="2">收支类别</font>&nbsp;&nbsp;
             <select class="easyui-combobox" id="entryTypeSearch" style="width:85px;">
                 <option value="" selected="true">请选择</option>
-                <option value="0">营业额</option>
-                <option value="1">支出</option>
+                <option value="0">支出</option>
+                <option value="1">营收</option>
                 <option value="2">利润</option>
             </select>&nbsp;&nbsp;
 
@@ -185,100 +179,74 @@
     </div>
 </table>
 
-<form id="addUserForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
-      data-options="width:750,title:'新增',modal:true,closed:true,cache:false,iconCls:'icon-add',
+<form id="addEntryForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
+      data-options="width:650,title:'新增',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
-            $('#addUserForm').form('reset');
+            $('#addEntryForm').form('reset');
        },
 		buttons:[{
 					text : '提交',
 					iconCls : 'icon-add-green',
 					handler : function () {
-                    addUserFormCommit();
+                    addEntryFormCommit();
 					}
 				},{
 					text:'关闭',
 					iconCls : 'icon-redo',
 					handler:function(){
-                    $('#addUserForm').dialog('close');
+                    $('#addEntryForm').dialog('close');
 					}
 				}]">
-    <div style="overflow-y: auto; height: 330px;">
-        <p>
-            &nbsp;&nbsp;姓名&nbsp;<input id="employerNameAdd" type="text" class="textbox" style="width:85px;" />
-            &nbsp;&nbsp;性别&nbsp;
-            <select class="easyui-combobox" id="genderAdd" style="width:50px;">
-                <option value="0" selected="true">男</option>
-                <option value="1">女</option>
-            </select>
-            &nbsp;&nbsp;身份证号&nbsp;<input id="idCardNoAdd" type="text" class="textbox" style="width:140px;" />
-            &nbsp;&nbsp;生日&nbsp;<input id="birthdayDateAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
-            &nbsp;&nbsp;手机&nbsp;<input id="phoneAdd" type="text" class="textbox" style="width:100px;" />
-        </p>
-        <p>
-            &nbsp;&nbsp;籍贯&nbsp;<input id="nativePlaceAdd" type="text" class="textbox" style="width:300px;" />
-            &nbsp;&nbsp;现住地址&nbsp;<input id="nowPlaceAdd" type="text" class="textbox" style="width:300px;" />
-        </p>
-        <p>
-            &nbsp;&nbsp;最高学历&nbsp;
-            <select class="easyui-combobox" id="highestEducationAdd" style="width:90px;">
-                <option value="0" selected="true">小学</option>
-                <option value="1">初中</option>
-                <option value="2">高中</option>
-                <option value="3">中专</option>
-                <option value="4">高职</option>
-                <option value="5">大专</option>
-                <option value="6">本科</option>
-                <option value="7">硕士研究生</option>
-                <option value="8">博士研究生</option>
-            </select>
-            &nbsp;&nbsp;毕业院校&nbsp;<input id="graduatedSchoolAdd" type="text" class="textbox" style="width:135px;" />
-            &nbsp;&nbsp;毕业时间&nbsp;<input id="graduatedDateAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
-        </p>
-        <p>
-            &nbsp;&nbsp;紧急联系人&nbsp;<input id="emergencyContactPeopleAdd" type="text" class="textbox" style="width:110px;" />
-            &nbsp;&nbsp;紧急联系人手机&nbsp;<input id="emergencyContactPeoplePhoneAdd" type="text" class="textbox" style="width:100px;" />
-        </p>
-        <p>
-            &nbsp;&nbsp;入职时间&nbsp;<input id="entryCompanyTimeAdd" class="easyui-datebox" data-options="editable:false" style="width:100px" />
-        </p>
-        <p>
-            &nbsp;&nbsp;所在部门&nbsp;<input id="departmentAdd" type="text" class="textbox" style="width:140px;" />
-            &nbsp;&nbsp;所在职位&nbsp;<input id="positionAdd" type="text" class="textbox" style="width:140px;" />
-            &nbsp;&nbsp;员工类别&nbsp;
-            <select class="easyui-combobox" id="employerTypeAdd" style="width:85px;">
-                <option value="1" selected="true">试用期员工</option>
-                <option value="2">实习期员工</option>
-                <option value="3">临时雇员</option>
-                <option value="0">正式员工</option>
-            </select>
-            &nbsp;&nbsp;在职状态&nbsp;
-            <select class="easyui-combobox" id="onJobStateAdd" style="width:70px;">
-                <option value="0" selected="true">在职</option>
-            </select>
-        </p>
-        <p>&nbsp;&nbsp;员工备注</p>
-        <p align="center">
-            <textarea id="employerRemarkAdd" style="width:690px; height: 70px;" />
-        </p>
-    </div>
+    <p>
+        &nbsp;&nbsp;费用名称&nbsp;<input id="entryNameEdit" type="text" class="textbox" style="width:550px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;费用金额&nbsp;<input id="entryAmountEdit" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:85px;" />
+        &nbsp;&nbsp;费用类别&nbsp;
+        <select class="easyui-combobox" id="entryTypeEdit" style="width:85px;">
+            <option value="0" selected="true">支出</option>
+            <option value="1">营收</option>
+            <option value="2">利润</option>
+        </select>
+        &nbsp;&nbsp;费用产生时间&nbsp;<input id="entryHappenDateEdit" class="easyui-datebox" data-options="editable:false" style="width:100px" />
+    </p>
+    <p>&nbsp;&nbsp;费用描述</p>
+    <p align="center">
+        <textarea id="entryDescEdit" style="width:610px; height: 60px;" />
+    </p>
+    <p>&nbsp;&nbsp;备注</p>
+    <p align="center">
+        <textarea id="entryUserRemarkEdit" style="width:610px; height: 60px;" />
+    </p>
 </form>
 
 <form id="detailEntryForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
-      data-options="width:750,title:'查看',modal:true,closed:true,cache:false,iconCls:'icon-tip',
+      data-options="width:650,title:'新增',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
-            $('#detailUserForm').form('reset');
+            $('#detailEntryForm').form('reset');
        }">
-    <div style="overflow-y: auto; height: 330px;">
-        <p>
-            &nbsp;&nbsp;费用产生时间&nbsp;<input id="entryHappenDate" type="text" class="textbox" style="width:300px;" />
-            &nbsp;&nbsp;费用名称&nbsp;<input id="entryName" type="text" class="textbox" style="width:300px;" />
-        </p>
-        <p>&nbsp;&nbsp;员工备注</p>
-        <p align="center">
-            <textarea id="employerRemarkDetail" style="width:690px; height: 70px;" />
-        </p>
-    </div>
+    <p>
+        &nbsp;&nbsp;费用名称&nbsp;<input id="entryNameDetail" type="text" class="textbox" style="width:550px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;费用金额&nbsp;<input id="entryAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:85px;" />
+        &nbsp;&nbsp;费用类别&nbsp;
+        <select class="easyui-combobox" id="entryTypeDetail" style="width:85px;">
+            <option value="0">支出</option>
+            <option value="1">营收</option>
+            <option value="2">利润</option>
+        </select>
+        &nbsp;&nbsp;费用产生时间&nbsp;<input id="entryHappenDateDetail" type="text" style="width:100px" />
+        &nbsp;&nbsp;费用录入用户&nbsp;<input id="entryUserNameDetail" type="text" style="width:100px;" />
+    </p>
+    <p>&nbsp;&nbsp;费用描述</p>
+    <p align="center">
+        <textarea id="entryDescDetail" style="width:610px; height: 60px;" />
+    </p>
+    <p>&nbsp;&nbsp;备注</p>
+    <p align="center">
+        <textarea id="entryUserRemarkDetail" style="width:610px; height: 60px;" />
+    </p>
 </form>
 
 </body>

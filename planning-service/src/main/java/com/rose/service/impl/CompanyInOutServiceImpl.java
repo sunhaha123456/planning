@@ -6,9 +6,11 @@ import com.rose.common.util.BigDecimalUtil;
 import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.TbCompanyInOut;
+import com.rose.data.entity.TbSysUser;
 import com.rose.data.to.request.CompanyInOutSearchRequest;
 import com.rose.repository.CompanyInOutRepository;
 import com.rose.repository.CompanyInOutRepositoryCustom;
+import com.rose.repository.SysUserRepository;
 import com.rose.service.CompanyInOutService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
     private CompanyInOutRepository companyInOutRepository;
     @Inject
     private CompanyInOutRepositoryCustom companyInOutRepositoryCustom;
+    @Inject
+    private SysUserRepository sysUserRepository;
     @Inject
     private ValueHolder valueHolder;
 
@@ -60,7 +64,14 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
 
     @Override
     public TbCompanyInOut getDetail(Long id) {
-        return companyInOutRepository.findOne(id);
+        TbCompanyInOut res = companyInOutRepository.findOne(id);
+        if (res != null) {
+            TbSysUser operateUser = sysUserRepository.findOne(res.getEntryUserId());
+            if (operateUser != null) {
+                res.setEntryUserName(operateUser.getUserName());
+            }
+        }
+        return res;
     }
 
     @Transactional(rollbackFor = Exception.class)
