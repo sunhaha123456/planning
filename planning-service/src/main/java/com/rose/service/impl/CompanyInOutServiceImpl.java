@@ -3,14 +3,18 @@ package com.rose.service.impl;
 import com.rose.common.data.base.PageList;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.BigDecimalUtil;
+import com.rose.common.util.DateUtil;
 import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
+import com.rose.data.constant.SystemConstant;
 import com.rose.data.entity.TbCompanyInOut;
 import com.rose.data.entity.TbSysUser;
+import com.rose.data.entity.TbSystemSetting;
 import com.rose.data.to.request.CompanyInOutSearchRequest;
 import com.rose.repository.CompanyInOutRepository;
 import com.rose.repository.CompanyInOutRepositoryCustom;
 import com.rose.repository.SysUserRepository;
+import com.rose.repository.SystemSettingRepository;
 import com.rose.service.CompanyInOutService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +35,8 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
     private CompanyInOutRepositoryCustom companyInOutRepositoryCustom;
     @Inject
     private SysUserRepository sysUserRepository;
+    @Inject
+    private SystemSettingRepository systemSettingRepository;
     @Inject
     private ValueHolder valueHolder;
 
@@ -79,5 +85,17 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
     @Override
     public void delete(Long id) {
         companyInOutRepository.updateDelFlag(id, new Date());
+    }
+
+    private void lockTimeValiate(Date entryHappenDate) {
+        TbSystemSetting lockTimeSetting = systemSettingRepository.findBySystemKey(SystemConstant.COMPANY_IN_OUT_LOCK_TIME_KEY);
+        if (lockTimeSetting != null && StringUtil.isNotEmpty(lockTimeSetting.getSystemValue())) {
+            Date lockTime = DateUtil.formatStr2Time(lockTimeSetting.getSystemKey());
+            if (lockTime != null) {
+                if (entryHappenDate.getTime() <= lockTime.getTime()) {
+                    throw new BusinessException("不能修改已锁定日期范围内的账目！");
+                }
+            }
+        }
     }
 }

@@ -160,15 +160,16 @@
             }
 
             if (result.data.systemValue != null && result.data.systemValue != '') {
-                $('#companyInOutLockTime').datebox('setValue', result.data.systemValue);
+                $('#companyInOutLockTime').datetimebox('setValue', result.data.systemValue);
             }
 
             $('#clockDateForm').dialog('open');
         }
 
         function clockDateFormCommit() {
-            var result = ajaxSynchPostJson("user/updateLockTime/updateLockTime?lockTime=" + $('#companyInOutLockTime').datebox('getValue'), null);
-            if (result.code != '200') {
+            var result = ajaxSynchPostJson("user/financeInOutManage/updateLockTime?lockTime=" + $('#companyInOutLockTime').datebox('getValue'), null);
+            if (result.code == '200') {
+                $('#clockDateForm').dialog('close');
                 alertSuccess();
             } else {
                 alertWarn(result.msg);

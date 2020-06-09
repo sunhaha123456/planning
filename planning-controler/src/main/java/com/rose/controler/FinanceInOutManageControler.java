@@ -1,6 +1,9 @@
 package com.rose.controler;
 
 import com.rose.common.data.base.PageList;
+import com.rose.common.exception.BusinessException;
+import com.rose.common.util.DateUtil;
+import com.rose.common.util.StringUtil;
 import com.rose.data.constant.SystemConstant;
 import com.rose.data.entity.TbCompanyInOut;
 import com.rose.data.entity.TbSystemSetting;
@@ -48,6 +51,9 @@ public class FinanceInOutManageControler {
 
     @PostMapping(value= "/updateLockTime")
     public void updateLockTime(@RequestParam(required = false) String lockTime) {
+        if (StringUtil.isNotEmpty(lockTime) && DateUtil.formatStr2Time(lockTime) == null) {
+            throw new BusinessException("锁定时间数据格式错误!");
+        }
         systemSettingService.updateBySystemKey(SystemConstant.COMPANY_IN_OUT_LOCK_TIME_KEY, lockTime);
     }
 }
