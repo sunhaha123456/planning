@@ -13,8 +13,8 @@ import javax.inject.Inject;
  */
 @Slf4j
 @RestController
-@RequestMapping("/user/financeInOutReport")
-public class FinanceInOutReportControler {
+@RequestMapping("/user/financeReport")
+public class FinanceReportControler {
 
     @Inject
     private CompanyInOutService companyInOutService;

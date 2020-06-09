@@ -197,8 +197,8 @@ public class JumpControler {
      * 功能：跳转财务模块的财务报表
      * @return
      */
-    @GetMapping(value = "/user/menuManage/toFinanceInOutReport")
-    public String toFinanceInOutReport() {
-        return "menu/financeInOutReport";
+    @GetMapping(value = "/user/menuManage/toFinanceReport")
+    public String toFinanceReport() {
+        return "menu/financeReport";
     }
 }
