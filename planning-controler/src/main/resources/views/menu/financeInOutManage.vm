@@ -152,6 +152,29 @@
             });
         }
 
+        function operateClockDateShow() {
+            var result = ajaxSynchGet("user/financeInOutManage/getLockTime", null);
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+
+            if (result.data.systemValue != null && result.data.systemValue != '') {
+                $('#companyInOutLockTime').datebox('setValue', result.data.systemValue);
+            }
+
+            $('#clockDateForm').dialog('open');
+        }
+
+        function clockDateFormCommit() {
+            var result = ajaxSynchPostJson("user/updateLockTime/updateLockTime?lockTime=" + $('#companyInOutLockTime').datebox('getValue'), null);
+            if (result.code != '200') {
+                alertSuccess();
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
         $(function () {
             dataGridInit();
             searchEntry();
@@ -164,6 +187,7 @@
         <div style="margin-bottom:5px;">
             <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailEntryShow()"><font size="2">查看</font></a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteEntry()"><font size="2">删除</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="operateClockDateShow()"><font size="2">设置账目锁定时间</font></a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
             <font size="2">开始时间</font>&nbsp;&nbsp;<input id="startDateSearch" class="easyui-datebox" data-options="editable:false" style="width:100px" />&nbsp;&nbsp;
@@ -205,6 +229,30 @@
     <p align="center">
         <textarea id="entryUserRemarkDetail" style="width:610px; height: 60px;" />
     </p>
+</form>
+
+<form id="clockDateForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
+      data-options="width:330,title:'设置账目锁定时间',modal:true,closed:true,cache:false,iconCls:'icon-login',
+       onClose:function () {
+            $('#clockDateForm').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    clockDateFormCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#clockDateForm').dialog('close');
+					}
+				}]">
+    <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;账目锁定时间&nbsp;&nbsp;&nbsp;&nbsp;<input id="companyInOutLockTime" class="easyui-datetimebox" data-options="editable:false" style="width:150px" />
+    </p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;备注：账目锁定时间点之前，不能再录入与删除收支</p>
 </form>
 
 </body>

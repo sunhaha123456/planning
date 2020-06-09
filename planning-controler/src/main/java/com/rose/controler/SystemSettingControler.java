@@ -1,5 +1,6 @@
 package com.rose.controler;
 
+import com.rose.data.constant.SystemConstant;
 import com.rose.data.entity.TbSystemSetting;
 import com.rose.service.SystemSettingService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class SystemSettingControler {
 
     @GetMapping(value= "/getIndexPageShowNotice")
     public TbSystemSetting getIndexPageShowNotice() {
-        return systemSettingService.getIndexPageShowNotice();
+        return systemSettingService.getBySystemKey(SystemConstant.INDEX_PAGE_NOTICE_SHOW_KEY);
     }
 
     @PostMapping(value= "/updateIndexPageShowNotice")

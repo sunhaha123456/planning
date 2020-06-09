@@ -4,6 +4,7 @@ import com.rose.common.data.base.PageList;
 import com.rose.common.data.response.ResponseResultCode;
 import com.rose.common.exception.BusinessException;
 import com.rose.data.base.PageParam;
+import com.rose.data.constant.SystemConstant;
 import com.rose.data.entity.TbFlowInstance;
 import com.rose.data.entity.TbFlowInstanceOperateHistory;
 import com.rose.data.entity.TbNotice;
@@ -39,7 +40,7 @@ public class MyIndexPageControler {
 
     @GetMapping(value= "/getIndexPageShowNotice")
     public TbSystemSetting getIndexPageShowNotice() {
-        return systemSettingService.getIndexPageShowNotice();
+        return systemSettingService.getBySystemKey(SystemConstant.INDEX_PAGE_NOTICE_SHOW_KEY);
     }
 
     @PostMapping(value= "/searchNotice")

@@ -21,8 +21,8 @@ public class SystemSettingServiceImpl implements SystemSettingService {
     private SystemSettingRepository systemSettingRepository;
 
     @Override
-    public TbSystemSetting getIndexPageShowNotice() {
-        return systemSettingRepository.findBySystemKey(SystemConstant.INDEX_PAGE_NOTICE_SHOW_KEY);
+    public TbSystemSetting getBySystemKey(String systemKey) {
+        return systemSettingRepository.findBySystemKey(systemKey);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -32,5 +32,11 @@ public class SystemSettingServiceImpl implements SystemSettingService {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
         systemSettingRepository.updateBySystemKey(SystemConstant.INDEX_PAGE_NOTICE_SHOW_KEY, indexPageShowNotice);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateBySystemKey(String systemKey, String value) {
+        systemSettingRepository.updateBySystemKey(systemKey, value);
     }
 }

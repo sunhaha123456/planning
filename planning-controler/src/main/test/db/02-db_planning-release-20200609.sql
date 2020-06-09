@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50520
 File Encoding         : 65001
 
-Date: 2020-05-27 13:38:13
+Date: 2020-06-09 17:04:15
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -300,12 +300,13 @@ CREATE TABLE `tb_system_setting` (
   `system_key` varchar(255) DEFAULT NULL COMMENT '项',
   `system_value` varchar(255) DEFAULT NULL COMMENT '值',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of tb_system_setting
 -- ----------------------------
-INSERT INTO `tb_system_setting` VALUES ('1', '2020-05-24 15:42:35', '2020-05-24 15:43:05', '用于首页是否展示公告标志', 'indexPageNoticeShowFlag', 'false');
+INSERT INTO `tb_system_setting` VALUES ('1', '2020-05-24 15:42:35', '2020-06-09 17:03:59', '设置首页是否展示公告', 'indexPageNoticeShowFlag', 'false');
+INSERT INTO `tb_system_setting` VALUES ('2', '2020-06-09 17:03:44', '2020-06-09 17:03:47', '设置公司收支时间截点', 'companyInOutLockTimeFlag', null);
 
 -- ----------------------------
 -- Table structure for tb_sys_user

@@ -15,5 +15,6 @@ public interface SystemConstant {
     String SYSTEM_USER_ID = "userId";
 
     // tb_system_setting 表 key
-    String INDEX_PAGE_NOTICE_SHOW_KEY = "indexPageNoticeShowFlag";
+    String INDEX_PAGE_NOTICE_SHOW_KEY = "indexPageNoticeShowFlag"; // 首页是否显示公告标志
+    String COMPANY_IN_OUT_LOCK_TIME_KEY = "companyInOutLockTimeFlag"; // 公司收支时间截点
 }
