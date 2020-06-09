@@ -12,127 +12,12 @@
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
     <script th:inline="javascript">
-        function addUserShow() {
-            $('#manager_add').dialog('open');
-            $('#loginNameAdd').focus();
-        }
-
-        function opertUserState(state) {
-            var showMsg = '';
-            if (state == 0) {
-                showMsg = '您确定解冻该用户吗？';
-            } else if (state == 1) {
-                showMsg = '您确定冻结该用户吗？';
-            } else {
-                showMsg = '您确定注销该用户吗？';
-            }
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                $.messager.confirm('确定操作', showMsg, function (flag) {
-                    if (flag) {
-                        var id = rows[0].id;
-                        $('#manager').datagrid('loading');
-                        var result = ajaxSynchGet("user/userManage/opert", {"id": id, "state": state});
-                        $('#manager').datagrid('loaded');
-                        alertInfo(result.msg);
-                        searchUser();
-                    }
-                });
-            } else {
-                alertWarn("请先选择记录！");
-            }
-        }
-
-        function editUserShow() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var id = rows[0].id;
-                var result = ajaxSynchGet("user/userManage/getDetail", {"id":id});
-                if (result.code == '200') {
-                    var loginName = result.data.loginName;
-                    var userName = result.data.userName;
-                    var roleGroupId = result.data.roleGroupId;
-                    $('#loginNameEditUser').val(loginName);
-                    $('#userNameEditUser').val(userName);
-                    $('#authEditUser').combobox('setValue', roleGroupId);
-                    $('#manager_editUser').dialog('open');
-                } else {
-                    alertWarn(result.msg);
-                }
-            } else {
-                alertWarn("请先选择记录！");
-            }
-        }
-
-        function editUserPasswordShow() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                $('#manager_editUserPassword').dialog('open');
-            } else {
-                alertWarn("请先选择记录！");
-            }
-        }
-
-        function addUserCommit() {
-            if ($('#manager_add').form('validate')) {
-                var loginNameAdd = $('#loginNameAdd').val();
-                var userNameAdd = $('#userNameAdd').val();
-                var passwordAdd = $('#passwordAdd').val();
-                var authAdd = $('#authAdd').combobox('getValue');
-                if (authAdd == '请选择') {
-                    alertWarn('请选择用户角色！');
-                } else {
-                    var result = ajaxSynchPostJson("user/userManage/save", {"loginName":loginNameAdd, "userName":userNameAdd, "upwd":passwordAdd, "roleGroupId":authAdd})
-                    if (result.code == '200') {
-                        alertSuccess();
-                        $('#manager_add').dialog('close');
-                        searchUser();
-                    } else {
-                        alertWarn(result.msg);
-                    }
-                }
-            }
-        }
-
-        function editUserCommit() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var id = rows[0].id;
-                var userName = $('#userNameEditUser').val();
-                var auth = $('#authEditUser').combobox('getValue');
-                var result = ajaxSynchPostJson("user/userManage/save", {"id":id, "userName":userName, "roleGroupId":auth});
-                if (result.code == '200') {
-                    alertSuccess();
-                    $('#manager_editUser').dialog('close');
-                    searchUser();
-                } else {
-                    alertWarn(result.msg);
-                }
-            } else {
-                alertWarn('操作失败！');
-            }
-        }
-
-        function editUserPasswordCommit() {
-            var rows = $('#manager').datagrid('getSelections');
-            if (rows.length > 0) {
-                var id = rows[0].id;
-                var userNewPassword = $('#userNewPassword').val();
-                var result = ajaxSynchPostJson("user/userManage/updatePasswodAdmin?id=" + id + "&userNewPassword=" + userNewPassword, null);
-                if (result.code == '200') {
-                    alertSuccess();
-                    $('#manager_editUserPassword').dialog('close');
-                    searchUser();
-                } else {
-                    alertWarn(result.msg);
-                }
-            } else {
-                alertWarn('操作失败！');
-            }
-        }
-
-        function searchUser() {
-            var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":1, "rows":10});
+        function searchEntry() {
+            var result = ajaxSynchPostJson("user/financeInOutManage/search", {
+                "startDate": $('#startDateSearch').datetimebox('getValue'),
+                "endDate": $('#endDateSearch').datetimebox('getValue'),
+                "entryType": $('#entryTypeSearch').combobox('getValue'),
+                "page":1, "rows":10});
             if (result.code == '200') {
                 dataGridPageInit();
                 $('#manager').datagrid('loadData', result.data);
@@ -158,40 +43,42 @@
                         hidden : true
                     },
                     {
-                        field : 'loginName',
-                        title : '登录用户名',
+                        field : 'entryHappenDate',
+                        title : '费用发生时间',
                         width : 100
                     },
                     {
-                        field : 'userName',
-                        title : '用户名',
+                        field : 'entryName',
+                        title : '费用名称',
                         width : 100
                     },
                     {
-                        field : 'roleGroupName',
-                        title : '所属角色',
-                        width : 100
-                    },
-                    {
-                        field : 'roleGroupId',
-                        width : 100,
-                        hidden : true
-                    },
-                    {
-                        field : 'userState',
-                        title : '状态',
+                        field : 'entryType',
+                        title : '费用类别',
                         width : 100,
                         formatter: function(value,row,index){
                             if (value == 0){
-                                return "正常";
+                                return "支出";
+                            } else if (value == 1){
+                                return "营收";
                             } else {
-                                return "冻结";
+                                return "利润";
                             }
                         }
                     },
                     {
+                        field : 'entryAmount',
+                        title : '费用金额',
+                        width : 100
+                    },
+                    {
+                        field : 'entryUserName',
+                        title : '录入人员',
+                        width : 100
+                    },
+                    {
                         field : 'createDate',
-                        title : '创建日期',
+                        title : '录入时间',
                         width : 100
                     }
                 ]]
@@ -205,7 +92,11 @@
                 pageSize : 10,
                 pageList : [10, 20, 30, 40, 50],
                 onSelectPage:function(pageNumber, pageSize){
-                    var result = ajaxSynchPostJson("user/userManage/search", {"loginName": $('#loginNameSearch').val(), "page":pageNumber, "rows":pageSize});
+                    var result = ajaxSynchPostJson("user/financeInOutManage/search", {
+                        "startDate": $('#startDateSearch').datetimebox('getValue'),
+                        "endDate": $('#endDateSearch').datetimebox('getValue'),
+                        "entryType": $('#entryTypeSearch').combobox('getValue'),
+                        "page":pageNumber, "rows":pageSize});
                     if (result.code == '200') {
                         $('#manager').datagrid('loadData', result.data);
                     }
@@ -213,33 +104,57 @@
             });
         }
 
-        function webPageInit() {
-            var result = ajaxSynchGet("user/roleManage/list", {"roleState": 0});
-            if (result.code == '200') {
-                $('#authAdd').combobox('loadData',result.data);
-                $('#authEditUser').combobox('loadData',result.data);
+        function detailEntryShow() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length == 0) {
+                alertWarn("请先选中记录！");
+                return;
             }
+            var result = ajaxSynchGet("user/financeInOutManage/getDetail", {"id": rows[0].id});
+            if (result.code != '200') {
+                alertWarn(result.msg);
+                return;
+            }
+
+            $("#entryNameDetail").val(result.data.entryName);
+            $("#entryAmountDetail").numberbox('setValue', result.data.entryAmount);
+            if (result.data.entryType == 0) {
+                $('#entryTypeDetail').val("支出");
+            } else if (result.data.entryType == 1) {
+                $('#entryTypeDetail').val("营收");
+            } else {
+                $('#entryTypeDetail').val("利润");
+            }
+            $("#entryHappenDateDetail").val(result.data.entryHappenDate);
+            $("#entryUserNameDetail").val(result.data.entryUserName);
+            $("#entryDescDetail").val(result.data.entryDesc);
+            $("#entryUserRemarkDetail").val(result.data.entryUserRemark);
+
+            $('#detailEntryForm').dialog('open');
         }
 
-        function keyDownInit() {
-            document.onkeydown = function doKeyDown() {
-                if (event.keyCode == 13) {
-                    var id = document.activeElement.id;
-                    if (id == "loginNameSearch") {
-                        searchUser();
-                        return false;
+        function deleteEntry() {
+            var rows = $('#manager').datagrid('getSelections');
+            if (rows.length == 0) {
+                alertWarn("请先选中记录！");
+                return;
+            }
+            $.messager.confirm('确定操作', "确定要删除吗？", function (flag) {
+                if (flag) {
+                    var result = ajaxSynchPostJson("user/financeInOutManage/delete?id=" + rows[0].id, null);
+                    if (result.code == '200') {
+                        searchEntry();
+                        alertInfo(result.msg);
                     } else {
-                        return false;
+                        alertWarn(result.msg);
                     }
                 }
-            }
+            });
         }
 
         $(function () {
-            keyDownInit();
             dataGridInit();
-            searchUser();
-            webPageInit();
+            searchEntry();
         });
     </script>
 </head>
@@ -247,92 +162,50 @@
 <table id="manager">
     <div id="manager_tool">
         <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addUserShow()"><font size="2">新增</font></a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editUserShow()"><font size="2">编辑</font></a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit-yellow" plain="true" onclick="editUserPasswordShow()"><font size="2">修改密码</font></a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-login" plain="true" onclick="opertUserState(1)"><font size="2">冻结</font></a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="opertUserState(0)"><font size="2">启用</font></a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="opertUserState(2)"><font size="2">注销</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailEntryShow()"><font size="2">查看</font></a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteEntry()"><font size="2">删除</font></a>
         </div>
         <div style="padding:0 0 0 7px;color:#333;">
-            <font size="2">用户登录名</font>&nbsp;&nbsp;<input type="text" class="textbox" id="loginNameSearch" style="width:160px" />
-            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchUser()">查询</a>
+            <font size="2">开始时间</font>&nbsp;&nbsp;<input id="startDateSearch" class="easyui-datebox" data-options="editable:false" style="width:100px" />&nbsp;&nbsp;
+            <font size="2">结束时间</font>&nbsp;&nbsp;<input id="endDateSearch" class="easyui-datebox" data-options="editable:false" style="width:100px" />&nbsp;&nbsp;
+            <font size="2">收支类别</font>&nbsp;&nbsp;
+            <select class="easyui-combobox" id="entryTypeSearch" style="width:85px;">
+                <option value="" selected="true">请选择</option>
+                <option value="0">支出</option>
+                <option value="1">营收</option>
+                <option value="2">利润</option>
+            </select>&nbsp;&nbsp;
+
+            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchEntry()">查询</a>
         </div>
     </div>
 </table>
 
-<form id="manager_add" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-add',
+<form id="detailEntryForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 0;color:#333;"
+      data-options="width:650,title:'新增',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
-            $('#manager_add').form('reset');
-       },
-		buttons:[{
-					text : '提交',
-					iconCls : 'icon-add-green',
-					handler : function () {
-                    addUserCommit();
-					}
-				},{
-					text:'关闭',
-					iconCls : 'icon-redo',
-					handler:function(){
-                    $('#manager_add').dialog('close');
-					}
-				}]">
-    <p>登录名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入登录名',invalidMessage:'登录名长度至少为1位'," type="text" id="loginNameAdd" style="width:200px;" /></p>
-    <p>用户名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入用户名',invalidMessage:'用户名长度至少为1位'," type="text" id="userNameAdd" style="width:200px;" /></p>
-    <p>密&nbsp;&nbsp;&nbsp;码：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入密码',invalidMessage:'密码长度至少为1位'," type="text" id="passwordAdd" style="width:200px;" /></p>
-    <p>角&nbsp;&nbsp;&nbsp;色：
-        <select class="easyui-combobox" id="authAdd" style="width:100px;" data-options="valueField:'id',textField:'roleName'">
-            <option value="请选择" selected="true" />
-        </select>
+            $('#detailEntryForm').form('reset');
+       }">
+    <p>
+        &nbsp;&nbsp;费用名称&nbsp;<input id="entryNameDetail" type="text" class="textbox" style="width:550px;" />
+    </p>
+    <p>
+        &nbsp;&nbsp;费用金额&nbsp;<input id="entryAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:85px;" />
+        &nbsp;&nbsp;费用类别&nbsp;<input id="entryTypeDetail" type="text" style="width:85px;" />
+        &nbsp;&nbsp;费用产生时间&nbsp;<input id="entryHappenDateDetail" type="text" style="width:100px" />
+    </p>
+    <p>
+        &nbsp;&nbsp;费用录入用户&nbsp;<input id="entryUserNameDetail" type="text" style="width:100px;" />
+    </p>
+    <p>&nbsp;&nbsp;费用描述</p>
+    <p align="center">
+        <textarea id="entryDescDetail" style="width:610px; height: 60px;" />
+    </p>
+    <p>&nbsp;&nbsp;备注</p>
+    <p align="center">
+        <textarea id="entryUserRemarkDetail" style="width:610px; height: 60px;" />
     </p>
 </form>
 
-<form id="manager_editUser" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
-       onClose:function () {
-            $('#manager_editUser').form('reset');
-       },
-		buttons:[{
-					text : '提交',
-					iconCls : 'icon-add-green',
-					handler : function () {
-                    editUserCommit();
-					}
-				},{
-					text:'关闭',
-					iconCls : 'icon-redo',
-					handler:function(){
-                    $('#manager_editUser').dialog('close');
-					}
-				}]">
-    <p>登录名：<input class="easyui-validatebox" type="text" id="loginNameEditUser" style="width:200px;" disabled="disabled" /></p>
-    <p>用户名：<input class="easyui-validatebox" data-options="required:true,validType:'length[1,100]',missingMessage:'请输入用户名',invalidMessage:'用户名长度至少为1位'," type="text" id="userNameEditUser" style="width:200px;" /></p>
-    <p>角&nbsp;&nbsp;&nbsp;色：
-        <select class="easyui-combobox" id="authEditUser" style="width:100px;" data-options="valueField:'id',textField:'roleName'" />
-    </p>
-</form>
-
-<form id="manager_editUserPassword" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
-       onClose:function () {
-            $('#manager_editUserPassword').form('reset');
-       },
-		buttons:[{
-					text : '提交',
-					iconCls : 'icon-add-green',
-					handler : function () {
-                    editUserPasswordCommit();
-					}
-				},{
-					text:'关闭',
-					iconCls : 'icon-redo',
-					handler:function(){
-                    $('#manager_editUserPassword').dialog('close');
-					}
-				}]">
-    <p>新密码：<input class="easyui-validatebox" type="text" id="userNewPassword" style="width:200px;" /></p>
-</form>
 </body>
 </html>

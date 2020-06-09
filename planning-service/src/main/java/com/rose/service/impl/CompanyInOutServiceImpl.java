@@ -46,6 +46,7 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
         Date now = new Date();
         param.setCreateDate(now);
         param.setLastModified(now);
+        param.setDelFlag(0);
         param.setEntryUserId(valueHolder.getUserIdHolder());
         if (StringUtil.isEmpty(param.getEntryName())) {
             throw new BusinessException("录入项名称不能为空！");

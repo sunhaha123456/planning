@@ -112,7 +112,7 @@
             var param = {
                 "entryName": $("#entryNameEdit").val(),
                 "entryAmount": $("#entryAmountEdit").val(),
-                "entryType": $('#entryTypeEdit').combobox('getValue')
+                "entryType": $('#entryTypeEdit').combobox('getValue'),
                 "entryHappenDate": $('#entryHappenDateEdit').datetimebox('getValue'),
                 "entryDesc": $("#entryDescEdit").val(),
                 "entryUserRemark": $("#entryUserRemarkEdit").val()
@@ -141,7 +141,13 @@
 
             $("#entryNameDetail").val(result.data.entryName);
             $("#entryAmountDetail").numberbox('setValue', result.data.entryAmount);
-            $('#entryTypeDetail').combobox('setValue', result.data.entryType);
+            if (result.data.entryType == 0) {
+                $('#entryTypeDetail').val("支出");
+            } else if (result.data.entryType == 1) {
+                $('#entryTypeDetail').val("营收");
+            } else {
+                $('#entryTypeDetail').val("利润");
+            }
             $("#entryHappenDateDetail").val(result.data.entryHappenDate);
             $("#entryUserNameDetail").val(result.data.entryUserName);
             $("#entryDescDetail").val(result.data.entryDesc);
@@ -230,13 +236,10 @@
     </p>
     <p>
         &nbsp;&nbsp;费用金额&nbsp;<input id="entryAmountDetail" type="text" class="easyui-numberbox" data-options="min:0,precision:2" style="width:85px;" />
-        &nbsp;&nbsp;费用类别&nbsp;
-        <select class="easyui-combobox" id="entryTypeDetail" style="width:85px;">
-            <option value="0">支出</option>
-            <option value="1">营收</option>
-            <option value="2">利润</option>
-        </select>
+        &nbsp;&nbsp;费用类别&nbsp;<input id="entryTypeDetail" type="text" style="width:85px;" />
         &nbsp;&nbsp;费用产生时间&nbsp;<input id="entryHappenDateDetail" type="text" style="width:100px" />
+    </p>
+    <p>
         &nbsp;&nbsp;费用录入用户&nbsp;<input id="entryUserNameDetail" type="text" style="width:100px;" />
     </p>
     <p>&nbsp;&nbsp;费用描述</p>
