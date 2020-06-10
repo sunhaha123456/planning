@@ -11,6 +11,7 @@ import com.rose.data.entity.TbCompanyInOut;
 import com.rose.data.entity.TbSysUser;
 import com.rose.data.entity.TbSystemSetting;
 import com.rose.data.to.request.CompanyInOutSearchRequest;
+import com.rose.data.to.response.SimpleHistogramResponse;
 import com.rose.repository.CompanyInOutRepository;
 import com.rose.repository.CompanyInOutRepositoryCustom;
 import com.rose.repository.SysUserRepository;
@@ -22,8 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -91,6 +91,58 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
         }
         lockTimeValiate(res.getEntryHappenDate());
         companyInOutRepository.updateDelFlag(id, new Date());
+    }
+
+    @Override
+    public Map<String, Object> getReports(String year) {
+        Map<String, Object> res = new HashMap<>();
+
+        SimpleHistogramResponse spend = new SimpleHistogramResponse();
+        spend.setTitle(year + "年支出统计");
+        spend.setLegend("支出");
+
+        SimpleHistogramResponse income = new SimpleHistogramResponse();
+        income.setTitle(year + "年营收统计");
+        income.setLegend("营收");
+
+        SimpleHistogramResponse profit = new SimpleHistogramResponse();
+        profit.setTitle(year + "年利润统计");
+        profit.setLegend("利润");
+
+        List<String> xAxisList = Arrays.asList(
+                "1月", "2月", "3月", "4月", "5月", "6月",
+                "7月", "8月", "9月", "10月", "11月", "12月"
+        );
+        spend.setXAxisList(xAxisList);
+        income.setXAxisList(xAxisList);
+        profit.setXAxisList(xAxisList);
+
+        Map<String, BigDecimal> valueMap = new HashMap<>();
+        valueMap.put("01", BigDecimal.ZERO);
+        valueMap.put("02", BigDecimal.ZERO);
+        valueMap.put("03", BigDecimal.ZERO);
+        valueMap.put("04", BigDecimal.ZERO);
+        valueMap.put("05", BigDecimal.ZERO);
+        valueMap.put("06", BigDecimal.ZERO);
+        valueMap.put("07", BigDecimal.ZERO);
+        valueMap.put("08", BigDecimal.ZERO);
+        valueMap.put("09", BigDecimal.ZERO);
+        valueMap.put("10", BigDecimal.ZERO);
+        valueMap.put("11", BigDecimal.ZERO);
+        valueMap.put("12", BigDecimal.ZERO);
+
+
+
+
+
+
+
+
+
+        res.put("spend", spend);
+        res.put("income", income);
+        res.put("profit", profit);
+        return res;
     }
 
     private void lockTimeValiate(Date entryHappenDate) {
