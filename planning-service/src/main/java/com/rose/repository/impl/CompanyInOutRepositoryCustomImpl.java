@@ -49,6 +49,6 @@ public class CompanyInOutRepositoryCustomImpl extends BaseRepositoryImpl impleme
         sql.append(" where del_flag = 0 and DATE_FORMAT(entry_happen_date,'%Y') = ? ");
         paramList.add(year);
         sql.append(" GROUP BY DATE_FORMAT(entry_happen_date,'%Y-%m'),entry_type ");
-        return queryList(sql.toString(), MonthEntryVo.class, paramList);
+        return queryList(sql.toString(), MonthEntryVo.class, paramList.toArray());
     }
 }
