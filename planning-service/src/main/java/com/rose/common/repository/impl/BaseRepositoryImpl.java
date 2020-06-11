@@ -97,7 +97,7 @@ public class BaseRepositoryImpl implements BaseRepository {
             throw new Exception("PageUtil Error!");
         }
         String countSql = sql.toLowerCase();
-        countSql = "select count(1) " + countSql.substring(countSql.indexOf("from"));
+        countSql = "select count(1) " + sql.substring(countSql.indexOf("from"));
         long c = getCount(countSql, params);
         if (c <= 0) {
             return new PageList(0, new ArrayList<>());

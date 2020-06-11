@@ -3,6 +3,7 @@ package com.rose.repository.impl;
 import com.rose.common.data.base.PageList;
 import com.rose.common.data.base.PageUtil;
 import com.rose.common.repository.impl.BaseRepositoryImpl;
+import com.rose.common.util.StringUtil;
 import com.rose.data.entity.TbCompanyInOut;
 import com.rose.data.to.request.CompanyInOutSearchRequest;
 import com.rose.data.to.vo.MonthEntryVo;
@@ -35,6 +36,10 @@ public class CompanyInOutRepositoryCustomImpl extends BaseRepositoryImpl impleme
         if (param.getEndDate() != null) {
             sql.append(" and a.entry_happen_date <= ? ");
             paramList.add(param.getEndDate());
+        }
+        if (StringUtil.isNotEmpty(param.getChartDate())) {
+            sql.append(" and DATE_FORMAT(a.entry_happen_date,'%Y-%m') = ? ");
+            paramList.add(param.getChartDate());
         }
         sql.append(" order by a.entry_happen_date desc ");
         return queryPage(sql.toString(), TbCompanyInOut.class, new PageUtil(param.getPage(), param.getRows()), null, paramList.toArray());

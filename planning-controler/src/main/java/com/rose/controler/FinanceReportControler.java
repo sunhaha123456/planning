@@ -1,14 +1,14 @@
 package com.rose.controler;
 
+import com.rose.common.data.base.PageList;
 import com.rose.common.exception.BusinessException;
 import com.rose.common.util.DateUtil;
 import com.rose.common.util.StringUtil;
+import com.rose.data.entity.TbCompanyInOut;
+import com.rose.data.to.request.CompanyInOutSearchRequest;
 import com.rose.service.CompanyInOutService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -34,5 +34,10 @@ public class FinanceReportControler {
             throw new BusinessException("年份时间格式错误！");
         }
         return companyInOutService.getReports(year);
+    }
+
+    @PostMapping(value= "/search")
+    public PageList<TbCompanyInOut> search(@RequestBody CompanyInOutSearchRequest param) throws Exception {
+        return companyInOutService.search(param);
     }
 }

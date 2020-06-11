@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class CompanyInOutSearchRequest extends PageParam {
 
-    // 录入项类别 0营业额 1支出 2利润
+    // 录入项类别 0支出 1营收 2利润
     private Integer entryType;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -20,4 +20,6 @@ public class CompanyInOutSearchRequest extends PageParam {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date endDate;
+
+    private String chartDate;
 }
