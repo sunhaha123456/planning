@@ -12,6 +12,7 @@ import com.rose.data.entity.TbSysUser;
 import com.rose.data.entity.TbSystemSetting;
 import com.rose.data.to.request.CompanyInOutSearchRequest;
 import com.rose.data.to.response.SimpleHistogramResponse;
+import com.rose.data.to.vo.MonthEntryVo;
 import com.rose.repository.CompanyInOutRepository;
 import com.rose.repository.CompanyInOutRepositoryCustom;
 import com.rose.repository.SysUserRepository;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -94,7 +96,7 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
     }
 
     @Override
-    public Map<String, Object> getReports(String year) {
+    public Map<String, Object> getReports(String year) throws Exception {
         Map<String, Object> res = new HashMap<>();
 
         SimpleHistogramResponse spend = new SimpleHistogramResponse();
@@ -113,36 +115,67 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
                 "1月", "2月", "3月", "4月", "5月", "6月",
                 "7月", "8月", "9月", "10月", "11月", "12月"
         );
-        spend.setXAxisList(xAxisList);
-        income.setXAxisList(xAxisList);
-        profit.setXAxisList(xAxisList);
+        spend.setXaxisList(xAxisList);
+        income.setXaxisList(xAxisList);
+        profit.setXaxisList(xAxisList);
 
-        Map<String, BigDecimal> valueMap = new HashMap<>();
-        valueMap.put("01", BigDecimal.ZERO);
-        valueMap.put("02", BigDecimal.ZERO);
-        valueMap.put("03", BigDecimal.ZERO);
-        valueMap.put("04", BigDecimal.ZERO);
-        valueMap.put("05", BigDecimal.ZERO);
-        valueMap.put("06", BigDecimal.ZERO);
-        valueMap.put("07", BigDecimal.ZERO);
-        valueMap.put("08", BigDecimal.ZERO);
-        valueMap.put("09", BigDecimal.ZERO);
-        valueMap.put("10", BigDecimal.ZERO);
-        valueMap.put("11", BigDecimal.ZERO);
-        valueMap.put("12", BigDecimal.ZERO);
+        List<BigDecimal> valueZeroList = Arrays.asList(
+                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO
+        );
 
+        List<MonthEntryVo> monthEntryList = companyInOutRepositoryCustom.listByMonth(year);
+        if (monthEntryList != null && monthEntryList.size() > 0) {
+            Map<String, BigDecimal> monthEntryMap = monthEntryList.stream().collect(Collectors.toMap(MonthEntryVo::getMonthTypeFlag, MonthEntryVo :: getAmount));
+            List<BigDecimal> valueSpendList = new ArrayList<>();
+            List<BigDecimal> valueIncodeList = new ArrayList<>();
+            List<BigDecimal> valueProfitList = new ArrayList<>();
 
+            // 类别 0支出 1营收 2利润
+            handleValueList(valueSpendList, monthEntryMap, 0);
+            handleValueList(valueSpendList, monthEntryMap, 1);
+            handleValueList(valueSpendList, monthEntryMap, 2);
 
-
-
-
-
-
+            spend.setValueList(valueSpendList);
+            income.setValueList(valueIncodeList);
+            profit.setValueList(valueProfitList);
+        } else {
+            spend.setValueList(valueZeroList);
+            income.setValueList(valueZeroList);
+            profit.setValueList(valueZeroList);
+        }
 
         res.put("spend", spend);
         res.put("income", income);
         res.put("profit", profit);
         return res;
+    }
+
+    private void handleValueList(List<BigDecimal> valueList, Map<String, BigDecimal> monthEntryMap, int type) {
+        BigDecimal temp = monthEntryMap.get("01" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("02" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("03" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("04" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("05" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("06" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("07" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("08" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("09" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("10" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("11" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
+        temp = monthEntryMap.get("12" + type);
+        valueList.add(temp != null ? temp : BigDecimal.ZERO);
     }
 
     private void lockTimeValiate(Date entryHappenDate) {

@@ -11,24 +11,66 @@
     <script th:src="@{/static/easyui/easy.common.js}"></script>
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
+    <script th:src="@{/static/echarts.min.js}"></script>
     <script th:inline="javascript">
-        $(function () {
 
+        var searchYearValue;
+
+        function chartInit(divId, title, legend, xAxisList, valueList) {
+            var myChart = echarts.init(document.getElementById(divId));
+            var option = {
+                title: {
+                    text: title
+                },
+                tooltip: {},
+                legend: {
+                    data:[legend]
+                },
+                xAxis: {
+                    data: xAxisList
+                },
+                yAxis: {},
+                series: [{
+                    name: legend,
+                    type: 'bar',
+                    data: valueList
+                }]
+            };
+            myChart.setOption(option);
+            myChart.on('click', function(params){
+                alert(params.name + "	" + params.value + "    " + searchYearValue);
+            });
+        }
+
+        function search() {
+            var result = ajaxSynchGet("user/financeReport/getReports", {"year":$("#yearSearch").val()});
+            if (result.code == '200') {
+                chartInit("spendDiv", result.data.spend.title, result.data.spend.legend, result.data.spend.xaxisList, result.data.spend.valueList);
+                chartInit("incomeDiv", result.data.income.title, result.data.income.legend, result.data.income.xaxisList, result.data.income.valueList);
+                chartInit("profitDiv", result.data.profit.title, result.data.profit.legend, result.data.profit.xaxisList, result.data.profit.valueList);
+                searchYearValue = $("#yearSearch").val();
+            } else {
+                alertWarn(result.msg);
+            }
+        }
+
+        $(function () {
+            var year = new Date().Format("yyyy");
+            $("#yearSearch").val(year);
+            search();
         });
     </script>
 </head>
 <body>
-<table id="manager">
-    <div id="manager_tool">
-        <div style="margin-bottom:5px;">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="detailEntryShow()"><font size="2">查看</font></a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteEntry()"><font size="2">删除</font></a>
-        </div>
-        <div style="padding:0 0 0 7px;color:#333;">
+<div style="padding:0 0 0 7px;color:#333;">
+    <font size="2" style="vertical-align: middle;">年份</font>&nbsp;&nbsp;<input id="yearSearch" type="text" class="textbox" style="width:150px" />&nbsp;&nbsp;
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="search()">查询</a>&nbsp;&nbsp;
+</div>
 
-        </div>
-    </div>
-</table>
+<br />
 
+<div id="spendDiv" style="overflow-x: auto;width: 600px;height:400px;"></div>
+<div id="incomeDiv" style="overflow-x: auto;width: 600px;height:400px;"></div>
+<div id="profitDiv" style="overflow-x: auto;width: 600px;height:400px;"></div>
 </body>
 </html>

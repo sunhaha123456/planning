@@ -9,6 +9,6 @@ import java.util.List;
 public class SimpleHistogramResponse {
     private String title;   // 标题
     private String legend;  // 图例
-    private List<String> xAxisList; // x轴项列表
+    private List<String> xaxisList; // x轴项列表
     private List<BigDecimal> valueList; // 数值列表
 }

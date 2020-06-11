@@ -20,5 +20,5 @@ public interface CompanyInOutService {
 
     void delete(Long id);
 
-    Map<String, Object> getReports(String year);
+    Map<String, Object> getReports(String year) throws Exception;
 }
