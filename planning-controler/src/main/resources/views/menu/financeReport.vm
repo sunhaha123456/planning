@@ -38,7 +38,7 @@
             };
             myChart.setOption(option);
             myChart.on('click', function(params){
-                alert(searchYearValue + "   " + params.name);
+                alert(searchYearValue + "   " + params.name + "     " + legend);
             });
         }
 

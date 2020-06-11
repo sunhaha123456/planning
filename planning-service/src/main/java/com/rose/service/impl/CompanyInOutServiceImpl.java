@@ -133,8 +133,8 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
 
             // 类别 0支出 1营收 2利润
             handleValueList(valueSpendList, monthEntryMap, 0);
-            handleValueList(valueSpendList, monthEntryMap, 1);
-            handleValueList(valueSpendList, monthEntryMap, 2);
+            handleValueList(valueIncodeList, monthEntryMap, 1);
+            handleValueList(valueProfitList, monthEntryMap, 2);
 
             spend.setValueList(valueSpendList);
             income.setValueList(valueIncodeList);
