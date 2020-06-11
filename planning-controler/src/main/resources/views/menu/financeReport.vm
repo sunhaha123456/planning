@@ -40,6 +40,8 @@
             myChart.on('click', function(params){
                 //alert(searchYearValue + "   " + params.name + "     " + legend);
 
+                var scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+
                 var chartDate = searchYearValue + "-" + getMonth(params.name);
                 var entryType = 0;
                 if (legend == "营收") {
@@ -65,7 +67,7 @@
                         {
                             field : 'entryHappenDate',
                             title : '费用发生时间',
-                            width : 100
+                            width : 50
                         },
                         {
                             field : 'entryName',
@@ -73,19 +75,33 @@
                             width : 100
                         },
                         {
+                            field : 'entryType',
+                            title : '费用类别',
+                            width : 40,
+                            formatter: function(value,row,index){
+                                if (value == 0){
+                                    return "支出";
+                                } else if (value == 1){
+                                    return "营收";
+                                } else {
+                                    return "利润";
+                                }
+                            }
+                        },
+                        {
                             field : 'entryAmount',
                             title : '费用金额',
-                            width : 100
+                            width : 50
                         },
                         {
                             field : 'entryUserName',
                             title : '录入人员',
-                            width : 100
+                            width : 60
                         },
                         {
                             field : 'createDate',
                             title : '录入时间',
-                            width : 100
+                            width : 80
                         }
                     ]]
                 });
@@ -108,7 +124,11 @@
                     return;
                 }
                 $('#chartDetailManager').datagrid('loadData', res.data);
-                
+
+                $('#chartDetailWindow').window({
+                    top: scrollTop + 100
+                });
+
                 $('#chartDetailWindow').window('open');
             });
         }
