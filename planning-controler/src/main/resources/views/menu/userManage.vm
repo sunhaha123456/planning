@@ -262,7 +262,7 @@
 </table>
 
 <form id="manager_add" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-add',
+      data-options="top:60,width:320,title:'新增管理',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#manager_add').form('reset');
        },
@@ -290,7 +290,7 @@
 </form>
 
 <form id="manager_editUser" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
+      data-options="top:60,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
             $('#manager_editUser').form('reset');
        },

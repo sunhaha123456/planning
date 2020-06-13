@@ -89,7 +89,7 @@
             </tr>
             <tr>
                 <td align="right" valign="middle"></td>
-                <td align="left"><input name="uname" type="text" id="uname" size="30" placeholder="用户名" value="superAdmin" /></td>
+                <td align="left"><input name="uname" type="text" id="uname" size="30" placeholder="用户名" value="xiaoMing" /></td>
                 <td><div id="unameTip"></div></td>
             </tr>
             <tr>
