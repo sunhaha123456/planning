@@ -23,7 +23,19 @@
     <script th:src="@{/static/flowChart/js/jquery.orgchart.js}"></script>
     <!-- flow chart end -->
     <style type="text/css">
-        a {text-decoration: none}
+        #noticeDiv a {text-decoration: none}
+        #noticeDiv a:link {
+            color: blue;
+        }
+        #noticeDiv a:active {
+            color: blue;
+        }
+        #noticeDiv a:visited {
+            color: blue;
+        }
+        #noticeDiv a:hover {
+            color: blue;
+        }
         .datagrid-header-row {
             text-align: center
         }

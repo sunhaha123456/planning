@@ -42,7 +42,16 @@ public class PublishNoticeServiceImpl implements PublishNoticeService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveNotice(TbNotice param) {
-        if (param == null || StringUtil.isEmpty(param.getTitle()) || StringUtil.isEmpty(param.getContent()) || !Arrays.asList(0, 1).contains(param.getStatus()) || param.getSort() == null) {
+        if (StringUtil.isEmpty(param.getTitle())) {
+            throw new BusinessException("请输入标题！");
+        }
+        if (StringUtil.isEmpty(param.getContent())) {
+            throw new BusinessException("请输入内容！");
+        }
+        if (param.getSort() == null) {
+            throw new BusinessException("请输入排序！");
+        }
+        if (!Arrays.asList(0, 1).contains(param.getStatus())) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
         Date now = new Date();
