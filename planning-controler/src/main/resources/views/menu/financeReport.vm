@@ -133,7 +133,7 @@
             });
         }
 
-        function search() {
+        function searchReport() {
             var result = ajaxSynchGet("user/financeReport/getReports", {"year":$("#yearSearch").val()});
             if (result.code == '200') {
                 chartInit("spendDiv", result.data.spend.title, result.data.spend.legend, result.data.spend.xaxisList, result.data.spend.valueList);
@@ -187,14 +187,14 @@
         $(function () {
             var year = new Date().Format("yyyy");
             $("#yearSearch").val(year);
-            search();
+            searchReport();
         });
     </script>
 </head>
 <body>
 <div style="padding:0 0 0 7px;color:#333;">
     <font size="2" style="vertical-align: middle;">年份</font>&nbsp;&nbsp;<input id="yearSearch" type="text" class="textbox" style="width:150px" />&nbsp;&nbsp;
-    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="search()">查询</a>&nbsp;&nbsp;
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="searchReport()"><font size="2">查询</font></a>&nbsp;&nbsp;
 </div>
 
 <br />
