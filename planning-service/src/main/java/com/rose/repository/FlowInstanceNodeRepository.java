@@ -25,4 +25,8 @@ public interface FlowInstanceNodeRepository extends CrudRepository<TbFlowInstanc
 
     @Query(value = "select * from tb_flow_instance_node where instance_id = :instanceId and node_level = :nodeLevel order by id asc", nativeQuery = true)
     List<TbFlowInstanceNode> listByInstanceIdAndLevel(@Param(value = "instanceId") Long instanceId, @Param(value = "nodeLevel") Integer nodeLevel);
+
+//    @Modifying
+//    @Query(value = "update tb_flow_instance_node set state = :newState where id = :id and state = :oldState", nativeQuery = true)
+//    int updateState(@Param(value = "id") Long id, @Param(value = "newState") Integer newState, @Param(value = "oldState") Integer oldState);
 }

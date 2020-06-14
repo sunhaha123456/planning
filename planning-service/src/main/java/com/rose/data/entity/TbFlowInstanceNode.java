@@ -44,9 +44,10 @@ public class TbFlowInstanceNode extends BaseDataIdLong {
     @Column(name = "operate_type", columnDefinition = "TINYINT DEFAULT 0 COMMENT '执行方式'")
     private Integer operateType;
 
+    // 不使用节点状态，暂保留
     // 流程节点状态：0未到达 1正在进行中 2已完成
-    @Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程节点状态'")
-    private Integer state;
+    //@Column(name = "state", columnDefinition = "TINYINT DEFAULT 0 COMMENT '流程节点状态'")
+    //private Integer state;
 
     // 用于记录流程图的children
     @Transient

@@ -9,7 +9,6 @@ import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.base.PageParam;
 import com.rose.data.entity.*;
-import com.rose.data.enums.FlowInstanceNodeStateEnum;
 import com.rose.data.enums.FlowInstanceNodeUserTaskStateEnum;
 import com.rose.data.enums.FlowInstanceStateEnum;
 import com.rose.data.to.request.ApprovalApplyRequest;
@@ -169,9 +168,9 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
         String operateInfo = null;
         if (type == 0) { // 撤销流程
-            if (flowInstance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
-                throw new BusinessException("流程状态不是已启动不能撤回！");
-            }
+//            if (flowInstance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
+//                throw new BusinessException("流程状态不是已启动不能撤回！");
+//            }
 
             int c = flowInstanceRepository.updateState(id, FlowInstanceStateEnum.USER_WITHDRAW.getIndex(), flowInstance.getState());
             if (c <= 0) {
@@ -315,7 +314,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                     nodeContentMap.put(t.getInstanceNodeId(), nodeContent);
                 }
                 nodeContentBud = new StringBuilder();
-                if (t.getState() == FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex()) {
+                if (flowInstance.getState() == FlowInstanceStateEnum.HAVE_STARTED.getIndex() && t.getState() == FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex()) {
                     nodeContentBud.append(t.getUserName()).append("(待操作)");
                 } else {
                     nodeContentBud.append(t.getUserName());
@@ -336,7 +335,15 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
             if (level != null && nodeListTemp != null) {
                 if (level == 0) {
                     nodeTemp = nodeListTemp.get(0);
-                    flowChart.setName(nodeTemp.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(nodeTemp.getState()) + ")");
+
+                    /*
+                    if (flowInstance.getState() == FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
+                        flowChart.setName(nodeTemp.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(nodeTemp.getState()) + ")");
+                    } else {
+                        flowChart.setName(nodeTemp.getNodeName());
+                    }
+                    */
+                    flowChart.setName(nodeTemp.getNodeName());
 
                     nodeContent = nodeContentMap.get(nodeTemp.getId());
                     if (nodeContent != null) {
@@ -348,7 +355,15 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                     children = flowChart.getChildren();
                     for (TbFlowInstanceNode node : nodeListTemp) {
                         flowChartTemp = new FlowChartResponse();
-                        flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
+
+                        /*
+                        if (flowInstance.getState() == FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
+                            flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
+                        } else {
+                            flowChartTemp.setName(node.getNodeName());
+                        }
+                        */
+                        flowChartTemp.setName(node.getNodeName());
 
                         nodeContent = nodeContentMap.get(node.getId());
                         if (nodeContent != null) {
@@ -365,7 +380,15 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
                     for (TbFlowInstanceNode node : nodeListTemp) {
                         flowChartTemp = new FlowChartResponse();
-                        flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
+
+                        /*
+                        if (flowInstance.getState() == FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
+                            flowChartTemp.setName(node.getNodeName() + "("+ FlowInstanceNodeStateEnum.getName(node.getState()) + ")");
+                        } else {
+                            flowChartTemp.setName(node.getNodeName());
+                        }
+                        */
+                        flowChartTemp.setName(node.getNodeName());
 
                         nodeContent = nodeContentMap.get(node.getId());
                         if (nodeContent != null) {
@@ -454,16 +477,16 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         List<TbFlowInstanceNode> flowInstanceNodeListDbParam = new ArrayList<>();
         TbFlowInstanceNode flowInstanceNodeTemp = null;
         Long flowInstanceNodePidTemp = null;
-        Integer flowInstanceNodeStateTemp = null;
+        //Integer flowInstanceNodeStateTemp = null;
         for (TbFlowTemplateNode n : templateNodeList) {
             if (n.getNodeLevel() == 0) { // 首层节点
                 flowInstanceNodePidTemp = 0L;
-                flowInstanceNodeStateTemp = templateNodeLevel == 1 ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
+                //flowInstanceNodeStateTemp = templateNodeLevel == 1 ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
             } else { // 其他节点
                 flowInstanceNodePidTemp = n.getPid();
-                flowInstanceNodeStateTemp = n.getNodeLevel() == (templateNodeLevel - 1) ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
+                //flowInstanceNodeStateTemp = n.getNodeLevel() == (templateNodeLevel - 1) ? FlowInstanceNodeStateEnum.HAVE_HANDING.getIndex() : FlowInstanceNodeStateEnum.NOT_ARRIVED.getIndex();
             }
-            flowInstanceNodeTemp = getFlowInstanceNode(now, flowInstanceDbRet.getId(), n.getId(), n.getNodeName(), flowInstanceNodePidTemp, n.getNodeLevel(), null, n.getInstruction(), n.getOperateType(), flowInstanceNodeStateTemp);
+            flowInstanceNodeTemp = getFlowInstanceNode(now, flowInstanceDbRet.getId(), n.getId(), n.getNodeName(), flowInstanceNodePidTemp, n.getNodeLevel(), null, n.getInstruction(), n.getOperateType());
             flowInstanceNodeListDbParam.add(flowInstanceNodeTemp);
         }
         Iterable<TbFlowInstanceNode> flowInstanceNodeDbRetIterable = flowInstanceNodeRepository.save(flowInstanceNodeListDbParam);
@@ -684,17 +707,17 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
         Date now = new Date();
 
-        if (approvalApplyOperateType == 0) { // 同意申请
+        int c = flowInstanceNodeUserTaskRepository.updateUserTask(userTaskId, approvalApplyOperateType, approvalApplyContent, now, FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
+        if (c <= 0) {
+            throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+        }
+
+        if (approvalApplyOperateType == 1) { // 同意申请
             int instanceNodeCurrentLevel = handingTaskNode.getNodeLevel();
             int instanceNodeMaxLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
 
             List<TbFlowInstanceNode> nodeListTemp = null;
             List<TbFlowInstanceNodeUserTask> nodeUserTaskListTemp = null;
-
-            int c = flowInstanceNodeUserTaskRepository.updateUserTask(userTaskId, approvalApplyOperateType, approvalApplyContent, now, FlowInstanceNodeUserTaskStateEnum.HAVE_OPERATE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
-            if (c <= 0) {
-                throw new BusinessException(ResponseResultCode.SERVER_ERROR);
-            }
 
             if (handingInstanceNodeIdList.size() == 1) {
                 if (handingTaskNode.getOperateType() == 0) {
@@ -810,14 +833,14 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 throw new BusinessException(ResponseResultCode.SERVER_ERROR);
             }
         } else { // 拒绝申请
-            int c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.USER_REJECT.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+            c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.USER_REJECT.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
             if (c <= 0) {
                 throw new BusinessException(ResponseResultCode.SERVER_ERROR);
             }
         }
 
         StringBuilder operateInfo = new StringBuilder();
-        operateInfo.append(approvalApplyOperateType == 0 ? "审批详情：同意。" : "审批详情：拒绝。").append(approvalApplyContent);
+        operateInfo.append(approvalApplyOperateType == 0 ? "拒绝。" : "同意。").append(approvalApplyContent);
         TbFlowInstanceOperateHistory history = getFlowInstanceOperateHistory(now, instanceId, instance.getInstanceName(), handingTaskNode.getId(), handingTaskNode.getNodeName(), operateUserId, operateInfo.toString());
 
         flowInstanceOperateHistoryRepository.save(history);
@@ -853,7 +876,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         return flowInstanceParam;
     }
 
-    private TbFlowInstanceNode getFlowInstanceNode(Date nodeDate, Long flowInstanceId, Long templateNodeId, String nodeName, Long pid, Integer nodeLevel, String totalCode, String instruction, Integer operateType, Integer state) {
+    private TbFlowInstanceNode getFlowInstanceNode(Date nodeDate, Long flowInstanceId, Long templateNodeId, String nodeName, Long pid, Integer nodeLevel, String totalCode, String instruction, Integer operateType) {
         TbFlowInstanceNode flowInstanceNode = new TbFlowInstanceNode();
         flowInstanceNode.setId(null);
         flowInstanceNode.setCreateDate(nodeDate);
@@ -866,7 +889,6 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         flowInstanceNode.setTotalCode(totalCode);
         flowInstanceNode.setInstruction(instruction);
         flowInstanceNode.setOperateType(operateType);
-        flowInstanceNode.setState(state);
         return flowInstanceNode;
     }
 

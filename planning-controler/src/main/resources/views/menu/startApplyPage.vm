@@ -185,7 +185,7 @@
 </div>
 
 <form id="startApplyForm" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:60,width:785,title:'发起申请',modal:true,closed:true,cache:false,iconCls:'icon-add',
+      data-options="top:30,width:785,title:'发起申请',modal:true,closed:true,cache:false,iconCls:'icon-add',
        onClose:function () {
             $('#startApplyForm').form('reset');
        },
