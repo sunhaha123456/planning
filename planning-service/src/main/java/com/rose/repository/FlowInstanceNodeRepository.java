@@ -20,8 +20,8 @@ public interface FlowInstanceNodeRepository extends CrudRepository<TbFlowInstanc
     @Query(value = "select * from tb_flow_instance_node where instance_id = :instanceId order by id asc", nativeQuery = true)
     List<TbFlowInstanceNode> listByInstanceId(@Param(value = "instanceId") Long instanceId);
 
-    @Query(value = "select max(node_level) from tb_flow_instance_node where instance_id = :instanceId", nativeQuery = true)
-    int selectInstanceLevel(@Param(value = "instanceId") Long instanceId);
+    //@Query(value = "select max(node_level) from tb_flow_instance_node where instance_id = :instanceId", nativeQuery = true)
+    //int selectInstanceLevel(@Param(value = "instanceId") Long instanceId);
 
     @Query(value = "select * from tb_flow_instance_node where instance_id = :instanceId and node_level = :nodeLevel order by id asc", nativeQuery = true)
     List<TbFlowInstanceNode> listByInstanceIdAndLevel(@Param(value = "instanceId") Long instanceId, @Param(value = "nodeLevel") Integer nodeLevel);

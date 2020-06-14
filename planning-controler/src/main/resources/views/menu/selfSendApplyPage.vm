@@ -60,7 +60,7 @@
                         width : 50,
                         formatter: function(value,row,index){
                             if (value == "0"){
-                                return "已启动";
+                                return "审批中";
                             } else if (value == "1"){
                                 return "已完成";
                             } else if (value == "2"){

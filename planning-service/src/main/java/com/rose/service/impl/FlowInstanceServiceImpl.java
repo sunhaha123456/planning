@@ -714,14 +714,14 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
         if (approvalApplyOperateType == 1) { // 同意申请
             int instanceNodeCurrentLevel = handingTaskNode.getNodeLevel();
-            int instanceNodeMaxLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
+            //int instanceNodeMaxLevel = flowInstanceNodeRepository.selectInstanceLevel(instanceId);
 
             List<TbFlowInstanceNode> nodeListTemp = null;
             List<TbFlowInstanceNodeUserTask> nodeUserTaskListTemp = null;
 
             if (handingInstanceNodeIdList.size() == 1) {
                 if (handingTaskNode.getOperateType() == 0) {
-                    if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 1、当只有一个正在处理的节点，且当前处理节点是抢占模式，且当前处理节点 level 是首层节点
+                    if (instanceNodeCurrentLevel == 0) { // 1、当只有一个正在处理的节点，且当前处理节点是抢占模式，且当前处理节点 level 是首层节点
                         c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.HAVE_FINISH.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
                         if (c <= 0) {
                             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
@@ -774,7 +774,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                         }
                     }
                 } else {
-                    if (instanceNodeCurrentLevel == instanceNodeMaxLevel) { // 3、当只有一个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 是首层节点
+                    if (instanceNodeCurrentLevel == 0) { // 3、当只有一个正在处理的节点，且当前处理节点是会签模式，且当前处理节点 level 是首层节点
                         if (handingTaskNodeWaitingOperateTaskIdList.size() == 0) { // 当前正在处理节点下没有其他待处理用户任务
                             c = flowInstanceRepository.updateHandingInstanceNodeIdsAndState(instanceId, null, FlowInstanceStateEnum.HAVE_FINISH.getIndex(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
                             if (c <= 0) {
