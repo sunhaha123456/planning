@@ -415,10 +415,11 @@
                     $('#approvalApplyForm').dialog('close');
 					}
 				}]">
-    <p>
-        <input name="approvalApplyOperateType" type="radio" value="1" checked="checked">同意</input>
+    <p align="center">
+        <input name="approvalApplyOperateType" type="radio" value="1" checked="checked"><font size="2">同意</font></input>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input name="approvalApplyOperateType" type="radio" value="0">拒绝</input>
+        <input name="approvalApplyOperateType" type="radio" value="0"><font size="2">拒绝</font></input>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     </p>
     <p>审批意见：
         <br/>

@@ -820,6 +820,11 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
                 }
             } else if (handingInstanceNodeIdList.size() > 1) {
                 if (handingTaskNode.getOperateType() == 0) { // 5、当有多个正在处理的节点，且当前处理节点是抢占模式
+                    c = flowInstanceRepository.updateHandingInstanceNodeIds(instanceId, handingInstanceNodeIdsExcludeCurrentNodeId.toString(), handingInstanceNodeIds, FlowInstanceStateEnum.HAVE_STARTED.getIndex());
+                    if (c <= 0) {
+                        throw new BusinessException(ResponseResultCode.SERVER_ERROR);
+                    }
+
                     if (handingTaskNodeWaitingOperateTaskIdList.size() > 0) { // 当前正在处理节点下还有其他待处理用户任务
                         c = flowInstanceNodeUserTaskRepository.updateUserTaskStateByIdList(handingTaskNodeWaitingOperateTaskIdList, FlowInstanceNodeUserTaskStateEnum.HAVE_CAPTURE.getIndex(), FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
                         if (c != handingTaskNodeWaitingOperateTaskIdList.size()) {
