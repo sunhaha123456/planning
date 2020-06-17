@@ -181,7 +181,7 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
     private void lockTimeValiate(Date entryHappenDate) {
         TbSystemSetting lockTimeSetting = systemSettingRepository.findBySystemKey(SystemConstant.COMPANY_IN_OUT_LOCK_TIME_KEY);
         if (lockTimeSetting != null && StringUtil.isNotEmpty(lockTimeSetting.getSystemValue())) {
-            Date lockTime = DateUtil.formatStr2Time(lockTimeSetting.getSystemKey());
+            Date lockTime = DateUtil.formatStr2Time(lockTimeSetting.getSystemValue());
             if (lockTime != null) {
                 if (entryHappenDate.getTime() <= lockTime.getTime()) {
                     throw new BusinessException("不能修改已锁定日期范围内的账目！");
