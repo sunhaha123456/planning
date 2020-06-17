@@ -35,7 +35,7 @@ public class StringUtil {
         }
         StringBuilder builder = new StringBuilder();
         for (Object obj : list) {
-            builder.append(",").append(obj + "");
+            builder.append("，").append(obj + "");
         }
         builder.deleteCharAt(0);
         return builder.toString();

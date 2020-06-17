@@ -120,14 +120,14 @@ public class FlowInstanceRepositoryCustomImpl extends BaseRepositoryImpl impleme
 
         StringBuilder sqlSelect = new StringBuilder();
         List<Object> paramListSelect = new ArrayList();
-        sqlSelect.append(" SELECT a.id, a.instance_name instanceName, c.node_name nodeName, c.id userTaskId, a.start_time startTime, a.state ");
+        sqlSelect.append(" SELECT a.id, a.instance_name instanceName, c.node_name nodeName, b.id userTaskId, a.start_time startTime, a.state ");
         sqlSelect.append(" FROM tb_flow_instance a join tb_flow_instance_node_user_task b on a.id = b.instance_id ");
         sqlSelect.append(" and a.state = ").append(FlowInstanceStateEnum.HAVE_STARTED.getIndex());
         sqlSelect.append(" and b.state = ").append(FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex());
         sqlSelect.append(" and b.user_id = ? ");
         paramListSelect.add(waitApprovalUserId);
         sqlSelect.append(" join tb_flow_instance_node c on b.instance_node_id = c.id ");
-        sqlSelect.append(" group by a.id, c.id order by a.id desc ");
+        sqlSelect.append(" group by a.id, b.id order by a.id desc ");
 
         PageUtil page = new PageUtil(pageNo, pageSize);
         sqlSelect.append(" limit ").append(page.getStart()).append(",").append(page.getPageSize());
