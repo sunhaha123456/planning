@@ -3,6 +3,7 @@
 <head>
     <title>欢迎使用，请登录！</title>
     <meta charset="UTF-8" />
+    <link rel="icon" th:href="@{/static/img/favicon.ico}" type="image/x-icon"/>
     <style th:inline="text">
         #container{ width:500px;}
         #container table td{ line-height:34px; font-size:12px;}
