@@ -4,6 +4,7 @@ import com.rose.common.repository.RedisRepositoryCustom;
 import com.rose.common.util.JsonUtil;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -61,4 +62,17 @@ public class RedisRepositoryCustomImpl implements RedisRepositoryCustom {
     public void deleteKeys(List<String> keyList) {
         template.delete(keyList);
     }
+
+    public Long getIncr(String key) {
+        RedisAtomicLong entityIdCounter = new RedisAtomicLong(key, template.getConnectionFactory());
+        Long increment = entityIdCounter.getAndIncrement();
+        //entityIdCounter.expire(0, TimeUnit.SECONDS);
+        return increment;
+    }
+
+//    public void setIncr(String key, int value) {
+//        RedisAtomicLong counter = new RedisAtomicLong(key, template.getConnectionFactory());
+//        counter.set(value);
+//        //counter.expire(0, TimeUnit.SECONDS);
+//    }
 }

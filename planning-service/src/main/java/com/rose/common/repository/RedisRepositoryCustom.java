@@ -39,4 +39,18 @@ public interface RedisRepositoryCustom {
     void delete(String key);
 
     void deleteKeys(List<String> keyList);
+
+    /**
+     * 功能：获取自增后的数值
+     * @param key redis中需要存在，不存在的话，会先返回0，然后 1，2，3
+     * @return
+     */
+    Long getIncr(String key);
+
+    /**
+     * 功能：初始化自增开始数值
+     * @param key
+     * @param value
+     */
+    //void setIncr(String key, int value);
 }
