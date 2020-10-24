@@ -42,6 +42,9 @@ public interface RedisRepositoryCustom {
 
     /**
      * 功能：获取自增后的数值
+     * 备注：注意进行redis 数据丢失的情形的考虑
+     *       所以，需要先 get -> 若不存在时 -> setnx 初始化种子 -> get 再判断一次 -> getIncr
+     *                           若存在时   -> getIncr
      * @param key redis中需要存在，不存在的话，会先返回0，然后 1，2，3
      * @return
      */
