@@ -2,6 +2,7 @@ package com.rose.common.repository.impl;
 
 import com.rose.common.repository.RedisRepositoryCustom;
 import com.rose.common.util.JsonUtil;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
@@ -75,4 +76,16 @@ public class RedisRepositoryCustomImpl implements RedisRepositoryCustom {
 //        counter.set(value);
 //        //counter.expire(0, TimeUnit.SECONDS);
 //    }
+
+    @Override
+    public void leftPush(String listName, String value) {
+        ListOperations<String, String> listOps = template.opsForList();
+        listOps.leftPush(listName, value);
+    }
+
+    @Override
+    public String rightPop(String listName) {
+        ListOperations<String, String> listOps = template.opsForList();
+        return listOps.rightPop(listName);
+    }
 }

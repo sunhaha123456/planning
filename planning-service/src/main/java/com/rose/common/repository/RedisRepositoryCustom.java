@@ -50,10 +50,20 @@ public interface RedisRepositoryCustom {
      */
     Long getIncr(String key);
 
+    // 功能：初始化自增开始数值
+    //void setIncr(String key, int value);
+
     /**
-     * 功能：初始化自增开始数值
-     * @param key
+     * 功能：list left push
+     * @param listName list名字，注意：名称格式最好是：list:xxx
      * @param value
      */
-    //void setIncr(String key, int value);
+    void leftPush(String listName, String value);
+
+    /**
+     * 功能：right pop
+     * @param listName
+     * @return
+     */
+    String rightPop(String listName);
 }
