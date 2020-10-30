@@ -6,8 +6,8 @@ import java.lang.annotation.*;
  * 元注解@Target,@Retention,@Documented,@Inherited
  * 
  *     @Target 表示该注解用于什么地方，可能的 ElemenetType 参数包括：
- *         ElemenetType.CONSTRUCTOR 构造器声明
- *         ElemenetType.FIELD 域声明（包括 enum 实例）
+ *         ElemenetType.CONSTRUCTOR     构造器声明
+ *         ElemenetType.FIELD           字段、枚举的常量
  *         ElemenetType.LOCAL_VARIABLE 局部变量声明
  *         ElemenetType.METHOD 方法声明
  *         ElemenetType.PACKAGE 包声明
