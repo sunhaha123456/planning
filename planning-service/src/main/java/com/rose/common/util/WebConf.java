@@ -8,6 +8,10 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 功能：获取properties配置文件以及系统参数中的key-value
+ * 备注：java -jar -Daaa=aaa xxx.jar方式传入的 aaa 参数会被获取到，而非脚本启动时，$中获取的值，会失败
+ */
 public class WebConf {
 
 	private static final Logger LOG = LoggerFactory.getLogger(WebConf.class);
