@@ -12,6 +12,15 @@ public interface RedisRepositoryCustom {
     // 保存，永久
     void save(String key, String value);
 
+    /**
+     * 功能：当不存在时，才会设置值
+     * 备注：当设置成功后，是可以使用 saveMinutes，设置超时时间的
+     * @param key
+     * @param value
+     * @return
+     */
+    boolean saveNX(String key, String value);
+
     // 保存，单位分钟
     void saveMinutes(String key, String value, long time);
 

@@ -23,6 +23,12 @@ public class RedisRepositoryCustomImpl implements RedisRepositoryCustom {
         ops.set(key, value);
     }
 
+    @Override
+    public boolean saveNX(String key, String value) {
+        ValueOperations<String, String> ops = template.opsForValue();
+        return ops.setIfAbsent(key, value);
+    }
+
     public void saveMinutes(String key, String value, long time) {
         ValueOperations<String, String> ops = template.opsForValue();
         ops.set(key, value, time, TimeUnit.MINUTES);
