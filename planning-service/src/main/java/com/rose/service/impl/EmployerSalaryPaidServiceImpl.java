@@ -146,7 +146,7 @@ public class EmployerSalaryPaidServiceImpl implements EmployerSalaryPaidService 
 
                 salaryList.add(salary);
             }
-            companyPaidSalaryRepository.save(salaryList);
+            companyPaidSalaryRepository.saveAll(salaryList);
         }
     }
 

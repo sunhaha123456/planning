@@ -6,6 +6,7 @@ import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.TbEmployer;
 import com.rose.data.entity.TbEmployerAdjustHistory;
+import com.rose.data.entity.TbSysUser;
 import com.rose.data.enums.EmployerHighestEducationEnum;
 import com.rose.data.enums.EmployerOnJobStateEnum;
 import com.rose.data.enums.EmployerTyepEnum;
@@ -201,7 +202,7 @@ public class EmployerServiceImpl implements EmployerService {
                 throw e;
             }
         }
-        Iterable<TbEmployer> iterable = employerRepository.save(list);
+        Iterable<TbEmployer> iterable = employerRepository.saveAll(list);
         Iterator<TbEmployer> iterator = iterable.iterator();
 
         TbEmployer employerTemp = null;
@@ -213,7 +214,7 @@ public class EmployerServiceImpl implements EmployerService {
             historyList.add(history);
         }
 
-        employerAdjustHistoryRepository.save(historyList);
+        employerAdjustHistoryRepository.saveAll(historyList);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -250,7 +251,12 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     public TbEmployerAdjustHistory getAdjustHistoryDetail(Long id) {
-        return employerAdjustHistoryRepository.findOne(id);
+        TbEmployerAdjustHistory employerAdjustHistory = null;
+        Optional<TbEmployerAdjustHistory> employerAdjustHistoryOptional = employerAdjustHistoryRepository.findById(id);
+        if (employerAdjustHistoryOptional.isPresent()) {
+            employerAdjustHistory = employerAdjustHistoryOptional.get();
+        }
+        return employerAdjustHistory;
     }
 
     private void addEmployerValidate(TbEmployer param) {

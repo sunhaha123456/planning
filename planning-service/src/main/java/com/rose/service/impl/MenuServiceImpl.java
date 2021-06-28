@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,26 +37,29 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<TbMenu> getUserMenu() {
-        TbSysUser user = sysUserRepository.findOne(valueHolder.getUserIdHolder());
-        if (user != null && user.getUserState() == 0) {
-            List<TbMenu> list_1 = menuRepositoryCustom.queryMenuListByRoleIdAndLevel(user.getRoleGroupId(), 1);
-            if (list_1 != null && list_1.size() > 0) {
-                List<TbMenu> list_2 = menuRepositoryCustom.queryMenuListByRoleIdAndLevel(user.getRoleGroupId(), 2);
-                if (list_2 != null && list_2.size() > 0) {
-                    for (TbMenu m1 : list_1) {
-                        m1.setChildren(new ArrayList<>());
-                        for (TbMenu m2 : list_2) {
-                            if (m2.getParentId().equals(m1.getId())) {
-                                m1.getChildren().add(m2);
+        Optional<TbSysUser> userOptional = sysUserRepository.findById(valueHolder.getUserIdHolder());
+        if (userOptional.isPresent()) {
+            TbSysUser user = userOptional.get();
+            if (user != null && user.getUserState() == 0) {
+                List<TbMenu> list_1 = menuRepositoryCustom.queryMenuListByRoleIdAndLevel(user.getRoleGroupId(), 1);
+                if (list_1 != null && list_1.size() > 0) {
+                    List<TbMenu> list_2 = menuRepositoryCustom.queryMenuListByRoleIdAndLevel(user.getRoleGroupId(), 2);
+                    if (list_2 != null && list_2.size() > 0) {
+                        for (TbMenu m1 : list_1) {
+                            m1.setChildren(new ArrayList<>());
+                            for (TbMenu m2 : list_2) {
+                                if (m2.getParentId().equals(m1.getId())) {
+                                    m1.getChildren().add(m2);
+                                }
                             }
-                        }
-                        if (m1.getChildren().size() > 0){
-                            Collections.sort(m1.getChildren());
+                            if (m1.getChildren().size() > 0){
+                                Collections.sort(m1.getChildren());
+                            }
                         }
                     }
                 }
+                return list_1;
             }
-            return list_1;
         }
         return new ArrayList<>();
     }
@@ -112,7 +112,7 @@ public class MenuServiceImpl implements MenuService {
             rele = new TbMenuRoleGroupReleation(now, roleGroupId, menuId);
             list.add(rele);
         }
-        menuUserReleationRepository.save(list);
+        menuUserReleationRepository.saveAll(list);
     }
 
     @Override
@@ -122,7 +122,11 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<TbMenu> getChild(Long rootId) {
-        TbMenu menu = menuRepository.findOne(rootId);
+        TbMenu menu = null;
+        Optional<TbMenu> menuOptional = menuRepository.findById(rootId);
+        if (menuOptional.isPresent()) {
+            menu = menuOptional.get();
+        }
         if (menu == null) {
             throw new BusinessException("查无此菜单！");
         }
@@ -143,7 +147,11 @@ public class MenuServiceImpl implements MenuService {
             param.setCreateDate(new Date());
             menuRepository.save(param);
         } else {
-            TbMenu menu = menuRepository.findOne(param.getId());
+            TbMenu menu = null;
+            Optional<TbMenu> menuOptional = menuRepository.findById(param.getId());
+            if (menuOptional.isPresent()) {
+                menu = menuOptional.get();
+            }
             if (menu == null) {
                 throw new BusinessException("菜单不存在！");
             }
@@ -163,7 +171,11 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public TbMenu getDetail(Long id) {
-        TbMenu menu = menuRepository.findOne(id);
+        TbMenu menu = null;
+        Optional<TbMenu> menuOptional = menuRepository.findById(id);
+        if (menuOptional.isPresent()) {
+            menu = menuOptional.get();
+        }
         if (menu == null) {
             throw new BusinessException("菜单不存在！");
         }
