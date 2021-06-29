@@ -11,7 +11,7 @@
     <script th:src="@{/static/easyui/easy.common.js}"></script>
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
-    <script th:inline="javascript">
+    <script type="text/javascript" th:inline="none">
         function searchEntry() {
             var result = ajaxSynchPostJson("user/financeInOutManage/search", {
                 "startDate": $('#startDateSearch').datetimebox('getValue'),

@@ -22,7 +22,7 @@
     </style>
     <script th:src="@{/static/flowChart/js/jquery.orgchart.js}"></script>
     <!-- flow chart end -->
-    <script th:inline="javascript">
+    <script type="text/javascript" th:inline="none">
         var msgOk = "模板状态：正常";
         var msgNo = "模板状态：停用";
 

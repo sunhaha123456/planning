@@ -6,6 +6,8 @@ import com.rose.common.repository.BaseRepository;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.internal.NativeQueryImpl;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.*;
 import org.slf4j.Logger;
@@ -125,18 +127,18 @@ public class BaseRepositoryImpl implements BaseRepository {
         Session session = em.getEntityManagerFactory().createEntityManager().unwrap(Session.class);
         try {
             LOG.info("执行SQL：{}", sql);
-            SQLQuery query = session.createSQLQuery(sql);
-            for (int i = 0; i < params.length; i++) {
-                query.setParameter(i, params[i]);
+            NativeQuery query = session.createNativeQuery(sql);
+            for (int i = 1; i <= params.length; i++) {
+                query.setParameter(i, params[i-1]);
             }
             if (clazz != null) {
                 List<String> fields = getFields(filedSql);
                 for (String field : fields) {
                     query = query.addScalar(field, getType(field, clazz));
                 }
-                list = query.setResultTransformer(Transformers.aliasToBean(clazz)).list();
+                list = query.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.aliasToBean(clazz)).list();
             } else {
-                list = query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP).list();
+                list = query.unwrap(NativeQueryImpl.class).setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP).list();
             }
         } catch (Exception e) {
             LOG.error("查询错误！{}", e);

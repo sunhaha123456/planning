@@ -43,7 +43,7 @@
             border: none;
         }
     </style>
-    <script th:inline="javascript">
+    <script type="text/javascript" th:inline="none">
         function noticeDataGridInit() {
             $('#manager_notice').datagrid({
                 fit : true,
@@ -369,7 +369,7 @@
 </div>
 
 <div id="noticeShowWindow" class="easyui-window" title="公告" data-options="iconCls:'icon-tip',maximized:true,minimizable:false,cache:false,closable:true,closed:true,resizable:true" style="width:780px;height:450px;">
-    <p align="center"><font color="black" size="4"><span id="noticeTitle""></span></font></p>
+    <p align="center"><span id="noticeTitle" th:size="4"></span></p>
     <p align="center"><textarea id="noticeContent" readonly="readonly" style="width: 99%;" /></p>
 </div>
 
@@ -426,5 +426,6 @@
         <textarea id="approvalApplyContent" style="width:650px; height: 220px;" />
     </p>
 </form>
+
 </body>
 </html>

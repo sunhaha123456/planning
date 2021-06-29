@@ -11,7 +11,7 @@
     <script th:src="@{/static/easyui/easy.common.js}"></script>
     <script th:src="@{/static/easyuiMask.js}"></script>
     <script th:src="@{/static/myFun.js}"></script>
-    <script th:inline="javascript">
+    <script type="text/javascript" th:inline="none">
         function addUserShow() {
             $('#manager_add').dialog('open');
             $('#loginNameAdd').focus();
@@ -289,6 +289,27 @@
     </p>
 </form>
 
+<form id="manager_editUserPassword" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
+      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
+       onClose:function () {
+            $('#manager_editUserPassword').form('reset');
+       },
+		buttons:[{
+					text : '提交',
+					iconCls : 'icon-add-green',
+					handler : function () {
+                    editUserPasswordCommit();
+					}
+				},{
+					text:'关闭',
+					iconCls : 'icon-redo',
+					handler:function(){
+                    $('#manager_editUserPassword').dialog('close');
+					}
+				}]">
+    <p>新密码：<input class="easyui-validatebox" type="text" id="userNewPassword" style="width:200px;" /></p>
+</form>
+
 <form id="manager_editUser" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
       data-options="top:60,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
        onClose:function () {
@@ -312,27 +333,6 @@
     <p>角&nbsp;&nbsp;&nbsp;色：
         <select class="easyui-combobox" id="authEditUser" style="width:100px;" data-options="valueField:'id',textField:'roleName'" />
     </p>
-</form>
-
-<form id="manager_editUserPassword" class="easyui-dialog" style="margin:0;padding:5px 0 0 25px;color:#333;"
-      data-options="top:150,width:320,title:'编辑管理',modal:true,closed:true,cache:false,iconCls:'icon-edit-yellow',
-       onClose:function () {
-            $('#manager_editUserPassword').form('reset');
-       },
-		buttons:[{
-					text : '提交',
-					iconCls : 'icon-add-green',
-					handler : function () {
-                    editUserPasswordCommit();
-					}
-				},{
-					text:'关闭',
-					iconCls : 'icon-redo',
-					handler:function(){
-                    $('#manager_editUserPassword').dialog('close');
-					}
-				}]">
-    <p>新密码：<input class="easyui-validatebox" type="text" id="userNewPassword" style="width:200px;" /></p>
 </form>
 </body>
 </html>

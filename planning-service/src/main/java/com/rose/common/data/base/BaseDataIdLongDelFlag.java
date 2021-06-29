@@ -14,7 +14,7 @@ import java.util.Date;
 public class BaseDataIdLongDelFlag implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(length = 19)
 	protected Long id;
 

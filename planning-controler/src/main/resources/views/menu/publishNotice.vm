@@ -17,7 +17,7 @@
         }
     </style>
 
-    <script th:inline="javascript">
+    <script type="text/javascript" th:inline="none">
         function searchNotice() {
             var result = ajaxSynchPostJson("user/publishNotice/searchNotice", {"page":1, "rows":10});
             if (result.code == '200') {

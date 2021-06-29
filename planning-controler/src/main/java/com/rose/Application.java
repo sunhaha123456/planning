@@ -1,4 +1,4 @@
-package com.rose.conf;
+package com.rose;
 
 import com.rose.interceptor.LoginInterceptor;
 import org.springframework.boot.SpringApplication;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.inject.Inject;
@@ -22,7 +23,7 @@ import javax.inject.Inject;
 @EntityScan({"com.rose.data.entity"})
 @EnableJpaRepositories({"com.rose.repository", "com.rose.common.repository"})
 @SpringBootApplication
-public class Application extends WebMvcConfigurerAdapter {
+public class Application extends WebMvcConfigurationSupport {
 
     @Inject
     private LoginInterceptor loginInterceptor;
