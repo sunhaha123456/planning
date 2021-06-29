@@ -10,6 +10,10 @@ import java.util.Date;
 import java.util.List;
 
 public interface FlowInstanceNodeUserTaskRepository extends CrudRepository<TbFlowInstanceNodeUserTask, Long> {
+
+    @Query(value = "select * from tb_flow_instance_node_user_task where id = :id", nativeQuery = true)
+    TbFlowInstanceNodeUserTask findOne(@Param(value = "id") Long id);
+
     @Modifying
     @Query(value = "delete from tb_flow_instance_node_user_task where instance_id = :instanceId", nativeQuery = true)
     int deleteByInstanceId(@Param(value = "instanceId") Long instanceId);

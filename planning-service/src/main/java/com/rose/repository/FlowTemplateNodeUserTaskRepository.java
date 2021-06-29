@@ -9,6 +9,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface FlowTemplateNodeUserTaskRepository extends CrudRepository<TbFlowTemplateNodeUserTask, Long> {
+
+    @Query(value = "select * from tb_flow_template_node_user_task where id = :id", nativeQuery = true)
+    TbFlowTemplateNodeUserTask findOne(@Param(value = "id") Long id);
+
     @Modifying
     @Query(value = "delete from tb_flow_template_node_user_task where template_id = :templateId", nativeQuery = true)
     int deleteByTmeplateId(@Param(value = "templateId") Long templateId);

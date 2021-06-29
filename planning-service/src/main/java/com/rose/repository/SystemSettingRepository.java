@@ -1,6 +1,5 @@
 package com.rose.repository;
 
-import com.rose.data.entity.TbFlowTemplate;
 import com.rose.data.entity.TbSystemSetting;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +7,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 public interface SystemSettingRepository extends CrudRepository<TbSystemSetting, Long> {
+
+    @Query(value = "select * from tb_system_setting where id = :id", nativeQuery = true)
+    TbSystemSetting findOne(@Param(value = "id") Long id);
 
     @Query(value = "select * from tb_system_setting where system_key = :systemKey", nativeQuery = true)
     TbSystemSetting findBySystemKey(@Param(value = "systemKey") String systemKey);

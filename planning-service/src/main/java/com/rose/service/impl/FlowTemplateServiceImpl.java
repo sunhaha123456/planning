@@ -121,7 +121,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                     if (c > 0) {
                         throw new BusinessException("不能删除还有流程实例的流程模板！");
                     }
-                    flowTemplateRepository.delete(id);
+                    flowTemplateRepository.deleteById(id);
                     flowTemplateNodeRepository.deleteByTemplateId(id);
                     flowTemplateNodeUserTaskRepository.deleteByTmeplateId(id);
                     break;
@@ -194,7 +194,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                 task.setTemplateNodeId(res.getId());
                 userTaskList.add(task);
             }
-            flowTemplateNodeUserTaskRepository.save(userTaskList);
+            flowTemplateNodeUserTaskRepository.saveAll(userTaskList);
 
             return res;
         } else { // 修改
@@ -231,7 +231,7 @@ public class FlowTemplateServiceImpl implements FlowTemplateService {
                     task.setTemplateNodeId(param.getId());
                     userTaskList.add(task);
                 }
-                flowTemplateNodeUserTaskRepository.save(userTaskList);
+                flowTemplateNodeUserTaskRepository.saveAll(userTaskList);
             }
 
             return flowTemplateNodeRepository.save(node);

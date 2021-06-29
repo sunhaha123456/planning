@@ -8,6 +8,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface MenuUserReleationRepository extends CrudRepository<TbMenuRoleGroupReleation, Long> {
 
+    @Query(value = "select * from tb_menu_role_group_releation where id = :id", nativeQuery = true)
+    TbMenuRoleGroupReleation findOne(@Param(value = "id") Long id);
+
     //@Query(value = "select * from tb_sys_user where uname = :uname and upwd = :upwd and user_state = 0", nativeQuery = true)
     //TbSysUser findByLoginNameAndUpwd(@Param(value = "uname") String uname, @Param(value = "upwd") String upwd);
 

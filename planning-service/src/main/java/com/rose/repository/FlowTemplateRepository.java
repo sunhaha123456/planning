@@ -10,6 +10,9 @@ import java.util.List;
 
 public interface FlowTemplateRepository extends CrudRepository<TbFlowTemplate, Long> {
 
+    @Query(value = "select * from tb_flow_template where id = :id", nativeQuery = true)
+    TbFlowTemplate findOne(@Param(value = "id") Long id);
+
     @Query(value = "select * from tb_flow_template where template_name = :templateName", nativeQuery = true)
     TbFlowTemplate findByTemplateName(@Param(value = "templateName") String templateName);
 

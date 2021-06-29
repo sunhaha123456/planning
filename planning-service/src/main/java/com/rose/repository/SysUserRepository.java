@@ -1,6 +1,7 @@
 package com.rose.repository;
 
 import com.rose.data.entity.TbSysUser;
+import com.rose.data.entity.TbSysUserLog;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -9,6 +10,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SysUserRepository extends CrudRepository<TbSysUser, Long> {
+
+    @Query(value = "select * from tb_sys_user where id = :id", nativeQuery = true)
+    TbSysUser findOne(@Param(value = "id") Long id);
 
     @Query(value = "select * from tb_sys_user where login_name = :loginName and upwd = :upwd", nativeQuery = true)
     TbSysUser findByLoginNameAndUpwd(@Param(value = "loginName") String loginName, @Param(value = "upwd") String upwd);

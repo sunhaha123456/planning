@@ -8,7 +8,6 @@ import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.constant.SystemConstant;
 import com.rose.data.entity.TbCompanyInOut;
-import com.rose.data.entity.TbMenu;
 import com.rose.data.entity.TbSysUser;
 import com.rose.data.entity.TbSystemSetting;
 import com.rose.data.to.request.CompanyInOutSearchRequest;
@@ -77,11 +76,7 @@ public class CompanyInOutServiceImpl implements CompanyInOutService {
     public TbCompanyInOut getDetail(Long id) {
         TbCompanyInOut res = companyInOutRepository.findOne(id);
         if (res != null) {
-            TbSysUser operateUser = null;
-            Optional<TbSysUser> operateUserOptional = sysUserRepository.findById(res.getEntryUserId());
-            if (operateUserOptional.isPresent()) {
-                operateUser = operateUserOptional.get();
-            }
+            TbSysUser operateUser = sysUserRepository.findOne(res.getEntryUserId());
             if (operateUser != null) {
                 res.setEntryUserName(operateUser.getUserName());
             }

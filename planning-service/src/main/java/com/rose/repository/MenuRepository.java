@@ -8,6 +8,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface MenuRepository extends CrudRepository<TbMenu, Long> {
+
+    @Query(value = "select * from tb_menu where id = :id", nativeQuery = true)
+    TbMenu findOne(@Param(value = "id") Long id);
+
     @Query(value = "select count(1) from tb_menu where menu_name = :menuName and dir_level = :dirLevel and parent_id = :parentId", nativeQuery = true)
     long countByMenuName(@Param(value = "menuName") String menuName, @Param("dirLevel") Integer dirLevel, @Param("parentId") Long parentId);
 

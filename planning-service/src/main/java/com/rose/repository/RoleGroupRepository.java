@@ -10,6 +10,9 @@ import java.util.List;
 
 public interface RoleGroupRepository extends CrudRepository<TbRoleGroup, Long> {
 
+    @Query(value = "select * from tb_role_group where id = :id", nativeQuery = true)
+    TbRoleGroup findOne(@Param(value = "id") Long id);
+
     @Query(value = "select * from tb_role_group", nativeQuery = true)
     List<TbRoleGroup> listAll();
 

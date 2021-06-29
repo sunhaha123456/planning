@@ -81,11 +81,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void operateInstanceByAdmin(Long id, Integer type) {
-        TbFlowInstance flowInstance = null;
-        Optional<TbFlowInstance> flowInstanceOptional = flowInstanceRepository.findById(id);
-        if (flowInstanceOptional.isPresent()) {
-            flowInstance = flowInstanceOptional.get();
-        }
+        TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
         if (flowInstance == null) {
             throw new BusinessException("流程实例不存在！");
         }
@@ -161,12 +157,8 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Override
     public void operateInstanceByUser(Long id, Integer type) {
         Long operateUserId = valueHolder.getUserIdHolder();
-        TbFlowInstance flowInstance = null;
-        Optional<TbFlowInstance> flowInstanceOptional = flowInstanceRepository.findById(id);
-        if (flowInstanceOptional.isPresent()) {
-            flowInstance = flowInstanceOptional.get();
-        }
 
+        TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
         if (flowInstance == null || (!flowInstance.getStartUserId().equals(operateUserId))) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
@@ -228,20 +220,12 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Override
     public TbFlowInstance getFlowInstanceDetail(Long id, Integer attachFileFlag, Long startUserId) {
-        TbFlowInstance flowInstance = null;
-        Optional<TbFlowInstance> flowInstanceOptional = flowInstanceRepository.findById(id);
-        if (flowInstanceOptional.isPresent()) {
-            flowInstance = flowInstanceOptional.get();
-        }
+        TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
         if (flowInstance == null || (startUserId != null && !startUserId.equals(flowInstance.getStartUserId()))) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
-        TbSysUser user = null;
-        Optional<TbSysUser> userOptional = sysUserRepository.findById(flowInstance.getStartUserId());
-        if (userOptional.isPresent()) {
-            user = userOptional.get();
-        }
 
+        TbSysUser user = sysUserRepository.findOne(flowInstance.getStartUserId());
         flowInstance.setStartUserName(user.getUserName());
         flowInstance.setStateShow(FlowInstanceStateEnum.getName(flowInstance.getState()));
 
@@ -289,12 +273,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Override
     public PageList<TbFlowInstanceOperateHistory> getOperateInfo(FlowInstanceRequest param) throws Exception {
         if (param.getStartUserId() != null) {
-            TbFlowInstance instance = null;
-            Optional<TbFlowInstance> instanceOptional = flowInstanceRepository.findById(param.getId());
-            if (instanceOptional.isPresent()) {
-                instance = instanceOptional.get();
-            }
-
+            TbFlowInstance instance = flowInstanceRepository.findOne(param.getId());
             if (instance == null || !param.getStartUserId().equals(instance.getStartUserId())) {
                 throw new BusinessException(ResponseResultCode.PARAM_ERROR);
             }
@@ -304,12 +283,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Override
     public FlowChartResponse getFlowInstanceFlowChart(Long id, Long startUserId) {
-        TbFlowInstance flowInstance = null;
-        Optional<TbFlowInstance> flowInstanceOptional = flowInstanceRepository.findById(id);
-        if (flowInstanceOptional.isPresent()) {
-            flowInstance = flowInstanceOptional.get();
-        }
-
+        TbFlowInstance flowInstance = flowInstanceRepository.findOne(id);
         if (flowInstance == null || (startUserId != null && !startUserId.equals(flowInstance.getStartUserId()))) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
@@ -440,11 +414,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void startApply(Long templateId, String instanceName, String applyContent, List<MultipartFile> fileList) throws IOException {
-        TbFlowTemplate template = null;
-        Optional<TbFlowTemplate> templateOptional = flowTemplateRepository.findById(templateId);
-        if (templateOptional.isPresent()) {
-            template = templateOptional.get();
-        }
+        TbFlowTemplate template = flowTemplateRepository.findOne(templateId);
         if (template == null) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
@@ -628,12 +598,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
     @Override
     public void exportFileFlowInstance(HttpServletResponse resp, Long instanceId, Long fileId, Long startUserId) throws Exception {
-        TbFlowInstance flowInstance = null;
-        Optional<TbFlowInstance> flowInstanceOptional = flowInstanceRepository.findById(instanceId);
-        if (flowInstanceOptional.isPresent()) {
-            flowInstance = flowInstanceOptional.get();
-        }
-
+        TbFlowInstance flowInstance = flowInstanceRepository.findOne(instanceId);
         if (flowInstance == null || (startUserId != null && !startUserId.equals(flowInstance.getStartUserId()))) {
             throw new BusinessException(ResponseResultCode.PARAM_ERROR);
         }
@@ -692,32 +657,20 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         if (approvalApplyContent.length() > 266) {
             throw new BusinessException("审批意见过长最多只能260字符！");
         }
-        TbFlowInstance instance = null;
-        Optional<TbFlowInstance> instanceOptional = flowInstanceRepository.findById(instanceId);
-        if (instanceOptional.isPresent()) {
-            instance = instanceOptional.get();
-        }
+        TbFlowInstance instance = flowInstanceRepository.findOne(instanceId);
         if (instance.getState() != FlowInstanceStateEnum.HAVE_STARTED.getIndex()) {
             throw new BusinessException("不能对已审核过的申请再次审核！");
         }
         Long operateUserId = valueHolder.getUserIdHolder();
-        TbFlowInstanceNodeUserTask userTask = null;
-        Optional<TbFlowInstanceNodeUserTask> userTaskOptional = flowInstanceNodeUserTaskRepository.findById(userTaskId);
-        if (userTaskOptional.isPresent()) {
-            userTask = userTaskOptional.get();
-        }
+        TbFlowInstanceNodeUserTask userTask = flowInstanceNodeUserTaskRepository.findOne(userTaskId);
         if (userTask == null || userTask.getState() != FlowInstanceNodeUserTaskStateEnum.WAITINT_OPERATE.getIndex() || !userTask.getUserId().equals(operateUserId)) {
             throw new BusinessException("不能对已审核过的申请再次审核！");
         }
         if (!instanceId.equals(userTask.getInstanceId()) || StringUtil.isEmpty(instance.getHandingInstanceNodeIds()) || !instance.getHandingInstanceNodeIds().contains(userTask.getInstanceNodeId() + "")) {
             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
         }
-        TbFlowInstanceNode handingTaskNode = null;
-        Optional<TbFlowInstanceNode> handingTaskNodeOptional = flowInstanceNodeRepository.findById(userTask.getInstanceNodeId());
-        if (handingTaskNodeOptional.isPresent()) {
-            handingTaskNode = handingTaskNodeOptional.get();
-        }
 
+        TbFlowInstanceNode handingTaskNode = flowInstanceNodeRepository.findOne(userTask.getInstanceNodeId());
         if (handingTaskNode == null) {
             throw new BusinessException(ResponseResultCode.SERVER_ERROR);
         }

@@ -6,7 +6,6 @@ import com.rose.common.util.StringUtil;
 import com.rose.common.util.ValueHolder;
 import com.rose.data.entity.TbEmployer;
 import com.rose.data.entity.TbEmployerAdjustHistory;
-import com.rose.data.entity.TbSysUser;
 import com.rose.data.enums.EmployerHighestEducationEnum;
 import com.rose.data.enums.EmployerOnJobStateEnum;
 import com.rose.data.enums.EmployerTyepEnum;
@@ -251,12 +250,7 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     public TbEmployerAdjustHistory getAdjustHistoryDetail(Long id) {
-        TbEmployerAdjustHistory employerAdjustHistory = null;
-        Optional<TbEmployerAdjustHistory> employerAdjustHistoryOptional = employerAdjustHistoryRepository.findById(id);
-        if (employerAdjustHistoryOptional.isPresent()) {
-            employerAdjustHistory = employerAdjustHistoryOptional.get();
-        }
-        return employerAdjustHistory;
+        return employerAdjustHistoryRepository.findOne(id);
     }
 
     private void addEmployerValidate(TbEmployer param) {

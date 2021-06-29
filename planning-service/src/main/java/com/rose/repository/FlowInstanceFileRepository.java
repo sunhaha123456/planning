@@ -10,6 +10,9 @@ import java.util.List;
 
 public interface FlowInstanceFileRepository extends CrudRepository<TbFlowInstanceFile, Long> {
 
+    @Query(value = "select * from tb_flow_instance_file where id = :id", nativeQuery = true)
+    TbFlowInstanceFile findOne(@Param(value = "id") Long id);
+
     @Query(value = "select * from tb_flow_instance_file where instance_id = :instanceId order by id asc", nativeQuery = true)
     List<TbFlowInstanceFile> listByInstanceId(@Param(value = "instanceId") Long instanceId);
 

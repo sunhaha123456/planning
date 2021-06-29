@@ -1,6 +1,7 @@
 package com.rose.repository;
 
 import com.rose.data.entity.TbFlowInstance;
+import com.rose.data.entity.TbFlowInstanceOperateHistory;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -9,6 +10,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface FlowInstanceRepository extends CrudRepository<TbFlowInstance, Long> {
+
+    @Query(value = "select * from tb_flow_instance where id = :id", nativeQuery = true)
+    TbFlowInstance findOne(@Param(value = "id") Long id);
 
     @Query(value = "select count(1) from tb_flow_instance where template_id = :templateId", nativeQuery = true)
     long countByTemplateId(@Param(value = "templateId") Long templateId);

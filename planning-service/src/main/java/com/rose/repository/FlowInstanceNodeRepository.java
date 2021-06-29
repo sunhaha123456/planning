@@ -10,6 +10,9 @@ import java.util.List;
 
 public interface FlowInstanceNodeRepository extends CrudRepository<TbFlowInstanceNode, Long> {
 
+    @Query(value = "select * from tb_flow_instance_node where id = :id", nativeQuery = true)
+    TbFlowInstanceNode findOne(@Param(value = "id") Long id);
+
     @Modifying
     @Query(value = "delete from tb_flow_instance_node where instance_id = :instanceId", nativeQuery = true)
     int deleteByInstanceId(@Param(value = "instanceId") Long instanceId);

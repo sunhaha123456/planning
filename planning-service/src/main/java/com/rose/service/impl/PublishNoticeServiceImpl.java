@@ -79,6 +79,6 @@ public class PublishNoticeServiceImpl implements PublishNoticeService {
         if (notice.getStatus() != 0) {
             throw new BusinessException("请先下架！");
         }
-        noticeRepository.delete(id);
+        noticeRepository.deleteById(id);
     }
 }
